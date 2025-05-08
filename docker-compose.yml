@@ -1,0 +1,78 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: doors-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: doors
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./Doors-DB/doors.sql:/docker-entrypoint-initdb.d/1-doors.sql
+      - ./Doors-DB/doorsDATA.sql:/docker-entrypoint-initdb.d/2-doorsDATA.sql
+    networks:
+      - app-network
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  backend:
+    build:
+      context: ./Doors-BE
+      dockerfile: WebApi/Dockerfile
+    container_name: doors-backend
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_URLS: https://+:7200
+      ConnectionStrings__db: "Server=doors-mysql;Port=3306;Database=doors;User=root;Password=root;TreatTinyAsBoolean=false;"
+    ports:
+      - "7200:7200"
+    depends_on:
+      - db
+      - mailhog
+    networks:
+      - app-network
+    volumes:
+      - ./Doors-BE/WebApi/certs/localhost.pfx:/certs/localhost.pfx
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: doors-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: doors-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./Doors-FE
+    container_name: doors-frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    volumes:
+      - ./Doors-FE/localhost.pem:/app/localhost.pem
+      - ./Doors-FE/localhost-key.pem:/app/localhost-key.pem
+    command: >
+      sh -c "ng serve --configuration=docker --host 0.0.0.0 --port 4200 --ssl true
+         --ssl-cert localhost.pem --ssl-key localhost-key.pem"
+
+
+networks:
+  app-network:
+    driver: bridge

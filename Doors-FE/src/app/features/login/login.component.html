@@ -1,0 +1,54 @@
+<div class="container">
+  <h3>{{ 'LOGIN.TITLE' | translate }}</h3>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
+
+    <!-- Email avec EmailInputComponent -->
+    <app-email-input
+      [form]="form"
+      [fieldError]="fieldError"
+      emailControlName="email"
+      [submitted]="validationTriggered"
+    ></app-email-input>
+
+    <!-- Password -->
+    <div class="form-group">
+      <label for="password">{{ 'LOGIN.LABEL.PASSWORD' | translate }}</label>
+      <input
+        type="password"
+        id="password"
+        formControlName="password"
+        class="form-control"
+        [placeholder]="'LOGIN.PLACEHOLDER.PASSWORD' | translate"
+        [ngClass]="{ 'is-invalid': form.get('password')?.invalid && form.get('password')?.touched }"
+      />
+      <div class="invalid-feedback" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+        {{ 'LOGIN.ERROR.FRONTEND.EMPTY_PASSWORD' | translate }}
+      </div>
+    </div>
+
+    <!-- Options -->
+    <div class="form-options">
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="rememberMe" />
+        {{ 'LOGIN.STAY_LOGGED_IN' | translate }}
+      </label>
+      <a href="/request-reset-password" class="forgot-password">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</a>
+    </div>
+
+    <!-- Submit -->
+    <div class="button-container">
+      <button type="submit" class="btn-submit" [disabled]="form.invalid">
+        {{ 'LOGIN.BUTTON' | translate }}
+      </button>
+    </div>
+
+    <!-- Erreur API -->
+    <p *ngIf="errorMessage" class="error-message">{{ errorMessage | translate }}</p>
+  </form>
+</div>
+
+<!-- Cartes d'action -->
+<div class="call-to-action-container">
+<app-call-to-action></app-call-to-action>
+</div>

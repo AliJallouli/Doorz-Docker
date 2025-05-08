@@ -1,0 +1,30 @@
+<div class="phone-input-container" [formGroup]="parentForm">
+  <label for="phoneNumber" *ngIf="!hideLabel">
+    {{ 'PHONE_INPUT.LABEL' | translate }}
+  </label>
+  <div class="input-group">
+    <select
+      formControlName="countryCode"
+      class="form-select"
+      id="countryCode"
+      [ngClass]="{'is-invalid': isFieldTouched('phoneNumber') && isFieldInvalid('phoneNumber')}"
+    >
+      <option value="+32">🇧🇪 +32</option>
+    </select>
+    <input
+      type="tel"
+      formControlName="phoneNumber"
+      class="form-control"
+      id="phoneNumber"
+      placeholder="{{ 'PHONE_INPUT.PLACEHOLDER' | translate }}"
+      maxlength="15"
+      (input)="sanitizePhoneNumber()"
+      [ngClass]="{'is-invalid': isFieldTouched('phoneNumber') && isFieldInvalid('phoneNumber')}"
+    />
+  </div>
+  <div *ngIf="isFieldTouched('phoneNumber') && isFieldInvalid('phoneNumber')" class="invalid-feedback">
+    <ng-container *ngIf="parentForm.get('phoneNumber')?.errors?.['pattern']">
+      {{ 'PHONE_INPUT.ERROR.PHONE_INVALID' | translate }}
+    </ng-container>
+  </div>
+</div>

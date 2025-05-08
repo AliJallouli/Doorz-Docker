@@ -1,0 +1,173 @@
+<div class="contact-container">
+  <div class="container">
+    <h2>{{ 'NAV.CONTACT' | translate }}</h2>
+
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" novalidate class="horizontal-form">
+      <!-- 🌐 Sélection de la langue -->
+      <div class="form-group">
+        <label for="language">
+          {{ 'CONTACT.LABEL.LANGUAGE' | translate }} <span class="required">*</span>
+        </label>
+        <select
+          id="language"
+          formControlName="languageId"
+          class="form-control"
+          [ngClass]="{'is-invalid': isFieldTouched('languageId') && isFieldInvalid('languageId')}"
+        >
+          <option *ngFor="let lang of languages" [value]="lang.languageId">
+            {{ lang.name }}
+          </option>
+        </select>
+        <div *ngIf="isFieldTouched('languageId') && isFieldInvalid('languageId')" class="invalid-feedback">
+          <ng-container *ngIf="f['languageId'].errors?.['required']">
+            {{ 'CONTACT.ERROR.FRONTEND.LANGUAGE_REQUIRED' | translate }}
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- 👤 FullName uniquement si non connecté -->
+      <div class="form-group" *ngIf="!isLoggedIn">
+        <label for="fullName">
+          {{ 'CONTACT.LABEL.FULLNAME' | translate }} <span class="required">*</span>
+        </label>
+        <input
+          id="fullName"
+          type="text"
+          formControlName="fullName"
+          class="form-control"
+          [ngClass]="{'is-invalid': isFieldTouched('fullName') && isFieldInvalid('fullName')}"
+          (input)="sanitizeFullName()"
+        />
+        <div *ngIf="isFieldTouched('fullName') && isFieldInvalid('fullName')" class="invalid-feedback">
+          <ng-container *ngIf="f['fullName'].errors?.['required']">
+            {{ 'CONTACT.ERROR.FRONTEND.FULLNAME_REQUIRED' | translate }}
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- ✉️ Email avec EmailInputComponent uniquement si non connecté -->
+      <div class="form-group" *ngIf="!isLoggedIn">
+        <app-email-input
+          [form]="contactForm"
+          [fieldError]="fieldError"
+          emailControlName="email"
+          [submitted]="validationTriggered"
+        ></app-email-input>
+      </div>
+
+      <!-- Telephone -->
+      <div class="form-group" *ngIf="!isLoggedIn">
+        <app-phone-input
+          [parentForm]="contactForm"
+          [hideLabel]="false"
+        ></app-phone-input>
+      </div>
+
+      <!-- 📌 Type de message -->
+      <div class="form-group">
+        <label for="contactMessageTypeId">
+          {{ 'CONTACT.TYPE_LABEL' | translate }} <span class="required">*</span>
+        </label>
+        <select
+          id="contactMessageTypeId"
+          formControlName="contactMessageTypeId"
+          [compareWith]="compareById"
+          (change)="onTypeChange()"
+          class="form-control"
+          [ngClass]="{'is-invalid': isFieldTouched('contactMessageTypeId') && isFieldInvalid('contactMessageTypeId')}"
+        >
+          <option *ngFor="let type of contactMessageTypes" [ngValue]="type.contactMessageTypeId">
+            {{ type.name }}
+          </option>
+        </select>
+
+
+        <!-- Affiche la description du type sélectionné -->
+        <div *ngIf="selectedTypeDescription" class="type-description">
+          <svg class="info-icon" viewBox="0 0 24 24" width="20" height="20">
+            <circle cx="12" cy="12" r="10" fill="#2a9d8f"/>
+            <text x="12" y="16" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">i</text>
+          </svg>
+          <span>{{ selectedTypeDescription }}</span>
+        </div>
+
+        <div *ngIf="isFieldTouched('contactMessageTypeId') && isFieldInvalid('contactMessageTypeId')" class="invalid-feedback">
+          <ng-container *ngIf="f['contactMessageTypeId'].errors?.['required']">
+            {{ 'CONTACT.TYPE_REQUIRED' | translate }}
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- 👇 Champ Sujet seulement si Autre -->
+      <div class="form-group" *ngIf="showSubjectField">
+        <label for="subject">
+          {{ 'CONTACT.LABEL.SUBJECT' | translate }} <span class="required">*</span>
+        </label>
+        <input
+          id="subject"
+          type="text"
+          formControlName="subject"
+          class="form-control"
+          [ngClass]="{'is-invalid': isFieldTouched('subject') && isFieldInvalid('subject')}"
+        />
+        <div *ngIf="isFieldTouched('subject') && isFieldInvalid('subject')" class="invalid-feedback">
+          <ng-container *ngIf="f['subject'].errors?.['required']">
+            {{ 'CONTACT.ERROR.FRONTEND.SUBJECT_REQUIRED' | translate }}
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- ✍️ Message -->
+      <div class="form-group">
+        <label for="message">
+          {{ 'CONTACT.LABEL.MESSAGE' | translate }} <span class="required">*</span>
+        </label>
+        <textarea
+          id="message"
+          formControlName="message"
+          rows="5"
+          maxlength="500"
+          class="form-control"
+          [ngClass]="{'is-invalid': isFieldTouched('message') && isFieldInvalid('message')}"
+        ></textarea>
+
+        <!-- Décompte des caractères -->
+        <small class="char-counter" [ngClass]="{'near-limit': f['message'].value?.length >= 450}">
+          {{ f['message'].value?.length || 0 }}/500 {{ 'CONTACT.CHARACTERS_USED' | translate }}
+        </small>
+
+        <div *ngIf="isFieldTouched('message') && isFieldInvalid('message')" class="invalid-feedback">
+          <ng-container *ngIf="f['message'].errors?.['required']">
+            {{ 'CONTACT.ERROR.FRONTEND.MESSAGE_REQUIRED' | translate }}
+          </ng-container>
+          <ng-container *ngIf="f['message'].errors?.['minlength']">
+            {{ 'CONTACT.ERROR.FRONTEND.MESSAGE_MINLENGTH' | translate }}
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <app-legal-consent
+          source="contact-form"
+          (consentsChanged)="onConsentsChanged($event)"
+          (documentTypesLoaded)="setExpectedConsentKeys($event)"
+        ></app-legal-consent>
+        <div *ngIf="validationTriggered && consentError && requiredConsentKey" class="invalid-feedback consent-error">
+          <div *ngIf="documentMap[requiredConsentKey]">
+            {{ 'CONTACT.ERROR.FRONTEND.CONSENT_REQUIRED' | translate: { document: documentMap[requiredConsentKey].name || requiredConsentKey } }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Bouton -->
+      <div class="button-container">
+        <button type="submit" class="btn-submit">
+          {{ 'CONTACT.BUTTON.SUBMIT' | translate }}
+        </button>
+      </div>
+
+      <!-- Message succès -->
+      <p *ngIf="successMessage" class="success">{{ successMessage | translate }}</p>
+    </form>
+  </div>
+</div>

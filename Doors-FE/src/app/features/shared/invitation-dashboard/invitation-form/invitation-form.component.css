@@ -1,0 +1,219 @@
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Form container */
+.form-container {
+  max-width: 720px !important; /* Match register */
+  width: 90% !important;
+  margin: 1rem auto;
+  background-color: #ffffff; /* White background */
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+/* Form layout */
+.horizontal-form {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 2vw, 0.75rem);
+  max-width: 100%;
+}
+
+/* Form row */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.5rem, 2vw, 0.75rem); /* Tighter gap for balanced look */
+}
+
+/* Form group */
+.form-group {
+  flex: 1 1 100%; /* Single column for simplicity */
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem; /* Tight spacing between label and input */
+}
+
+/* Labels */
+.form-group > label:not(.form-check-label) {
+  font-size: clamp(0.875rem, 3vw, 0.9375rem);
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.25rem; /* Reduced for closer label-input spacing */
+}
+
+/* Inputs and selects */
+input[type="text"],
+input[type="email"],
+select {
+  padding: clamp(0.625rem, 2vw, 0.75rem);
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: clamp(1rem, 3vw, 1.0625rem);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus {
+  border-color: #2a9d8f;
+  box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+  outline: none;
+}
+
+/* Error states */
+.is-invalid {
+  border-color: #e74c3c !important;
+}
+
+.invalid-feedback {
+  color: #e74c3c;
+  font-size: clamp(0.8125rem, 3vw, 0.875rem);
+  margin-top: 0.25rem;
+}
+
+/* Submit button */
+.btn-submit {
+  padding: clamp(0.75rem, 2vw, 0.875rem) clamp(1rem, 3vw, 1.5rem);
+  font-size: clamp(0.875rem, 3vw, 0.9375rem);
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  background-color: #2a9d8f;
+  color: white;
+  border: none;
+  margin: 0.5rem 0;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #21867a;
+  transform: translateY(-1px);
+}
+
+.btn-submit:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center button */
+}
+
+/* Constrain EmailInputComponent */
+app-email-input {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+app-email-input .form-group,
+app-email-input input {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Override dashboard-container */
+:host-context(.dashboard-container) {
+  width: auto;
+  max-width: 900px;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  :host {
+    padding: 0;
+  }
+
+  .form-container {
+    width: 95% !important;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group {
+    flex: 1 1 100%;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  select {
+    padding: 0.625rem;
+    font-size: clamp(0.9375rem, 3vw, 1rem);
+  }
+
+  .btn-submit {
+    padding: 0.875rem 1rem;
+  }
+
+  .form-group > label:not(.form-check-label) {
+    margin-bottom: 0.2rem;
+  }
+
+  .invalid-feedback {
+    font-size: clamp(0.75rem, 3vw, 0.8125rem);
+  }
+}
+
+/* Tablet */
+@media (max-width: 768px) and (min-width: 577px) {
+  .form-container {
+    width: 95% !important;
+    padding: 1.25rem;
+    margin: 0.5rem auto;
+  }
+
+  .form-row {
+    gap: 0.625rem;
+  }
+
+  .btn-submit {
+    padding: 0.75rem 1.25rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 992px) {
+  .form-container {
+    max-width: 800px !important;
+    padding: 2rem;
+  }
+
+  .form-row {
+    gap: 0.75rem;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+  .form-container {
+    max-width: 900px !important;
+  }
+}
+
+/* Safeguard against stretching */
+:host,
+.form-container,
+.horizontal-form,
+.form-row {
+  max-width: 100%;
+  overflow-x: hidden;
+}

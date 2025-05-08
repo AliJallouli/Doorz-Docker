@@ -1,0 +1,99 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: clamp(0.5rem, 2vw, 0.75rem); /* Aligné avec .horizontal-form gap */
+}
+
+label {
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+  padding: 0.25rem 0; /* Zone cliquable */
+}
+
+.required {
+  color: #e74c3c; /* Rouge pour champs obligatoires */
+}
+
+input[type="email"] {
+  padding: clamp(0.625rem, 2vw, 0.75rem);
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: clamp(1.0625rem, 3.5vw, 1.125rem); /* Évite zoom iOS */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input[type="email"]:focus {
+  border-color: #2a9d8f; /* Vert focus */
+  box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+  outline: none;
+}
+
+input[type="email"].is-invalid {
+  border-color: #e74c3c !important; /* Rouge erreur */
+}
+
+.invalid-feedback {
+  color: #e74c3c;
+  font-size: clamp(0.875rem, 3vw, 0.9375rem);
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  .form-group {
+    margin-bottom: 0.5rem; /* Plus compact */
+  }
+
+  label {
+    font-size: clamp(0.8125rem, 3.5vw, 0.875rem);
+    padding: 0.375rem 0; /* Zone cliquable plus grande */
+  }
+
+  input[type="email"] {
+    padding: 0.625rem;
+    font-size: clamp(1rem, 3.5vw, 1.0625rem); /* Évite zoom iOS */
+  }
+
+  .invalid-feedback {
+    font-size: clamp(0.8125rem, 3vw, 0.875rem);
+  }
+}
+
+/* Tablette */
+@media (max-width: 768px) and (min-width: 577px) {
+  .form-group {
+    margin-bottom: 0.625rem;
+  }
+
+  input[type="email"] {
+    padding: 0.75rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 992px) {
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  input[type="email"] {
+    padding: 0.875rem;
+  }
+}
+
+/* Grands écrans */
+@media (min-width: 1200px) {
+  .form-group {
+    margin-bottom: 1rem;
+  }
+}

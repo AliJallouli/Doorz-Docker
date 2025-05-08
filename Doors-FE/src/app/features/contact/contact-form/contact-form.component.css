@@ -1,0 +1,302 @@
+/* Conteneur principal */
+.contact-container {
+  display: block;
+  width: 100%;
+  padding: 1.5rem 1rem;
+  padding-top: 5rem;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+/* Conteneur interne */
+.contact-container .container {
+  max-width: 720px; /* Augmenté pour grands écrans */
+  width: 90%;
+  margin: 1rem auto;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Typographie */
+.contact-container h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  color: #264653;
+  font-size: clamp(1.25rem, 3.5vw, 1.5rem);
+  line-height: 1.4;
+}
+
+/* Formulaire */
+.contact-container form {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 2vw, 1rem); /* Réduit sur mobile */
+  max-width: 100%;
+}
+
+/* Groupe de champs */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+  padding: 0.25rem 0; /* Améliore l'interaction tactile */
+}
+
+/* Astérisque pour champs obligatoires */
+.required {
+  color: #e74c3c;
+  font-weight: bold;
+  margin-left: 0.25rem;
+}
+
+/* Styles pour input, textarea et select */
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: clamp(0.625rem, 2vw, 0.75rem);
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: clamp(1.0625rem, 3.5vw, 1.125rem); /* Plus grand pour éviter zoom iOS */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+.form-group select {
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%23333" d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px;
+  cursor: pointer;
+  padding-right: 2rem; /* Élargit la zone cliquable */
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #2a9d8f;
+  box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+  outline: none;
+}
+
+/* Champs invalides */
+.form-group input.is-invalid,
+.form-group textarea.is-invalid,
+.form-group select.is-invalid {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+}
+
+/* Messages d'erreur */
+.invalid-feedback {
+  color: #e74c3c;
+  font-size: clamp(0.8125rem, 3vw, 0.875rem); /* Taille minimale augmentée */
+  margin-top: 0.25rem;
+  display: block;
+  visibility: visible;
+}
+
+/* Erreur spécifique pour le consentement */
+.form-group .consent-error {
+  margin-top: 0.5rem;
+  padding: 0.25rem 0;
+  font-weight: 500;
+  background-color: rgba(231, 76, 60, 0.1);
+  border-radius: 4px;
+  font-size: clamp(0.8125rem, 3vw, 0.875rem); /* Taille explicite */
+}
+
+/* Description du type */
+.type-description {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #e6f4f1;
+  border-left: 3px solid #2a9d8f;
+  border-radius: 4px;
+  font-size: clamp(0.8125rem, 3vw, 0.9375rem);
+  color: #264653;
+  line-height: 1.5;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.type-description .info-icon {
+  flex-shrink: 0;
+  width: clamp(16px, 2vw, 18px); /* Taille dynamique */
+  height: clamp(16px, 2vw, 18px);
+  margin-right: 0.5rem;
+  transition: transform 0.2s ease;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.type-description .info-icon:hover {
+  transform: scale(1.1);
+}
+
+.type-description span {
+  flex: 1;
+  overflow-wrap: break-word;
+}
+
+/* Décompte des caractères */
+.char-counter {
+  display: block;
+  text-align: right;
+  font-size: clamp(0.75rem, 2.5vw, 0.8125rem);
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.char-counter.near-limit {
+  color: #e74c3c;
+}
+
+/* Bouton */
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.button-container button {
+  padding: clamp(0.75rem, 2vw, 0.875rem) clamp(1.5rem, 3vw, 2rem); /* Plus grand sur mobile */
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #2a9d8f;
+  color: white;
+  border: none;
+}
+
+.button-container button:hover:not(:disabled) {
+  background-color: #21867a;
+  transform: translateY(-1px);
+}
+
+.button-container button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Message de succès */
+.success {
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+  color: #2a9d8f;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* Ajustements responsifs */
+@media (max-width: 576px) {
+  .contact-container {
+    padding: 1rem 0.5rem;
+    padding-top: 4.5rem;
+  }
+
+  .contact-container .container {
+    width: 95%;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .contact-container h2 {
+    margin-bottom: 1rem;
+  }
+
+  .contact-container form {
+    gap: 0.75rem;
+  }
+
+  .form-group label {
+    padding: 0.375rem 0; /* Zone cliquable plus grande */
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 0.625rem;
+    font-size: clamp(1rem, 3.5vw, 1.0625rem); /* Évite zoom iOS */
+  }
+
+  .form-group select {
+    padding-right: 1.75rem;
+  }
+
+  .type-description {
+    padding: 0.5rem;
+    font-size: clamp(0.75rem, 3vw, 0.875rem);
+  }
+
+  .button-container button {
+    padding: 0.875rem 1.5rem;
+  }
+
+  .invalid-feedback,
+  .form-group .consent-error {
+    font-size: clamp(0.75rem, 3vw, 0.8125rem);
+  }
+}
+
+@media (max-width: 768px) and (min-width: 577px) {
+  .contact-container .container {
+    padding: 1.5rem;
+    width: 95%;
+  }
+
+  .contact-container form {
+    gap: 0.875rem;
+  }
+
+  .button-container button {
+    padding: 0.75rem 1.75rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .contact-container .container {
+    padding: 2.5rem;
+    max-width: 800px; /* Plus large pour desktop */
+  }
+}
+
+@media (min-width: 1200px) {
+  .contact-container .container {
+    max-width: 900px; /* Optimisé pour grands écrans */
+  }
+}
+
+/* Éviter les conflits de positionnement */
+.contact-container,
+.contact-container .container,
+.contact-container form,
+.form-group {
+  position: static;
+  overflow: visible;
+  z-index: auto;
+}
+

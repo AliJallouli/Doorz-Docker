@@ -1,0 +1,30 @@
+<section class="student-needs-section">
+  <h2>{{ 'STUDENT_NEEDS.TITLE' | translate }}</h2>
+  <div class="needs-container">
+    <div class="need-card" *ngFor="let need of studentNeeds; let i = index">
+      <div class="card-number">{{ i + 1 }}</div>
+      <h4>{{ need.title | translate }}</h4>
+      <div class="card-content">
+        <p [innerHTML]="need.description | translate"></p>
+        <div class="response-buttons">
+          <button class="btn agree" (click)="onRespond(i, true)">
+            {{ 'STUDENT_NEEDS.AGREE' | translate }}
+          </button>
+          <button class="btn disagree" (click)="onRespond(i, false)">
+            {{ 'STUDENT_NEEDS.DISAGREE' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="need-card">
+      <div class="card-number">{{ studentNeeds.length + 1 }}</div>
+      <h4>{{ 'STUDENT_NEEDS.EXTRA_TITLE' | translate }}</h4>
+      <div class="card-content">
+        <p [innerHTML]="'STUDENT_NEEDS.EXTRA_DESC' | translate"></p>
+        <textarea placeholder="{{ 'STUDENT_NEEDS.EXTRA_PLACEHOLDER' | translate }}" rows="4"></textarea>
+        <button class="btn agree" (click)="onExtraSubmit()">{{ 'STUDENT_NEEDS.SEND' | translate }}</button>
+      </div>
+    </div>
+  </div>
+
+</section>

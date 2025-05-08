@@ -1,0 +1,6 @@
+﻿export type KnownBackendError =
+  | 'INVALID_LOGIN'
+  | 'TOO_MANY_FAILED_ATTEMPTS'
+  | 'REFRESH_TOKEN_REQUIRED'
+  | 'EMAIL_ALREADY_USED'
+  | 'INTERNAL_SERVER_ERROR';

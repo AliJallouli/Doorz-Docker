@@ -1,0 +1,530 @@
+﻿{
+  "EMAIL_INPUT": {
+    "LABEL": {
+      "EMAIL": "E-Mail-Adresse"
+    },
+    "PLACEHOLDER": {
+      "EMAIL": "Geben Sie Ihre E-Mail-Adresse ein"
+    },
+    "ERROR": {
+      "EMAIL_REQUIRED": "E-Mail-Adresse ist erforderlich.",
+      "EMAIL_INVALID": "E-Mail-Adresse muss gültig sein."
+    }
+  },
+  "PASSWORD_INPUT": {
+    "LABEL": {
+      "PASSWORD": "Passwort",
+      "CONFIRM_PASSWORD": "Passwort bestätigen"
+    },
+    "ERROR": {
+      "PASSWORD_REQUIRED": "Das Passwort ist erforderlich.",
+      "CONFIRM_PASSWORD_REQUIRED": "Die Passwortbestätigung ist erforderlich.",
+      "PASSWORD_MINLENGTH": "Das Passwort muss mindestens 6 Zeichen lang sein.",
+      "PASSWORD_PATTERN": "Das Passwort muss mindestens einen Buchstaben und eine Zahl enthalten.",
+      "PASSWORD_MISMATCH": "Die Passwörter stimmen nicht überein."
+    }
+  },
+  "PHONE_INPUT": {
+    "LABEL": "Telefonnummer",
+    "PLACEHOLDER": "(0) 123 456 789",
+    "ERROR": {
+      "PHONE_INVALID": "Die Telefonnummer ist nicht gültig."
+    }
+  },
+  "LOGIN": {
+    "TITLE": "Anmeldung",
+    "LABEL": {
+      "EMAIL": "E-Mail-Adresse",
+      "PASSWORD": "Passwort"
+    },
+    "PLACEHOLDER": {
+      "EMAIL": "Geben Sie Ihre E-Mail-Adresse ein",
+      "PASSWORD": "Geben Sie Ihr Passwort ein"
+    },
+    "BUTTON": "Anmelden",
+    "STAY_LOGGED_IN": "Angemeldet bleiben",
+    "FORGOT_PASSWORD": "Passwort vergessen?",
+    "SUCCESS": "Anmeldung erfolgreich.",
+    "ERROR": {
+      "FRONTEND": {
+        "EMPTY_FIELDS": "Bitte füllen Sie alle Felder aus.",
+        "EMPTY_EMAIL": "E-Mail-Adresse ist erforderlich.",
+        "INVALID_EMAIL": "E-Mail-Adresse muss gültig sein.",
+        "EMPTY_PASSWORD": "Passwort ist erforderlich."
+      },
+      "BACKEND": {
+        "INVALID_LOGIN": "Falsche E-Mail oder falsches Passwort.",
+        "TOO_MANY_FAILED_ATTEMPTS": "Zu viele fehlgeschlagene Versuche. Bitte versuchen Sie es später erneut.",
+        "LOGIN_ATTEMPT_SAVE_FAILED": "Fehler beim Speichern des Anmeldeversuchs.",
+        "LOGIN_FINALIZATION_FAILED": "Fehler beim Abschließen der Anmeldung."
+      }
+    },
+    "STUDENT_TITLE": "Studentenbereich",
+    "STUDENT_DESCRIPTION": "Finde deinen <strong>Studentenjob</strong>, <strong>Praktikum</strong>, <strong>Kot</strong>, <strong>Ausbildung</strong> oder <strong>Event</strong> mit einem Klick! Werde Teil der <strong>Studenten-Vibe</strong>!",
+    "STUDENT_REGISTER": "Los geht's!",
+    "LANDLORD_TITLE": "Anmeldung Privater Vermieter",
+    "LANDLORD_DESCRIPTION": "Biete deine <strong>Kots</strong> an und verbinde dich im Handumdrehen mit <strong>Studenten</strong>.",
+    "LANDLORD_REGISTER": "Vermieter werden",
+    "PROFESSIONAL_TITLE": "Bereich für Profis",
+    "PROFESSIONAL_DESCRIPTION": "Steigere deine Angebote für <strong>Studentenjobs</strong>, <strong>Praktika</strong>, <strong>Ausbildungen</strong>, <strong>Kot-Vermietung</strong> oder <strong>Events</strong> bei <strong>Studenten</strong>.",
+    "PROFESSIONAL_CONTACT": "Kontaktiere uns"
+  },
+  "FOOTER": {
+    "NAVIGATION": "Navigation",
+    "CONTACT": "Kontakt",
+    "CONTACT_EMAIL": "contact@doorz.com",
+    "CONTACT_PHONE": "+00 000 000 000",
+    "CONTACT_ADDRESS": "7000 - Mons",
+    "FOLLOW_US": "Folgen Sie uns",
+    "LANGUAGE": "Sprache",
+    "BRAND": "DOORZ",
+    "RIGHTS": "Alle Rechte vorbehalten.",
+    "PRIVACY": "Datenschutzrichtlinie"
+  },
+  "NAV": {
+    "BRAND": "DOORZ",
+    "STUDENTJOB": "Studentenjob",
+    "INTERSHIP": "Praktikum",
+    "AIDES": "Unterstützung",
+    "EVENTS": "Veranstaltungen",
+    "PROFESSIONEL": "Professionell",
+    "STUDENTITEM": "Studierende",
+    "RECRUITER": "Unternehmen",
+    "INSTITUTIONS": "Institutionen",
+    "ORGANISATIONS": "Öffentliche Organisationen",
+    "ASSOCIATIONS": "Vereine",
+    "MOUVEMENT": "Studentenbewegung",
+    "ABOUT": "Über uns",
+    "FEATURES": "Funktionen",
+    "CONTACT": "Kontakt",
+    "LOGIN": "Anmeldung",
+    "PROFILE": "Profil",
+    "LOGOUT": "Abmelden",
+    "INVITE_COLLEAGUES": "Kollegen",
+    "STUDENT": {
+      "DASHBOARD": "Dashboard",
+      "STUDIES": "Studium",
+      "INTERNSHIPS": "Praktika",
+      "JOBS": "Jobs",
+      "EVENTS": "Veranstaltungen"
+    },
+    "SUPERADMIN": {
+      "DASHBOARD": "Dashboard",
+      "INVITE": "Einladen"
+    },
+    "COMPANY": {
+      "HOME": "Unternehmen",
+      "ADMIN": "Unternehmensadmin",
+      "RECRUITER": "Unternehmensrecruiter",
+      "VIEWER": "Unternehmensbetrachter"
+    },
+    "INSTITUTION": {
+      "HOME": "Institution",
+      "ADMIN": "Institutionsadmin",
+      "EDITOR": "Institutionseditor",
+      "VIEWER": "Institutionsbetrachter"
+    },
+    "LANDLORD": {
+      "DASHBOARD": "Vermieter-Dashboard"
+    }
+  },
+  "INVITE": {
+    "LABEL": {
+      "ENTITY_TYPE": "Entitätstyp",
+      "ENTITY_NAME": "Name",
+      "COMPANY_NUMBER": "Firmennummer",
+      "INSTITUTION_TYPE": "Institutionstyp",
+      "EMAIL": "E-Mail",
+      "ROLE": "Rolle"
+    },
+    "PLACEHOLDER": {
+      "ENTITY_TYPE": "Entität auswählen",
+      "ENTITY_NAME": "Name der Entität",
+      "COMPANY_NUMBER": "XXXX.XXX.XXX",
+      "INSTITUTION_TYPE": "Typ auswählen",
+      "EMAIL": "nutzer@beispiel.com",
+      "ROLE": "Rolle auswählen"
+    },
+    "BUTTON": {
+      "INVITE_ENTITY": "Einladen",
+      "INVITE_COLLEAGUE": "Kollegen einladen"
+    },
+    "SUCCESS": {
+      "COMPANY": "Unternehmensadministrator erfolgreich eingeladen.",
+      "INSTITUTION": "Institutionsadministrator erfolgreich eingeladen.",
+      "COLLEAGUE": "Kollege erfolgreich eingeladen."
+    },
+    "ERROR": {
+      "FRONTEND": {
+        "REQUIRED_ENTITY_NAME_EMAIL": "Die Felder Entität, Name und E-Mail sind erforderlich.",
+        "REQUIRED_COMPANY_NUMBER": "Firmennummer ist für ein Unternehmen erforderlich.",
+        "INVALID_COMPANY_NUMBER": "Ungültige Firmennummer (Format: XXXX.XXX.XXX).",
+        "REQUIRED_INSTITUTION_TYPE": "Institutionstyp ist erforderlich.",
+        "REQUIRED_EMAIL_ROLE": "Die Felder E-Mail und Rolle sind erforderlich.",
+        "INVALID_EMAIL": "Ungültige E-Mail.",
+        "MISSING_FIELDS_PREFIX": "Die folgenden Felder sind erforderlich: ",
+        "MISSING_FIELD": {
+          "ENTITY": "Entität",
+          "NAME": "Name",
+          "EMAIL": "E-Mail",
+          "COMPANY_NUMBER": "Firmennummer",
+          "INSTITUTION_TYPE": "Institutionstyp"
+        }
+      },
+      "BACKEND": {
+        "INVITER_NOT_ADMIN": "Nur ein Administrator kann Kollegen einladen.",
+        "INVITER_NOT_LINKED_TO_ENTITY": "Ihr Konto ist mit keiner Entität verknüpft.",
+        "ROLE_NOT_VALID_FOR_ENTITY_TYPE": "Die ausgewählte Rolle ist für diesen Entitätstyp ungültig.",
+        "INVITATION_CREATION_FAILED": "Erstellung der Einladung fehlgeschlagen.",
+        "INVALID_COMPANY_INPUT": "Die Unternehmensdaten sind ungültig.",
+        "COMPANY_NAME_ALREADY_USED": "Der Unternehmensname wird bereits verwendet.",
+        "COMPANY_CREATION_FAILED": "Unternehmen konnte nicht erstellt werden.",
+        "INVALID_INSTITUTION_INPUT": "Die Institutionsdaten sind ungültig.",
+        "INSTITUTION_NAME_ALREADY_USED": "Der Institutionsname wird bereits verwendet.",
+        "INSTITUTION_TYPE_NOT_FOUND": "Der angegebene Institutionstyp wurde nicht gefunden.",
+        "INSTITUTION_CREATION_FAILED": "Institution konnte nicht erstellt werden.",
+        "ENTITY_CREATION_FAILED": "Erstellung der Entität fehlgeschlagen.",
+        "ENTITY_NAME_MISSING": "Name der Entität ist erforderlich.",
+        "ENTITY_TYPE_NOT_FOUND": "Entitätstyp nicht gefunden.",
+        "ADMIN_ROLE_NOT_FOUND": "Die Administratorrolle wurde für diesen Entitätstyp nicht gefunden."
+      }
+    }
+  },
+  "SHARED": {
+    "LOADING": "Laden...",
+    "ERROR": {
+      "FRONTEND": {
+        "EMPTY_FIELDS": "Bitte füllen Sie alle Felder aus.",
+        "FIRSTNAME_REQUIRED": "Vorname ist erforderlich (mindestens 2 Zeichen).",
+        "LASTNAME_REQUIRED": "Nachname ist erforderlich (mindestens 2 Zeichen).",
+        "FIRSTNAME_MINLENGTH": "Mindestens 2 Zeichen.",
+        "LASTNAME_MINLENGTH": "Mindestens 2 Zeichen."
+      },
+      "BACKEND": {
+        "USER_NOT_FOUND": "Benutzer für diese Bestätigung nicht gefunden.",
+        "EMAIL_SENDING_FAILED": "Beim Senden der Einladungs-E-Mail ist ein Fehler aufgetreten.",
+        "EMAIL_ALREADY_USED": "Diese E-Mail-Adresse wird bereits verwendet.",
+        "INVALID_EMAIL": "Ungültige E-Mail-Adresse.",
+        "INTERNAL_SERVER_ERROR": "Ein interner Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
+        "TOKEN_INVALID": "Ungültiges Token!",
+        "OTP_INVALID": "Ungültiger Code. Bitte versuchen Sie es erneut.",
+        "TOO_MANY_OTP_RESENDS": "Sie haben zu viele OTP-Codes angefordert. Bitte warten Sie, bevor Sie es erneut versuchen."
+      }
+    }
+  },
+  "REGISTERFROMINVITE": {
+    "TITLE": "Registrierung über Einladung",
+    "LABEL": {
+      "EMAIL": "E-Mail-Adresse",
+      "FIRSTNAME": "Vorname",
+      "LASTNAME": "Nachname"
+    },
+    "PLACEHOLDER": {
+      "EMAIL": "Geben Sie Ihre E-Mail-Adresse ein",
+      "FIRSTNAME": "Geben Sie Ihren Vornamen ein",
+      "LASTNAME": "Geben Sie Ihren Nachnamen ein"
+    },
+    "BUTTON": {
+      "SUBMIT": "Mein Konto erstellen"
+    },
+    "SUCCESS": "Registrierung erfolgreich. Sie werden weitergeleitet.",
+    "ERROR": {
+      "FRONTEND": {
+        "INVALID_TOKEN": "Der Einladungslink ist ungültig oder abgelaufen."
+      },
+      "BACKEND": {
+        "INVITATION_INVALID": "Der Link ist ungültig oder wurde bereits verwendet.",
+        "USER_ALREADY_EXISTS": "Ein Benutzer mit dieser E-Mail-Adresse existiert bereits.",
+        "INVITATION_DETAILS_MISSING": "Einladungsdetails sind unvollständig.",
+        "ROLE_NOT_VALID_FOR_ENTITY_TYPE": "Diese Rolle ist für die Entität nicht gültig.",
+        "REGISTRATION_FAILED": "Ein Fehler ist bei der Registrierung aufgetreten."
+      }
+    }
+  },
+  "REGISTERPUBLIC": {
+    "TITLE_STUDENT": "Studentenregistrierung",
+    "TITLE_LANDLORD": "Vermieterregistrierung",
+    "LABEL": {
+      "EMAIL": "E-Mail-Adresse",
+      "FIRSTNAME": "Vorname",
+      "LASTNAME": "Nachname"
+    },
+    "PLACEHOLDER": {
+      "EMAIL": "Geben Sie Ihre E-Mail-Adresse ein",
+      "FIRSTNAME": "Geben Sie Ihren Vornamen ein",
+      "LASTNAME": "Geben Sie Ihren Nachnamen ein"
+    },
+    "BUTTON": {
+      "SUBMIT": "Mein Konto erstellen"
+    },
+    "SUCCESS": "Registrierung erfolgreich. Überprüfen Sie Ihre E-Mail, um Ihr Konto zu bestätigen.",
+    "ERROR": {
+      "FRONTEND": {
+        "EMAIL_REQUIRED": "E-Mail-Adresse ist erforderlich.",
+        "EMAIL_INVALID": "E-Mail-Adresse muss gültig sein.",
+        "ALL_CONSENTS_REQUIRED": "Sie müssen allen rechtlichen Zustimmungen zustimmen, um fortzufahren."
+      },
+      "BACKEND": {
+        "USER_REGISTRATION_FAILED": "Ein Fehler ist bei der Registrierung aufgetreten.",
+        "ROLE_NOT_FOUND": "Die angegebene Rolle wurde nicht gefunden.",
+        "PUBLIC_ENTITY_TYPE_NOT_FOUND": "Der Entitätstyp 'Öffentlich' wurde nicht gefunden.",
+        "UNSUPPORTED_PUBLIC_ROLE": "Die angegebene Rolle wird für die öffentliche Registrierung nicht unterstützt.",
+        "USER_NOT_FOUND_AFTER_ENTITY_CREATION": "Der Benutzer konnte nach der Erstellung nicht erneut geladen werden."
+      }
+    }
+  },
+  "CONFIRMEMAIL": {
+    "TITLE": "Bestätigen Sie Ihre E-Mail-Adresse",
+    "RESEND_SUCCESS": "Eine neue Bestätigungs-E-Mail wurde gesendet.",
+    "SUCCESS_DISCONNECTED": "Ihre E-Mail-Adresse wurde erfolgreich bestätigt. Sie können sich jetzt anmelden.",
+    "SUCCESS_CONNECTED": "Ihre E-Mail-Adresse wurde erfolgreich bestätigt.",
+    "OTP_REQUIRED": "Bitte geben Sie den per E-Mail erhaltenen OTP-Code ein.",
+    "WAIT_BEFORE_RETRY": "Erneut versuchen in",
+    "REMAINING_RESENDS": "Sie können noch {{count}} OTP-Code(s) anfordern",
+    "OTP_ATTEMPTS_LEFT": "Sie haben noch {{count}} Versuch(e), den Code einzugeben",
+    "LABEL": {
+      "EMAIL": "E-Mail-Adresse",
+      "OTP": "Bestätigungscode"
+    },
+    "BUTTON": {
+      "TO_LOGIN": "Anmeldung",
+      "RESEND_CONFIRMATION": "Code erneut senden",
+      "VALIDATE_OTP": "Bestätigen",
+      "RESEND_OTP": "Code erneut senden"
+    },
+    "ERROR": {
+      "FRONTEND": {
+        "INVALID_LINK": "Der Link ist ungültig oder unvollständig. Bitte überprüfen Sie Ihre E-Mail.",
+        "EMAIL_INVALID": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+        "OTP_INVALID": "Ungültiger Code."
+      },
+      "BACKEND": {
+        "EMAIL_ALREADY_CONFIRMED": "Ihre E-Mail-Adresse wurde bereits bestätigt.",
+        "EMAIL_CONFIRMATION_FAILED": "E-Mail-Bestätigung fehlgeschlagen.",
+        "EMAIL_CONFIRMATION_INVALID_TOKEN": "Der Bestätigungstoken ist ungültig.",
+        "EMAIL_CONFIRMATION_TOKEN_EXPIRED": "Der Bestätigungslink ist abgelaufen. Bitte fordern Sie einen neuen Link an.",
+        "EMAIL_CONFIRMATION_TOO_EARLY": "Sie müssen einige Minuten warten, bevor Sie eine neue Bestätigung anfordern können.",
+        "EMAIL_CONFIRMATION_NOT_FOUND": "Kein Bestätigungsantrag für diesen Benutzer gefunden.",
+        "OTP_TOO_MANY_ATTEMPTS": "Zu viele Versuche. Bitte fordern Sie einen neuen Code an."
+      }
+    }
+  },
+  "RESETPASSWORD": {
+    "TITLE": "Passwort zurücksetzen",
+    "SUCCESS": "Ihr Passwort wurde erfolgreich aktualisiert. Sie können sich jetzt anmelden.",
+    "FEEDBACK": "Falls ein Konto für diese E-Mail-Adresse existiert, wurde ein Rücksetzlink gesendet.",
+    "LABEL": {
+      "EMAIL": "E-Mail-Adresse"
+    },
+    "BUTTON": {
+      "SUBMIT": "Zurücksetzen",
+      "TO_LOGIN": "Anmeldung"
+    },
+    "ERROR": {
+      "FRONTEND": {
+        "EMAIL_REQUIRED": "E-Mail-Adresse ist erforderlich.",
+        "EMAIL_INVALID": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+        "INVALID_LINK": "Dieser Link ist ungültig oder abgelaufen."
+      },
+      "BACKEND": {
+        "TOO_MANY_TOKEN_REQUESTS": "Zu viele Versuche. Bitte versuchen Sie es in ein paar Minuten erneut.",
+        "PASSWORD_RESET_SAME_AS_OLD": "Ihr neues Passwort darf nicht mit dem alten übereinstimmen.",
+        "PASSWORD_RESET_ALREADY_REQUESTED": "Ein Rücksetzantrag wurde kürzlich gesendet. Bitte warten Sie, bevor Sie einen neuen stellen.",
+        "PASSWORD_RESET_TOKEN_INVALID": "Der Link ist ungültig oder wurde bereits verwendet.",
+        "PASSWORD_RESET_TOKEN_EXPIRED": "Der Rücksetzlink ist abgelaufen.",
+        "PASSWORD_RESET_TOKEN_USED": "Dieser Rücksetzlink wurde bereits verwendet.",
+        "PASSWORD_RESET_FAILED": "Passwortrücksetzung fehlgeschlagen. Bitte versuchen Sie es erneut."
+      }
+    }
+  },
+  "LEGAL": {
+    "VERSION": "Version:",
+    "PUBLISHED_ON": "Veröffentlicht am:",
+    "CLOSE": "Schließen",
+    "DEFAULT_TITLE": "Standardtitel",
+    "ERROR": "Fehler",
+    "ERROR_MESSAGE": "Dokument konnte nicht geladen werden."
+  },
+  "REGISTERCHOICE": {
+    "TITLE": "Wählen Sie Ihren Kontotyp",
+    "BUTTON": {
+      "STUDENT": "Ich bin Student",
+      "PRIVATE_LANDLORD": "Ich bin privater Vermieter"
+    },
+    "SUCCESS": {
+      "REDIRECT": "Weiterleitung zum Registrierungsformular..."
+    },
+    "ERROR": {
+      "FRONTEND": {
+        "INVALID_ROLE": "Ungültiger Kontotyp. Bitte wählen Sie Student oder privater Vermieter."
+      },
+      "BACKEND": {
+        "REGISTRATION_INIT_FAILED": "Fehler bei der Initialisierung der Registrierung. Bitte versuchen Sie es erneut."
+      }
+    }
+  },
+  "CONTACT": {
+    "CHARACTERS_USED": "Zeichen verwendet",
+    "LABEL": {
+      "FULLNAME": "Vollständiger Name",
+      "EMAIL": "E-Mail-Adresse",
+      "SUBJECT": "Betreff",
+      "MESSAGE": "Nachricht",
+      "LANGUAGE": "Bevorzugte Sprache",
+      "PHONE": "Telefonnummer"
+    },
+    "BUTTON": {
+      "SUBMIT": "Senden"
+    },
+    "ERROR": {
+      "FRONTEND": {
+        "FULLNAME_REQUIRED": "Name ist erforderlich",
+        "FULLNAME_MINLENGTH": "Mindestens 2 Zeichen",
+        "EMAIL_REQUIRED": "E-Mail ist erforderlich",
+        "EMAIL_INVALID": "Ungültige E-Mail",
+        "SUBJECT_REQUIRED": "Betreff ist erforderlich",
+        "MESSAGE_REQUIRED": "Nachricht ist erforderlich",
+        "MESSAGE_MINLENGTH": "Mindestens 10 Zeichen",
+        "CONSENT_REQUIRED": "Sie müssen die allgemeinen Nutzungsbedingungen akzeptieren.",
+        "PHONE_INVALID": "Die Telefonnummer ist nicht gültig."
+      }
+    },
+    "TYPE_LABEL": "Nachrichtentyp",
+    "TYPE_REQUIRED": "Nachrichtentyp ist erforderlich",
+    "MESSAGE_SENT_SUCCESS": "Ihre Nachricht wurde erfolgreich gesendet."
+  },
+  "CONSENT_REQUIRED": "{{document}}.",
+  "ALL_CONSENTS_REQUIRED": "Alle rechtlichen Zustimmungen müssen akzeptiert werden.",
+  "CONSENT_ERROR_INTRO": "Bitte akzeptieren Sie die folgenden Dokumente:",
+  "LANDING": {
+    "RESULTS": {
+      "TITLE": "Suchergebnisse",
+      "NO_RESULTS": "Noch keine Ergebnisse gefunden. Verwenden Sie die Suchformulare, um Möglichkeiten zu finden."
+    }
+  },
+  "SEARCH": {
+    "STUDENT_JOB": {
+      "TITLE": "Suche nach Studentenjobs",
+      "LABEL": {
+        "KEYWORDS": "Schlüsselwörter",
+        "LOCATION": "Standort",
+        "CONTRACT_TYPE": "Vertragsart",
+        "SCHEDULE_TYPE": "Arbeitszeit",
+        "MIN_SALARY": "Mindestgehalt (€/Monat)",
+        "REMOTE_POSSIBLE": "Fernarbeit möglich"
+      },
+      "PLACEHOLDER": {
+        "KEYWORDS": "Geben Sie Schlüsselwörter ein (z. B. Kellner, Verkauf)",
+        "LOCATION": "Geben Sie eine Stadt oder Region ein",
+        "CONTRACT_TYPE": "Wählen Sie eine Vertragsart",
+        "SCHEDULE_TYPE": "Wählen Sie eine Arbeitszeit",
+        "MIN_SALARY": "Geben Sie das Mindestgehalt ein"
+      },
+      "OPTION": {
+        "ALL": "Alle",
+        "CDD": "Befristeter Vertrag",
+        "CDI": "Unbefristeter Vertrag",
+        "INTERIM": "Zeitarbeit",
+        "FULL_TIME": "Vollzeit",
+        "PART_TIME": "Teilzeit",
+        "FLEXIBLE": "Flexible Arbeitszeiten"
+      },
+      "BUTTON": {
+        "SUBMIT": "Suchen"
+      }
+    },
+    "INTERNSHIP": {
+      "TITLE": "Praktikumssuche",
+      "LABEL": {
+        "KEYWORDS": "Schlüsselwörter",
+        "STUDY_DOMAIN": "Studienbereich",
+        "LOCATION": "Standort",
+        "MIN_DURATION": "Mindestdauer (Monate)",
+        "ECTS_CREDITS": "Mindest-ECTS-Credits",
+        "REMOTE_POSSIBLE": "Fernarbeit möglich"
+      },
+      "PLACEHOLDER": {
+        "KEYWORDS": "Geben Sie Schlüsselwörter ein (z. B. Entwicklung, Marketing)",
+        "STUDY_DOMAIN": "Wählen Sie einen Bereich",
+        "LOCATION": "Geben Sie eine Stadt oder Region ein",
+        "MIN_DURATION": "Geben Sie die Mindestdauer ein",
+        "ECTS_CREDITS": "Geben Sie die Mindest-ECTS-Credits ein"
+      },
+      "OPTION": {
+        "ALL": "Alle",
+        "IT": "Informatik",
+        "MARKETING": "Marketing",
+        "ENGINEERING": "Ingenieurwesen"
+      },
+      "BUTTON": {
+        "SUBMIT": "Suchen"
+      }
+    },
+    "STUDY": {
+      "TITLE": "Suche nach Studiengängen und Weiterbildungen",
+      "LABEL": {
+        "KEYWORDS": "Schlüsselwörter",
+        "STUDY_DOMAIN": "Studienbereich",
+        "LOCATION": "Standort",
+        "DEGREE_TYPE": "Abschlussart",
+        "DELIVERY_MODE": "Bereitstellungsmodus",
+        "MAX_COST": "Maximale Kosten (€/Jahr)"
+      },
+      "PLACEHOLDER": {
+        "KEYWORDS": "Geben Sie Schlüsselwörter ein (z. B. Informatik, Recht)",
+        "STUDY_DOMAIN": "Wählen Sie einen Bereich",
+        "LOCATION": "Geben Sie eine Stadt oder Region ein",
+        "DEGREE_TYPE": "Wählen Sie eine Abschlussart",
+        "DELIVERY_MODE": "Wählen Sie einen Modus",
+        "MAX_COST": "Geben Sie die maximalen Kosten ein"
+      },
+      "OPTION": {
+        "ALL": "Alle",
+        "IT": "Informatik",
+        "LAW": "Recht",
+        "MEDICINE": "Medizin",
+        "BACHELOR": "Bachelor",
+        "MASTER": "Master",
+        "DOCTORATE": "Doktorat",
+        "IN_PERSON": "Präsenz",
+        "ONLINE": "Online",
+        "HYBRID": "Hybrid"
+      },
+      "BUTTON": {
+        "SUBMIT": "Suchen"
+      }
+    },
+    "EVENT": {
+      "TITLE": "Veranstaltungssuche",
+      "LABEL": {
+        "KEYWORDS": "Schlüsselwörter",
+        "LOCATION": "Standort",
+        "START_DATE": "Startdatum",
+        "ENTITY_TYPE": "Veranstaltertyp",
+        "IS_PUBLIC": "Nur öffentliche Veranstaltungen"
+      },
+      "PLACEHOLDER": {
+        "KEYWORDS": "Geben Sie Schlüsselwörter ein (z. B. Konferenz, Workshop)",
+        "LOCATION": "Geben Sie eine Stadt oder Region ein",
+        "START_DATE": "Wählen Sie ein Datum",
+        "ENTITY_TYPE": "Wählen Sie einen Typ"
+      },
+      "OPTION": {
+        "ALL": "Alle",
+        "INSTITUTION": "Institution",
+        "COMPANY": "Unternehmen",
+        "CAMPUS": "Campus"
+      },
+      "BUTTON": {
+        "SUBMIT": "Suchen"
+      }
+    }
+  },
+  "SEARCH_FORM": {
+    "KEYWORDS": "Schlüsselwörter",
+    "KEYWORDS_PLACEHOLDER": "Beisp.: Webentwickler",
+    "LOCATION": "Wo?",
+    "LOCATION_PLACEHOLDER": "Beisp.: Mons",
+    "SUBMIT": "Suchen"
+  }
+}

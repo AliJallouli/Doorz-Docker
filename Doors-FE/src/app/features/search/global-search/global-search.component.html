@@ -1,0 +1,23 @@
+<form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="search-form">
+  <div class="form-group">
+    <label for="keywords">{{ 'SEARCH_FORM.KEYWORDS' | translate }}</label>
+    <input
+      type="text"
+      id="keywords"
+      formControlName="keywords"
+      placeholder="{{ 'SEARCH_FORM.KEYWORDS_PLACEHOLDER' | translate }}"
+    />
+  </div>
+  <div class="form-group">
+    <label for="location">{{ 'SEARCH_FORM.LOCATION' | translate }}</label>
+    <input
+      type="text"
+      id="location"
+      formControlName="location"
+      placeholder="{{ 'SEARCH_FORM.LOCATION_PLACEHOLDER' | translate }}"
+    />
+  </div>
+  <button type="submit" class="search-button">
+    {{ 'SEARCH_FORM.SUBMIT' | translate }}
+  </button>
+</form>

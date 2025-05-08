@@ -1,0 +1,363 @@
+
+
+apt install ufw -y
+ufw allow OpenSSH      # pour que tu puisses continuer à te connecter en SSH
+ufw allow 80           # HTTP (site web sans SSL)
+ufw allow 443          # HTTPS (site web sécurisé)
+
+apt install fail2ban -y
+
+systemctl enable fail2ban
+systemctl start fail2ban
+
+journalctl -u fail2ban
+
+# Config pour mysql
+===================
+
+apt update && apt install mysql-server -y
+
+systemctl status mysql
+
+mysql_secure_installation
+
+/*
+VALIDATE PASSWORD COMPONENT
+Press y|Y for Yes, any other key for No: 
+→ n
+
+Set root password? 
+Press y|Y for Yes, any other key for No: 
+→ y
+→ Enter your new password: ********
+→ Re-enter your new password: ********
+
+Remove anonymous users? 
+Press y|Y for Yes, any other key for No: 
+→ y
+
+Disallow root login remotely? 
+Press y|Y for Yes, any other key for No: 
+→ y
+
+Remove test database and access to it? 
+Press y|Y for Yes, any other key for No: 
+→ y
+
+Reload privilege tables now? 
+Press y|Y for Yes, any other key for No: 
+→ y
+*/
+sudo mysql
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Georgette6391$';
+FLUSH PRIVILEGES;
+EXIT;
+
+CREATE DATABASE doorz CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE USER 'doorz_user'@'localhost' IDENTIFIED BY 'Georgette6391$';
+
+GRANT ALL PRIVILEGES ON doorz.* TO 'doorz_user'@'localhost';
+
+FLUSH PRIVILEGES;
+EXIT;
+
+USE doorz;
+SOURCE /root/Doorzs-DB/doors.sql;
+SOURCE /root/Doors-DB/doorsDATA.sql;
+
+mysql -u root -p
+
+
+
+#Configuration Du backend
+===========================
+
+
+wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+dpkg -i packages-microsoft-prod.deb
+apt update
+
+apt install -y dotnet-sdk-8.0
+
+dotnet --version
+
+mkdir -p /var/www/doorz-backend #sur ssh root
+
+#Publication de l'api et l'envoie vers le server (Terminal dans WebApi)
+dotnet publish -c Release -o ./publish
+scp -r ./publish root@51.38.188.92:/var/www/doorz-backend
+
+#Config du service Backend
+nano /etc/systemd/system/doors-backend.service
+/*[Unit]
+Description=Doorz Backend API
+After=network.target
+
+[Service]
+WorkingDirectory=/var/www/doorz-backend/publish
+ExecStart=/usr/bin/dotnet /var/www/doorz-backend/publish/WebApi.dll
+Restart=always
+RestartSec=5
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+SyslogIdentifier=doors-backend
+Environment=DOTNET_DbgEnableMiniDump=1
+Environment=DOTNET_DbgMiniDumpType=4
+Environment=DOTNET_DbgMiniDumpName=/var/dotnet-dumps/doors-backend.dmp
+
+[Install]
+WantedBy=multi-user.target*/
+
+sudo mkdir -p /var/dotnet-dumps
+sudo chmod 777 /var/dotnet-dumps
+
+#Reload du service Backend
+systemctl daemon-reload
+systemctl enable doors-backend
+systemctl start doors-backend
+systemctl status doors-backend
+
+#Les logs:
+journalctl -u doors-backend --since "1 hour ago"
+journalctl -u doors-backend --since "2024-04-30" --no-pager
+
+#Explorer les dumps
+dotnet-dump analyze /var/dotnet-dumps/doors-backend.dmp
+dotnet-dump analyze /var/dotnet-dumps/doors-backend.dmp <<EOF > dump-analysis.txt
+clrstack
+threads
+quit
+EOF
+
+#Swager
+https://api.doorz.be/swagger/index.html
+
+#Les erreurs de mise en service
+=================================
+cd /var/www/doorz-backend/publish/
+dotnet WebApi.dll
+
+
+#Pour reset le publish:
+rm -rf /var/www/doorz-backend/publish/*
+supprimer le publish du dossier webapi
+
+
+
+
+# Config pour le Frontend:
+===========================
+
+apt update && apt install nginx -y
+
+apt install certbot python3-certbot-nginx -y
+
+nano /etc/nginx/sites-available/api.doorz.be
+/*server {
+    listen 80;
+    listen [::]:80;
+    server_name api.doorz.be;
+
+    # Redirection vers HTTPS
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name api.doorz.be;
+
+    # Configuration SSL
+    ssl_certificate /etc/letsencrypt/live/api.doorz.be/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/api.doorz.be/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location / {
+        proxy_pass http://localhost:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection keep-alive;
+        proxy_set_header Host $host;
+		proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}*/
+
+sudo nano /etc/nginx/sites-available/doorz-fe
+/*server {
+    listen 443 ssl;
+    server_name doorz.be www.doorz.be;
+
+    root /var/www/doorz-fe/browser;
+    index index.html;
+
+    ssl_certificate /etc/letsencrypt/live/doorz.be/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/doorz.be/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+	
+	#probleme ici avec unsafe line
+    add_header Content-Security-Policy "default-src 'self'; connect-src 'self' https://api.doorz.be; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; base-uri 'self';" always;
+
+
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+
+    location ^~ /assets/ {
+        root /var/www/doorz-fe/browser;
+        access_log off;
+        expires 30d;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location ~* \.(?:css|js|woff2?|ttf|otf|eot|svg|ico|png|jpg|jpeg|gif)$ {
+        access_log off;
+        add_header Content-Type $content_type;
+        try_files $uri =404;
+    }
+}
+
+
+server {
+    listen 80;
+    server_name doorz.be www.doorz.be;
+    return 301 https://$host$request_uri;
+}
+*/
+ng build --configuration production
+scp -r dist/doors-fe/browser/* root@51.38.188.92:/var/www/doorz-fe/browser
+
+ln -s /etc/nginx/sites-available/api.doorz.be /etc/nginx/sites-enabled/
+nginx -t
+systemctl reload nginx
+
+#Test de sécurité:
+https://securityheaders.com
+https://developer.mozilla.org/en-US/observatory
+https://www.ssllabs.com/ssltest/
+
+
+
+#Configuration RabbitMQ
+=======================
+
+sudo apt update && sudo apt upgrade -y
+
+sudo reboot
+
+ssh root@51.38.188.92
+
+uname -r
+
+sudo apt install erlang rabbitmq-server -y
+sudo systemctl enable rabbitmq-server
+sudo systemctl start rabbitmq-server
+sudo systemctl status rabbitmq-server
+
+sudo rabbitmq-plugins enable rabbitmq_management
+
+sudo rabbitmqctl add_user admin password123
+sudo rabbitmqctl set_user_tags admin administrator
+sudo rabbitmqctl set_permissions -p / admin ".*" ".*" ".*"
+
+sudo ufw allow 15672       # Interface web
+sudo ufw allow 5672/tcp    # Port AMQP pour les applications
+ 
+sudo ufw allow 5672
+sudo ufw status
+
+sudo rabbitmq-plugins enable rabbitmq_management
+sudo rabbitmqctl add_user doorzadmin tonSuperMotDePasse
+sudo rabbitmqctl set_user_tags doorzadmin administrator
+sudo rabbitmqctl set_permissions -p / doorzadmin ".*" ".*" ".*"
+
+sudo rabbitmqctl list_users
+
+sudo rabbitmqctl delete_user guest
+
+sudo rabbitmqctl add_vhost doorz_vhost
+sudo rabbitmqctl set_permissions -p doorz_vhost doorz_user ".*" ".*" ".*"
+
+sudo ufw allow 5672/tcp
+sudo ufw allow from YOUR_IP to any port 15672 proto tcp
+sudo ufw deny 25672/tcp
+
+sudo apt install rabbitmq-server -y
+sudo rabbitmq-plugins enable rabbitmq_management
+
+#Sécurisation de RabbitMQ en production avec TLS (AMQPS – port 5671)
+sudo apt install certbot -y
+
+Gestion DNS de  doorz.be (chez OVH).
+Ajoute un enregistrement A
+
+sudo systemctl stop nginx  #Libérer le port 80 momentannement
+sudo certbot certonly --standalone -d mq.doorz.be
+sudo systemctl start nginx
+
+#Choisir l'emplacement:
+sudo mkdir -p /etc/rabbitmq/ssl
+sudo cp /etc/letsencrypt/live/mq.doorz.be/fullchain.pem /etc/rabbitmq/ssl/
+sudo cp /etc/letsencrypt/live/mq.doorz.be/privkey.pem /etc/rabbitmq/ssl/
+
+#Verif des permissions
+sudo chown rabbitmq:rabbitmq /etc/rabbitmq/ssl/*.pem
+sudo chmod 640 /etc/rabbitmq/ssl/*.pem
+sudo usermod -a -G ssl-cert rabbitmq
+sudo chmod o+x /etc/letsencrypt/live/
+sudo chmod o+x /etc/letsencrypt/archive/
+
+#Créer un groupe dédié aux certificats
+sudo groupadd rabbitmq-cert
+sudo usermod -a -G rabbitmq-cert rabbitmq
+
+#Donner les droits:
+sudo chgrp rabbitmq-cert /etc/letsencrypt/live/mq.doorz.be/*
+sudo chgrp rabbitmq-cert /etc/letsencrypt/archive/mq.doorz.be/*
+sudo chmod 750 /etc/letsencrypt/archive/mq.doorz.be/*
+sudo chmod 750 /etc/letsencrypt/live/mq.doorz.be/*
+sudo chmod o+x /etc/letsencrypt/live
+sudo chmod o+x /etc/letsencrypt/archive
+
+#Restart
+sudo systemctl restart rabbitmq-server
+sudo ss -tlnp | grep 5671
+/*LISTEN 0      128                *:5671             *:*    users:(("beam.smp",pid=11992,fd=37))*/
+
+#Le firewall
+sudo ufw allow 5671/tcp
+sudo ufw deny 5672/tcp
+
+
+sudo nano /etc/rabbitmq/rabbitmq.conf
+
+/*# Chemin des logs
+log.dir = /var/log/rabbitmq
+
+# Désactiver l'utilisateur guest
+loopback_users.guest = false
+
+# Configurer AMQPS (port 5671)
+listeners.ssl.default = 5671
+ssl_options.certfile = /etc/letsencrypt/live/mq.doorz.be/fullchain.pem
+ssl_options.keyfile = /etc/letsencrypt/live/mq.doorz.be/privkey.pem
+ssl_options.verify = verify_none
+ssl_options.fail_if_no_peer_cert = false
+
+# Configurer HTTPS pour l'API de gestion (port 15671)
+management.ssl.port = 15671
+management.ssl.certfile = /etc/letsencrypt/live/mq.doorz.be/fullchain.pem
+management.ssl.keyfile = /etc/letsencrypt/live/mq.doorz.be/privkey.pem
+
+# Activer le plugin de management
+management.load_definitions = /etc/rabbitmq/definitions.json*/
+

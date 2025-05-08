@@ -1,0 +1,498 @@
+:host {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Reset box-sizing et marges par défaut */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Conteneur principal */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  padding: 1rem 0.5rem;
+  padding-top: 5.5rem; /* Desktop (>574px) */
+  font-family: 'Inter', sans-serif;
+}
+
+/* Conteneur des sections */
+.section-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(1rem, 2vw, 1.5rem); /* Padding par défaut pour autres sections */
+  margin-bottom: 40px;
+  background-color: #ffffff;
+  border-radius: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Spécifiques aux sections */
+.section-container.top-section {
+  margin-top: 10px;
+  padding: 0 !important; /* 💥 Sans padding, renforcé */
+}
+
+.section-container.landing-page-container {
+  padding: 0 !important; /* Sans padding */
+  background: none !important; /* 💥 Supprimer le fond */
+  box-shadow: none !important; /* 💥 Supprimer l'ombre */
+}
+
+.section-container.bottom-section {
+  padding: 0 !important; /* 💥 Sans padding, renforcé */
+  background: none !important; /* 💥 Supprimer le fond */
+  box-shadow: none !important; /* 💥 Supprimer l'ombre */
+}
+
+/* Sections texte */
+.top-section .section-content h2,
+.bottom-section .section-content h2 {
+  font-size: clamp(1.5rem, 4vw, 1.75rem);
+  font-weight: 700;
+  color: #264653;
+  margin: 0 0 0.5rem 0;
+  text-align: center;
+}
+
+.top-section .section-content p,
+.bottom-section .section-content p {
+  font-size: clamp(1rem, 3vw, 1.125rem);
+  color: #333;
+  margin: 0 0 1rem 0;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* Suppression complète du padding et marges latérales pour le contenu */
+.top-section .section-content,
+.bottom-section .section-content {
+  padding: 0 !important; /* 💥 Aucun padding, renforcé */
+  margin-left: 0; /* Pas de marge latérale */
+  margin-right: 0; /* Pas de marge latérale */
+  width: 100%; /* Occupe toute la largeur */
+  box-sizing: border-box;
+  padding-top: clamp(1rem, 2vw, 1.5rem); /* Padding vertical uniquement */
+  padding-bottom: clamp(1rem, 2vw, 1.5rem); /* Padding vertical uniquement */
+}
+
+/* Neutraliser les marges et paddings des éléments internes */
+.top-section .section-content > *,
+.bottom-section .section-content > * {
+  margin-left: 0 !important; /* Pas de marge latérale */
+  margin-right: 0 !important; /* Pas de marge latérale */
+  padding-left: 0 !important; /* Pas de padding latéral */
+  padding-right: 0 !important; /* Pas de padding latéral */
+}
+
+/* Landing page */
+.landing-page-container {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: none !important; /* 💥 Supprimer le fond */
+  box-shadow: none !important; /* 💥 Supprimer l'ombre */
+}
+
+/* Sidebar */
+.sidebar {
+  flex: 0 0 30%;
+  max-width: 30%;
+  min-width: 250px;
+  background: transparent;
+  padding: 0;
+}
+
+/* Main content */
+.main-content {
+  flex: 1 1 70%;
+  max-width: 70%;
+  min-width: 0;
+  padding: 0;
+}
+
+/* Professional content */
+.professional-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  background: #ffffff; /* 💥 Conservé */
+  border-radius: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 💥 Conservé */
+  text-align: center;
+}
+
+.professional-content h2 {
+  font-size: clamp(1.5rem, 4vw, 1.75rem);
+  font-weight: 700;
+  color: #264653;
+}
+
+.professional-content p {
+  font-size: clamp(1rem, 3vw, 1.125rem);
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Résultats */
+.results-container {
+  background-color: #ffffff; /* 💥 Conservé */
+  border-radius: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 💥 Conservé */
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+.results-header {
+  background: #e0f7fa; /* 💥 Conservé */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px; /* 💥 Hauteur fixe pour correspondre à .accordion-header (desktop) */
+  padding: 0 clamp(0.5rem, 1.5vw, 0.75rem); /* Padding uniquement horizontal */
+  box-sizing: border-box;
+}
+
+.results-header h3 {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: #1a3c34;
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+}
+
+.result-item {
+  padding: clamp(0.5rem, 1.5vw, 0.75rem);
+  background-color: #f9f9f9; /* 💥 Conservé */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* 💥 Conservé */
+  margin-bottom: clamp(0.5rem, 1vw, 0.75rem);
+}
+
+.no-results {
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+  color: #555;
+  text-align: center;
+  padding: clamp(0.5rem, 1vw, 0.75rem);
+}
+
+/* Call to action */
+.call-to-action-container {
+  display: flex;
+  justify-content: center;
+  background-color: transparent; /* 💥 Conservé */
+}
+
+/* Accordéon */
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.25rem, 1vw, 0.5rem);
+  width: 100%;
+  height: 100%;
+}
+
+.accordion-item {
+  background: #ffffff; /* 💥 Conservé */
+  border-left: 4px solid #00A896;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* 💥 Conservé */
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.accordion-item:nth-child(2) { border-left-color: #FF6B6B; }
+.accordion-item:nth-child(3) { border-left-color: #FFD166; }
+.accordion-item:nth-child(4) { border-left-color: #06D6A0; }
+.accordion-item:nth-child(5) { border-left-color: #118AB2; }
+
+.accordion-header {
+  padding: 0 clamp(0.5rem, 1.5vw, 0.75rem); /* 💥 Padding uniquement horizontal */
+  height: 52px; /* 💥 Hauteur fixe pour desktop (SVG 28px + padding vertical 24px) */
+  cursor: pointer;
+  background: #f8fafc; /* 💥 Conservé */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.accordion-header.active-panel {
+  background: #e0f7fa; /* 💥 Conservé */
+}
+
+.accordion-header h3 {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: #1a3c34;
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+}
+
+.accordion-content {
+  max-height: 0; /* 💥 Caché par défaut */
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.accordion-content.active-panel {
+  max-height: none; /* 💥 Visible quand ouvert */
+}
+
+.no-panel-message {
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+  color: #555;
+  text-align: center;
+  padding: clamp(0.5rem, 1vw, 0.75rem);
+  display: none; /* 💥 Caché par défaut */
+}
+
+/* landing-page.component.css */
+.accordion {
+  border-radius: 0 !important; /* Aucun coin arrondi */
+}
+
+.accordion-item {
+  border-radius: 0 !important; /* Aucun coin arrondi */
+}
+
+.accordion-content {
+  border-radius: 0 !important; /* Aucun coin arrondi */
+}
+
+/* Adaptations pour responsive */
+
+/* 📱 Mobile (≤ 574px) */
+@media (max-width: 574px) {
+  .page-wrapper {
+    padding: 0.5rem; /* Aération sur mobile */
+    padding-top: 3.2rem; /* Adapté à la navbar mobile */
+  }
+
+  .section-container {
+    max-width: 100%;
+    margin-bottom: 20px; /* Espacement réduit pour mobile */
+    padding: clamp(0.75rem, 2vw, 1rem);
+  }
+
+  .section-container.top-section,
+  .section-container.bottom-section {
+    padding: 0 !important; /* Sans padding, renforcé */
+  }
+
+  .section-container.top-section {
+    margin-top: 8px; /* Cohérent pour tous les mobiles */
+  }
+
+  .top-section .section-content,
+  .bottom-section .section-content {
+    padding: 0 !important; /* 💥 Aucun padding, renforcé */
+    margin-left: 0; /* Pas de marge latérale */
+    margin-right: 0; /* Pas de marge latérale */
+    width: 100%;
+    padding-top: clamp(0.75rem, 2vw, 1rem); /* Padding vertical */
+    padding-bottom: clamp(0.75rem, 2vw, 1rem); /* Padding vertical */
+  }
+
+  .top-section .section-content > *,
+  .bottom-section .section-content > * {
+    margin-left: 0 !important; /* Pas de marge latérale */
+    margin-right: 0 !important; /* Pas de marge latérale */
+    padding-left: 0 !important; /* Pas de padding latéral */
+    padding-right: 0 !important; /* Pas de padding latéral */
+  }
+
+  .landing-page-container {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sidebar,
+  .main-content {
+    flex: 1 1 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .professional-content {
+    max-width: 100%;
+    padding: clamp(0.75rem, 2vw, 1rem);
+  }
+
+  /* 💥 Ajuster la hauteur des headers pour mobile */
+  .accordion-header,
+  .results-header {
+    height: 44px; /* 💥 Hauteur fixe pour mobile (SVG 28px + padding vertical 16px) */
+    padding: 0 clamp(0.5rem, 1.5vw, 0.75rem); /* Padding uniquement horizontal */
+  }
+
+  /* 💥 Forcer le panneau actif fermé visuellement */
+  .accordion-content {
+    max-height: 0; /* 💥 Toujours caché par défaut */
+    overflow: hidden;
+  }
+
+  .accordion-content.active-panel {
+    max-height: none; /* 💥 Visible quand ouvert après clic */
+  }
+
+  .accordion-header {
+    background: #f8fafc; /* 💥 Conservé */
+  }
+
+  .accordion-header.active-panel {
+    background: #e0f7fa; /* 💥 Conservé */
+  }
+
+  .no-panel-message {
+    display: block; /* 💥 Visible par défaut pour LANDING.NO_PANEL_SELECTED */
+  }
+}
+
+/* 📱 Très petits écrans (≤ 260px) */
+@media (max-width: 260px) {
+  .section-container {
+    padding: 0.5rem; /* Réduit pour très petits écrans */
+  }
+
+  .section-container.top-section,
+  .section-container.bottom-section {
+    padding: 0 !important; /* Sans padding, renforcé */
+  }
+
+  .section-container.top-section {
+    margin-top: 8px; /* Cohérent */
+  }
+
+  .top-section .section-content,
+  .bottom-section .section-content {
+    padding: 0 !important; /* 💥 Aucun padding, renforcé */
+    margin-left: 0; /* Pas de marge latérale */
+    margin-right: 0; /* Pas de marge latérale */
+    width: 100%;
+    padding-top: 0.5rem; /* Padding vertical réduit */
+    padding-bottom: 0.5rem; /* Padding vertical réduit */
+  }
+
+  .top-section .section-content > *,
+  .bottom-section .section-content > * {
+    margin-left: 0 !important; /* Pas de marge latérale */
+    margin-right: 0 !important; /* Pas de marge latérale */
+    padding-left: 0 !important; /* Pas de padding latéral */
+    padding-right: 0 !important; /* Pas de padding latéral */
+  }
+}
+
+/* 📱 Tablette à mobile large (575px - 991px) */
+@media (max-width: 991px) and (min-width: 575px) {
+  .page-wrapper {
+    padding-top: 3.5rem; /* Correspond à la navbar intermédiaire */
+  }
+
+  .section-container {
+    max-width: 100%;
+    margin-bottom: 24px; /* Transition fluide vers mobile */
+  }
+
+  .section-container.top-section,
+  .section-container.bottom-section {
+    padding: 0 !important; /* Sans padding, renforcé */
+  }
+
+  .section-container.top-section {
+    margin-top: 8px; /* Cohérent avec mobile */
+  }
+
+  .top-section .section-content,
+  .bottom-section .section-content {
+    padding: 0 !important; /* 💥 Aucun padding, renforcé */
+    margin-left: 0; /* Pas de marge latérale */
+    margin-right: 0; /* Pas de marge latérale */
+    width: 100%;
+    padding-top: clamp(0.75rem, 2vw, 1rem); /* Padding vertical */
+    padding-bottom: clamp(0.75rem, 2vw, 1rem); /* Padding vertical */
+  }
+
+  .top-section .section-content > *,
+  .bottom-section .section-content > * {
+    margin-left: 0 !important; /* Pas de marge latérale */
+    margin-right: 0 !important; /* Pas de marge latérale */
+    padding-left: 0 !important; /* Pas de padding latéral */
+    padding-right: 0 !important; /* Pas de padding latéral */
+  }
+}
+
+/* Grand écran (≥ 1200px) */
+@media (min-width: 1200px) {
+  .section-container {
+    max-width: 1400px;
+    padding: clamp(1.5rem, 3vw, 2rem);
+    margin-bottom: 48px;
+  }
+
+  .section-container.top-section,
+  .section-container.bottom-section {
+    padding: 0 !important; /* Sans padding, renforcé */
+  }
+
+  .section-container.top-section {
+    margin-top: 12px;
+  }
+
+  .top-section .section-content,
+  .bottom-section .section-content {
+    padding: 0 !important; /* 💥 Aucun padding, renforcé */
+    margin-left: 0; /* Pas de marge latérale */
+    margin-right: 0; /* Pas de marge latérale */
+    width: 100%;
+    padding-top: clamp(1.5rem, 3vw, 2rem); /* Padding vertical */
+    padding-bottom: clamp(1.5rem, 3vw, 2rem); /* Padding vertical */
+  }
+
+  .top-section .section-content > *,
+  .bottom-section .section-content > * {
+    margin-left: 0 !important; /* Pas de marge latérale */
+    margin-right: 0 !important; /* Pas de marge latérale */
+    padding-left: 0 !important; /* Pas de padding latéral */
+    padding-right: 0 !important; /* Pas de padding latéral */
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .section-container.bottom-section {
+    margin-top: 32px; /* ✅ Espacement entre landing et bottom */
+  }
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Espace entre icône et texte */
+}
+
+.accordion-header i {
+  font-size: 1.5rem; /* Taille de l'icône */
+  color: #264653; /* Couleur professionnelle */
+}

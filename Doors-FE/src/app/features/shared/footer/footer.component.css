@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Utiliser les mêmes variables que la navbar */
+:root {
+  --primary-color: #F4A261; /* Orange solaire */
+  --secondary-color: #264653; /* Bleu profond */
+  --accent-color: #2A9D8F; /* Vert éco */
+  --background-light: #F1FAEE; /* Fond clair */
+  --text-color: #333333; /* Texte principal */
+}
+
+.footer {
+  font-family: 'Roboto', sans-serif;
+  background-color: #343a40; /* Fond sombre */
+  color: #ffffff;
+  padding: 30px 0; /* Réduit le padding pour un look plus compact */
+}
+
+/* Conteneur */
+.footer .container {
+  max-width: 960px; /* Largeur plus étroite pour un centrage harmonieux */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Colonnes */
+.footer-column {
+  padding: 15px; /* Espace intérieur pour un look équilibré */
+  border-radius: 5px; /* Coins arrondis pour une touche moderne */
+  transition: box-shadow 0.3s ease-in-out; /* Animation au survol */
+}
+
+.footer-column:hover {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* Ombre subtile au survol */
+}
+
+/* Titres des sections */
+.footer-title {
+  font-size: 16px; /* Réduit légèrement pour compacité */
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 15px; /* Réduit l'espacement */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--primary-color) !important; /* Soulignement orange */
+  padding-bottom: 5px;
+}
+
+/* Liens du footer */
+.footer-link {
+  color: #e7efe7; /* Légèrement plus clair pour contraste */
+  font-size: 13px; /* Réduit pour compacité */
+  font-weight: 400;
+  text-decoration: none;
+  transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+  display: block;
+  margin-bottom: 8px; /* Réduit l'espacement */
+}
+
+.footer-link:hover {
+  color: var(--primary-color);
+  transform: translateX(5px); /* Animation de glissement */
+}
+
+/* Icônes réseaux sociaux */
+.footer-social {
+  color: #e7efe7;
+  font-size: 18px; /* Réduit légèrement */
+  text-decoration: none;
+  transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.footer-social:hover {
+  color: var(--primary-color);
+  transform: scale(1.2); /* Animation d'agrandissement */
+}
+
+/* Langues */
+.footer .lang-link {
+  padding: 4px 8px; /* Réduit */
+  font-size: 13px; /* Réduit */
+  color: #e7efe7;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.footer .lang-link:hover {
+  color: var(--primary-color);
+  transform: translateX(5px);
+}
+
+/* Liste des langues */
+.footer .lang-list {
+  justify-content: flex-start; /* Alignement à gauche sur desktop */
+}
+
+/* Mentions légales */
+.footer-legal {
+  font-size: 11px; /* Réduit */
+  color: #cccccc;
+}
+
+.footer-legal a {
+  color: #e7efe7;
+  text-decoration: none;
+}
+
+.footer-legal a:hover {
+  color: var(--primary-color);
+}
+
+/* Responsive : Mobile (max-width: 991px) */
+@media screen and (max-width: 991px) {
+  .footer {
+    padding: 20px 0;
+  }
+
+  .footer-column {
+    padding: 10px;
+    border-radius: 3px;
+  }
+
+  .footer-column:hover {
+    box-shadow: none; /* Supprime l'ombre au survol en mobile */
+  }
+
+  .footer-title {
+    font-size: 14px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--primary-color) !important;
+    padding-bottom: 3px;
+  }
+
+  .footer-link {
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+
+  .footer-social {
+    font-size: 16px;
+  }
+
+  .footer .lang-link {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .footer-legal {
+    font-size: 8px;
+  }
+
+  .footer .lang-list {
+    justify-content: center; /* Centre les langues */
+  }
+
+  .footer .col-12 {
+    text-align: center;
+  }
+
+  .footer .col-12.mb-4 {
+    margin-bottom: 15px !important;
+  }
+}
+.footer .col-12 {
+  text-align: center;
+}
+.footer .lang-list {
+  justify-content: center; /* Centre les langues */
+}
+
+/* RTL (arabe) */
+html[dir="rtl"] .footer-link,
+html[dir="rtl"] .footer-legal {
+  text-align: right;
+}
+
+html[dir="rtl"] .footer-link:hover {
+  transform: translateX(-5px); /* Inverse l'animation pour RTL */
+}
+
+html[dir="rtl"] .footer .lang-link:hover {
+  transform: translateX(-5px);
+}

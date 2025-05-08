@@ -1,0 +1,10 @@
+.dashboard-container {
+  width: 100%;
+  max-width: 100%;
+  padding: 1rem;
+}
+
+.dashboard-container app-invitation-form {
+  max-width: 900px;
+  margin: 0 auto;
+}

@@ -1,0 +1,121 @@
+<div class="container mt-5" id="invitation-form-container" *ngIf="!isLoading">
+  <ng-container *ngIf="isValid && invitationInfo; else invalidToken">
+    <h3>{{ 'REGISTERFROMINVITE.TITLE' | translate }}</h3>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="horizontal-form">
+      <!-- Email (readonly, pas d'étoile car non obligatoire) -->
+      <app-email-input
+        [form]="form"
+        [fieldError]="fieldError"
+        emailControlName="email"
+        [submitted]="validationTriggered"
+        [readonly]="true"
+      ></app-email-input>
+
+      <!-- Prénom -->
+      <div class="form-group">
+        <label>
+          {{ 'REGISTERFROMINVITE.LABEL.FIRSTNAME' | translate }}
+          <span class="required">*</span>
+        </label>
+        <input
+          type="text"
+          formControlName="firstName"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid': (form.get('firstName')?.invalid && form.get('firstName')?.touched) || fieldError['firstName']
+          }"
+        />
+        <div class="invalid-feedback" *ngIf="form.get('firstName')?.touched && form.get('firstName')?.errors?.['required']">
+          {{ 'SHARED.ERROR.FRONTEND.FIRSTNAME_REQUIRED' | translate }}
+        </div>
+        <div class="invalid-feedback" *ngIf="form.get('firstName')?.touched && form.get('firstName')?.errors?.['minlength']">
+          {{ 'SHARED.ERROR.FRONTEND.FIRSTNAME_MINLENGTH' | translate }}
+        </div>
+        <div class="invalid-feedback" *ngIf="fieldError['firstName']">
+          {{ fieldError['firstName'] | translate }}
+        </div>
+      </div>
+
+      <!-- Nom -->
+      <div class="form-group">
+        <label>
+          {{ 'REGISTERFROMINVITE.LABEL.LASTNAME' | translate }}
+          <span class="required">*</span>
+        </label>
+        <input
+          type="text"
+          formControlName="lastName"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid': (form.get('lastName')?.invalid && form.get('lastName')?.touched) || fieldError['lastName']
+          }"
+        />
+        <div class="invalid-feedback" *ngIf="form.get('lastName')?.touched && form.get('lastName')?.errors?.['required']">
+          {{ 'SHARED.ERROR.FRONTEND.LASTNAME_REQUIRED' | translate }}
+        </div>
+        <div class="invalid-feedback" *ngIf="form.get('lastName')?.touched && form.get('lastName')?.errors?.['minlength']">
+          {{ 'SHARED.ERROR.FRONTEND.LASTNAME_MINLENGTH' | translate }}
+        </div>
+        <div class="invalid-feedback" *ngIf="fieldError['lastName']">
+          {{ fieldError['lastName'] | translate }}
+        </div>
+      </div>
+
+      <!-- Champs de mot de passe -->
+      <app-password-input
+        [form]="form"
+        [fieldError]="fieldError"
+        passwordControlName="password"
+        confirmPasswordControlName="confirmPassword"
+      ></app-password-input>
+
+      <!-- Legal Consent Component -->
+      <div class="form-group">
+        <div class="legal-consent-container" [ngClass]="{'is-invalid': validationTriggered && consentError}">
+          <app-legal-consent
+            source="register-form"
+            (consentsChanged)="onConsentsChanged($event)"
+            (documentTypesLoaded)="setExpectedConsentKeys($event)"
+          ></app-legal-consent>
+          <div *ngIf="validationTriggered && consentError" class="invalid-feedback consent-error">
+            <p *ngIf="hasMissingConsents()" class="error-intro">
+              {{ 'REGISTER.CONSENT_ERROR_INTRO' | translate }}
+            </p>
+            <ul class="error-list">
+              <ng-container *ngFor="let key of expectedConsentKeys">
+                <li *ngIf="!legalConsents[key]">
+                  {{ 'REGISTER.CONSENT_REQUIRED' | translate: { document: documentMap[key].name || key } }}
+                </li>
+              </ng-container>
+            </ul>
+            <ng-container *ngIf="expectedConsentKeys.length === 0">
+              {{ 'REGISTER.ALL_CONSENTS_REQUIRED' | translate }}
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- Erreur globale -->
+      <div *ngIf="globalError" class="text-danger text-center">
+        {{ globalError | translate }}
+      </div>
+
+      <!-- Bouton -->
+      <div class="form-group button-container">
+        <button
+          type="submit"
+          class="btn-submit"
+        >
+          {{ 'REGISTERFROMINVITE.BUTTON.SUBMIT' | translate }}
+        </button>
+      </div>
+    </form>
+  </ng-container>
+
+  <ng-template #invalidToken>
+    <div class="alert alert-danger">
+      {{ 'REGISTERFROMINVITE.ERROR.FRONTEND.INVALID_TOKEN' | translate }}
+    </div>
+  </ng-template>
+</div>

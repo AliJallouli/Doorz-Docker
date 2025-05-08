@@ -1,0 +1,7 @@
+.full-wrapper,
+.container,
+.form-group {
+  position: static !important; /* Évite les conflits de position */
+  overflow: visible !important; /* Assure que la fenêtre n'est pas coupée */
+  z-index: auto !important; /* Pas de z-index élevé */
+}/* You can add global styles to this file, and also import other style files */

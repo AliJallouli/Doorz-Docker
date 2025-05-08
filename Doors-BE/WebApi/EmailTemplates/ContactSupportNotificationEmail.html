@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="[Lang]">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>[EmailTitle]</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .content {
+            padding: 20px;
+            text-align: left; 
+            font-size: 16px;
+            color: #333;
+        }
+
+        .details {
+            background-color: #f1f1f1; 
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .details p {
+            margin: 5px 0;
+            font-size: 14px; 
+        }
+
+        .details strong {
+            color: #333; 
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+            padding: 15px;
+            border-top: 1px solid #eaeaea;
+            background-color: #f9f9f9; 
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>[EmailTitle]</h1>
+    </div>
+    <div class="content">
+        <p>[Intro]</p>
+        <p>[Details]</p>
+        <div class="details">
+            <p><strong>[UtilisateurLabel]:</strong> [Utilisateur]</p>
+            <p><strong>[FullNameLabel]:</strong> [FullName]</p>
+            <p><strong>[EmailLabel]:</strong> [Email]</p>
+            <p><strong>[SubjectLabel]:</strong> [MessageSubject]</p>
+            <p><strong>[MessageLabel]:</strong> [Message]</p>
+            <p><strong>[IpAddressLabel]:</strong> [IpAddress]</p>
+            <p><strong>[UserAgentLabel]:</strong> [UserAgent]</p>
+            <p><strong>[PhoneLabel]:</strong> [Phone]</p>
+        </div>
+    </div>
+    <div class="footer">
+        <p>[FooterNote]</p>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+/* Conteneur du composant téléphone */
+.phone-input-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Label */
+.phone-input-container label {
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+/* Conteneur du champ téléphone */
+.phone-input-container .input-group {
+  display: flex;
+  align-items: stretch; /* Assure la même hauteur pour les éléments */
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Sélecteur de code pays */
+.phone-input-container .input-group .form-select {
+  flex: 0 0 auto;
+  width: clamp(90px, 20vw, 100px);
+  padding: clamp(0.625rem, 2vw, 0.75rem) clamp(0.5rem, 1.5vw, 0.625rem);
+  border: 1px solid #ccc;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  font-size: clamp(0.875rem, 3vw, 0.9375rem);
+  line-height: 1.5;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  cursor: pointer;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%23333" d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 12px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Champ numéro de téléphone */
+.phone-input-container .input-group .form-control {
+  flex: 1;
+  padding: clamp(0.625rem, 2vw, 0.75rem);
+  border: 1px solid #ccc;
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  font-size: clamp(0.875rem, 3vw, 0.9375rem);
+  line-height: 1.5;
+  box-sizing: border-box;
+  min-height: 44px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Focus sur le select ou l'input */
+.phone-input-container .input-group .form-select:focus,
+.phone-input-container .input-group .form-control:focus {
+  border-color: #2a9d8f;
+  box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+  outline: none;
+}
+
+/* Champ invalide */
+.phone-input-container .input-group .form-select.is-invalid,
+.phone-input-container .input-group .form-control.is-invalid {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+}
+
+/* Message d'erreur */
+.phone-input-container .invalid-feedback {
+  display: block;
+  color: #e74c3c;
+  font-size: clamp(0.75rem, 3vw, 0.8125rem);
+  margin-top: 0.25rem;
+}
+
+/* Ajustements responsifs */
+@media (max-width: 576px) {
+  .phone-input-container .input-group .form-select {
+    width: clamp(80px, 25vw, 90px);
+    padding: 0.625rem 0.5rem;
+    font-size: clamp(0.8125rem, 3.5vw, 0.875rem);
+    min-height: 40px;
+  }
+
+  .phone-input-container .input-group .form-control {
+    padding: 0.625rem;
+    font-size: clamp(0.8125rem, 3.5vw, 0.875rem);
+    min-height: 40px;
+  }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+  .phone-input-container .input-group .form-select {
+    width: clamp(85px, 20vw, 95px);
+    min-height: 42px;
+  }
+
+  .phone-input-container .input-group .form-control {
+    min-height: 42px;
+  }
+}
+
+@media (min-width: 769px) {
+  .phone-input-container .input-group .form-select {
+    width: clamp(90px, 15vw, 100px);
+    min-height: 44px;
+  }
+
+  .phone-input-container .input-group .form-control {
+    min-height: 44px;
+  }
+}

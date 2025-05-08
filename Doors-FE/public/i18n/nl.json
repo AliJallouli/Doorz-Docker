@@ -1,0 +1,530 @@
+﻿{
+  "EMAIL_INPUT": {
+    "LABEL": {
+      "EMAIL": "E-mailadres"
+    },
+    "PLACEHOLDER": {
+      "EMAIL": "Vul je e-mailadres in"
+    },
+    "ERROR": {
+      "EMAIL_REQUIRED": "E-mailadres is vereist.",
+      "EMAIL_INVALID": "E-mailadres moet geldig zijn."
+    }
+  },
+  "PASSWORD_INPUT": {
+    "LABEL": {
+      "PASSWORD": "Wachtwoord",
+      "CONFIRM_PASSWORD": "Wachtwoord bevestigen"
+    },
+    "ERROR": {
+      "PASSWORD_REQUIRED": "Het wachtwoord is verplicht.",
+      "CONFIRM_PASSWORD_REQUIRED": "De wachtwoordbevestiging is verplicht.",
+      "PASSWORD_MINLENGTH": "Het wachtwoord moet minimaal 6 tekens lang zijn.",
+      "PASSWORD_PATTERN": "Het wachtwoord moet minimaal één letter en één cijfer bevatten.",
+      "PASSWORD_MISMATCH": "De wachtwoorden komen niet overeen."
+    }
+  },
+  "PHONE_INPUT": {
+    "LABEL": "Telefoonnummer",
+    "PLACEHOLDER": "(0) 123 456 789",
+    "ERROR": {
+      "PHONE_INVALID": "Het telefoonnummer is niet geldig."
+    }
+  },
+  "LOGIN": {
+    "TITLE": "Inloggen",
+    "LABEL": {
+      "EMAIL": "E-mailadres",
+      "PASSWORD": "Wachtwoord"
+    },
+    "PLACEHOLDER": {
+      "EMAIL": "Voer je e-mailadres in",
+      "PASSWORD": "Voer je wachtwoord in"
+    },
+    "BUTTON": "Inloggen",
+    "STAY_LOGGED_IN": "Ingelogd blijven",
+    "FORGOT_PASSWORD": "Wachtwoord vergeten?",
+    "SUCCESS": "Inloggen gelukt.",
+    "ERROR": {
+      "FRONTEND": {
+        "EMPTY_FIELDS": "Vul alle velden in.",
+        "EMPTY_EMAIL": "E-mailadres is verplicht.",
+        "INVALID_EMAIL": "E-mailadres moet geldig zijn.",
+        "EMPTY_PASSWORD": "Wachtwoord is verplicht."
+      },
+      "BACKEND": {
+        "INVALID_LOGIN": "Onjuist e-mailadres of wachtwoord.",
+        "TOO_MANY_FAILED_ATTEMPTS": "Te veel mislukte pogingen. Probeer het later opnieuw.",
+        "LOGIN_ATTEMPT_SAVE_FAILED": "Er is een fout opgetreden bij het opslaan van de inlogpoging.",
+        "LOGIN_FINALIZATION_FAILED": "Er is een fout opgetreden bij het afronden van de inlog."
+      }
+    },
+    "STUDENT_TITLE": "Studentenruimte",
+    "STUDENT_DESCRIPTION": "Vind je <strong>studentenjob</strong>, <strong>stage</strong>, <strong>kot</strong>, <strong>opleiding</strong> of <strong>evenement</strong> in één klik! Sluit je aan bij de <strong>studentenvibe</strong>!",
+    "STUDENT_REGISTER": "Let's do this!",
+    "LANDLORD_TITLE": "Inschrijving Private Verhuurder",
+    "LANDLORD_DESCRIPTION": "Bied je <strong>kots</strong> aan en maak contact met <strong>studenten</strong> in een oogwenk.",
+    "LANDLORD_REGISTER": "Verhuurder worden",
+    "PROFESSIONAL_TITLE": "Professionele Ruimte",
+    "PROFESSIONAL_DESCRIPTION": "Geef je aanbiedingen voor <strong>studentenjobs</strong>, <strong>stages</strong>, <strong>opleidingen</strong>, <strong>kotverhuur</strong> of <strong>evenementen</strong> een boost richting <strong>studenten</strong>.",
+    "PROFESSIONAL_CONTACT": "Contacteer ons"
+  },
+  "FOOTER": {
+    "NAVIGATION": "Navigatie",
+    "CONTACT": "Contact",
+    "CONTACT_EMAIL": "contact@doorz.com",
+    "CONTACT_PHONE": "+00 000 000 000",
+    "CONTACT_ADDRESS": "7000 - Mons",
+    "FOLLOW_US": "Volg ons",
+    "LANGUAGE": "Taal",
+    "BRAND": "DOORZ",
+    "RIGHTS": "Alle rechten voorbehouden.",
+    "PRIVACY": "Privacybeleid"
+  },
+  "NAV": {
+    "BRAND": "DOORZ",
+    "ABOUT": "Over Ons",
+    "STUDENTJOB": "Studentenjob",
+    "INTERSHIP": "Stage",
+    "AIDES": "Steun voor studenten",
+    "EVENTS": "Evenementen",
+    "PROFESSIONEL": "Professioneel",
+    "STUDENTITEM": "Studenten",
+    "RECRUITER": "Bedrijven",
+    "INSTITUTIONS": "Instellingen",
+    "ORGANISATIONS": "Publieke organisaties",
+    "ASSOCIATIONS": "Verenigingen",
+    "MOUVEMENT": "Studentenbeweging",
+    "FEATURES": "Functies",
+    "CONTACT": "Contact",
+    "LOGIN": "Inloggen",
+    "PROFILE": "Profiel",
+    "LOGOUT": "Uitloggen",
+    "INVITE_COLLEAGUES": "Collega’s",
+    "STUDENT": {
+      "DASHBOARD": "Dashboard",
+      "STUDIES": "Studies",
+      "INTERNSHIPS": "Stages",
+      "JOBS": "Banen",
+      "EVENTS": "Evenementen"
+    },
+    "SUPERADMIN": {
+      "DASHBOARD": "Dashboard",
+      "INVITE": "Uitnodigen"
+    },
+    "COMPANY": {
+      "HOME": "Bedrijf",
+      "ADMIN": "Bedrijfsbeheerder",
+      "RECRUITER": "Bedrijfsrecruiter",
+      "VIEWER": "Bedrijfskijker"
+    },
+    "INSTITUTION": {
+      "HOME": "Instelling",
+      "ADMIN": "Instellingsbeheerder",
+      "EDITOR": "Instellingseditor",
+      "VIEWER": "Instellingskijker"
+    },
+    "LANDLORD": {
+      "DASHBOARD": "Verhuurder Dashboard"
+    }
+  },
+  "INVITE": {
+    "LABEL": {
+      "ENTITY_TYPE": "Type entiteit",
+      "ENTITY_NAME": "Naam",
+      "COMPANY_NUMBER": "Bedrijfsnummer",
+      "INSTITUTION_TYPE": "Type instelling",
+      "EMAIL": "E-mail",
+      "ROLE": "Rol"
+    },
+    "PLACEHOLDER": {
+      "ENTITY_TYPE": "Kies een entiteit",
+      "ENTITY_NAME": "Naam van de entiteit",
+      "COMPANY_NUMBER": "XXXX.XXX.XXX",
+      "INSTITUTION_TYPE": "Kies een type",
+      "EMAIL": "gebruiker@voorbeeld.com",
+      "ROLE": "Kies een rol"
+    },
+    "BUTTON": {
+      "INVITE_ENTITY": "Uitnodigen",
+      "INVITE_COLLEAGUE": "Collega uitnodigen"
+    },
+    "SUCCESS": {
+      "COMPANY": "Bedrijfsbeheerder succesvol uitgenodigd.",
+      "INSTITUTION": "Instellingsbeheerder succesvol uitgenodigd.",
+      "COLLEAGUE": "Collega succesvol uitgenodigd."
+    },
+    "ERROR": {
+      "FRONTEND": {
+        "REQUIRED_ENTITY_NAME_EMAIL": "De velden Entiteit, Naam en E-mail zijn verplicht.",
+        "REQUIRED_COMPANY_NUMBER": "Bedrijfsnummer is verplicht voor een bedrijf.",
+        "INVALID_COMPANY_NUMBER": "Ongeldig bedrijfsnummer (formaat: XXXX.XXX.XXX).",
+        "REQUIRED_INSTITUTION_TYPE": "Type instelling is verplicht.",
+        "REQUIRED_EMAIL_ROLE": "De velden E-mail en Rol zijn verplicht.",
+        "INVALID_EMAIL": "Ongeldige e-mail.",
+        "MISSING_FIELDS_PREFIX": "De volgende velden zijn verplicht: ",
+        "MISSING_FIELD": {
+          "ENTITY": "Entiteit",
+          "NAME": "Naam",
+          "EMAIL": "E-mail",
+          "COMPANY_NUMBER": "Bedrijfsnummer",
+          "INSTITUTION_TYPE": "Type instelling"
+        }
+      },
+      "BACKEND": {
+        "INVITER_NOT_ADMIN": "Alleen een beheerder kan collega’s uitnodigen.",
+        "INVITER_NOT_LINKED_TO_ENTITY": "Je account is niet gekoppeld aan een entiteit.",
+        "ROLE_NOT_VALID_FOR_ENTITY_TYPE": "De geselecteerde rol is niet geldig voor dit type entiteit.",
+        "INVITATION_CREATION_FAILED": "Het aanmaken van de uitnodiging is mislukt.",
+        "INVALID_COMPANY_INPUT": "De bedrijfsgegevens zijn ongeldig.",
+        "COMPANY_NAME_ALREADY_USED": "De bedrijfsnaam is al in gebruik.",
+        "COMPANY_CREATION_FAILED": "Kan het bedrijf niet aanmaken.",
+        "INVALID_INSTITUTION_INPUT": "De instellingsgegevens zijn ongeldig.",
+        "INSTITUTION_NAME_ALREADY_USED": "De instellingsnaam is al in gebruik.",
+        "INSTITUTION_TYPE_NOT_FOUND": "Het opgegeven type instelling is niet gevonden.",
+        "INSTITUTION_CREATION_FAILED": "Kan de instelling niet aanmaken.",
+        "ENTITY_CREATION_FAILED": "Het aanmaken van de entiteit is mislukt.",
+        "ENTITY_NAME_MISSING": "Naam van de entiteit is verplicht.",
+        "ENTITY_TYPE_NOT_FOUND": "Type entiteit niet gevonden.",
+        "ADMIN_ROLE_NOT_FOUND": "De beheerdersrol is niet gevonden voor dit type entiteit."
+      }
+    }
+  },
+  "SHARED": {
+    "LOADING": "Laden...",
+    "ERROR": {
+      "FRONTEND": {
+        "EMPTY_FIELDS": "Vul alle velden in.",
+        "FIRSTNAME_REQUIRED": "Voornaam is vereist (minimaal 2 tekens).",
+        "LASTNAME_REQUIRED": "Achternaam is vereist (minimaal 2 tekens).",
+        "FIRSTNAME_MINLENGTH": "Minimaal 2 tekens.",
+        "LASTNAME_MINLENGTH": "Minimaal 2 tekens."
+      },
+      "BACKEND": {
+        "USER_NOT_FOUND": "Gebruiker niet gevonden voor deze bevestiging.",
+        "EMAIL_SENDING_FAILED": "Er is een fout opgetreden bij het verzenden van de uitnodigingsemail.",
+        "EMAIL_ALREADY_USED": "Dit emailadres is al in gebruik.",
+        "INVALID_EMAIL": "Ongeldig emailadres.",
+        "INTERNAL_SERVER_ERROR": "Er is een interne fout opgetreden. Probeer het later opnieuw.",
+        "TOKEN_INVALID": "Ongeldig token!",
+        "OTP_INVALID": "Ongeldige code. Probeer opnieuw.",
+        "TOO_MANY_OTP_RESENDS": "Je hebt te veel OTP-codes aangevraagd. Wacht even voordat je het opnieuw probeert."
+      }
+    }
+  },
+  "REGISTERFROMINVITE": {
+    "TITLE": "Registratie via uitnodiging",
+    "LABEL": {
+      "EMAIL": "E-mailadres",
+      "FIRSTNAME": "Voornaam",
+      "LASTNAME": "Achternaam"
+    },
+    "PLACEHOLDER": {
+      "EMAIL": "Vul je e-mailadres in",
+      "FIRSTNAME": "Vul je voornaam in",
+      "LASTNAME": "Vul je achternaam in"
+    },
+    "BUTTON": {
+      "SUBMIT": "Maak mijn account aan"
+    },
+    "SUCCESS": "Registratie succesvol. Je wordt doorgestuurd.",
+    "ERROR": {
+      "FRONTEND": {
+        "INVALID_TOKEN": "De uitnodigingslink is ongeldig of verlopen."
+      },
+      "BACKEND": {
+        "INVITATION_INVALID": "De link is ongeldig of al gebruikt.",
+        "USER_ALREADY_EXISTS": "Er bestaat al een gebruiker met dit e-mailadres.",
+        "INVITATION_DETAILS_MISSING": "Uitnodigingsdetails zijn onvolledig.",
+        "ROLE_NOT_VALID_FOR_ENTITY_TYPE": "Deze rol is niet geldig voor de entiteit.",
+        "REGISTRATION_FAILED": "Er is een fout opgetreden tijdens de registratie."
+      }
+    }
+  },
+  "REGISTERPUBLIC": {
+    "TITLE_STUDENT": "Student Registratie",
+    "TITLE_LANDLORD": "Verhuurder Registratie",
+    "LABEL": {
+      "EMAIL": "E-mailadres",
+      "FIRSTNAME": "Voornaam",
+      "LASTNAME": "Achternaam"
+    },
+    "PLACEHOLDER": {
+      "EMAIL": "Vul je e-mailadres in",
+      "FIRSTNAME": "Vul je voornaam in",
+      "LASTNAME": "Vul je achternaam in"
+    },
+    "BUTTON": {
+      "SUBMIT": "Maak mijn account aan"
+    },
+    "SUCCESS": "Registratie succesvol. Controleer je e-mail om je account te bevestigen.",
+    "ERROR": {
+      "FRONTEND": {
+        "EMAIL_REQUIRED": "E-mailadres is vereist.",
+        "EMAIL_INVALID": "E-mailadres moet geldig zijn.",
+        "ALL_CONSENTS_REQUIRED": "Je moet alle wettelijke toestemmingen accepteren om verder te gaan."
+      },
+      "BACKEND": {
+        "USER_REGISTRATION_FAILED": "Er is een fout opgetreden tijdens de registratie.",
+        "ROLE_NOT_FOUND": "De opgegeven rol is niet gevonden.",
+        "PUBLIC_ENTITY_TYPE_NOT_FOUND": "Het entiteitstype 'Publiek' is niet gevonden.",
+        "UNSUPPORTED_PUBLIC_ROLE": "De opgegeven rol wordt niet ondersteund voor publieke registratie.",
+        "USER_NOT_FOUND_AFTER_ENTITY_CREATION": "De gebruiker kon niet worden herladen na creatie."
+      }
+    }
+  },
+  "CONFIRMEMAIL": {
+    "TITLE": "Bevestig je e-mailadres",
+    "RESEND_SUCCESS": "Een nieuwe bevestigingsmail is verzonden.",
+    "SUCCESS_DISCONNECTED": "Je e-mailadres is succesvol bevestigd. Je kunt nu inloggen.",
+    "SUCCESS_CONNECTED": "Je e-mailadres is succesvol bevestigd.",
+    "OTP_REQUIRED": "Voer de OTP-code in die je per e-mail hebt ontvangen.",
+    "WAIT_BEFORE_RETRY": "Probeer opnieuw over",
+    "REMAINING_RESENDS": "Je kunt nog {{count}} OTP-code(s) aanvragen",
+    "OTP_ATTEMPTS_LEFT": "Je hebt nog {{count}} poging(en) om de code in te voeren",
+    "LABEL": {
+      "EMAIL": "E-mailadres",
+      "OTP": "Verificatiecode"
+    },
+    "BUTTON": {
+      "TO_LOGIN": "Inloggen",
+      "RESEND_CONFIRMATION": "Code opnieuw verzenden",
+      "VALIDATE_OTP": "Valideren",
+      "RESEND_OTP": "Code opnieuw verzenden"
+    },
+    "ERROR": {
+      "FRONTEND": {
+        "INVALID_LINK": "De link is ongeldig of onvolledig. Controleer je e-mail.",
+        "EMAIL_INVALID": "Voer een geldig e-mailadres in.",
+        "OTP_INVALID": "Ongeldige code."
+      },
+      "BACKEND": {
+        "EMAIL_ALREADY_CONFIRMED": "Je e-mailadres is al bevestigd.",
+        "EMAIL_CONFIRMATION_FAILED": "E-mailbevestiging mislukt.",
+        "EMAIL_CONFIRMATION_INVALID_TOKEN": "De bevestigingstoken is ongeldig.",
+        "EMAIL_CONFIRMATION_TOKEN_EXPIRED": "De bevestigingslink is verlopen. Vraag een nieuwe link aan.",
+        "EMAIL_CONFIRMATION_TOO_EARLY": "Je moet een paar minuten wachten voordat je een nieuwe bevestiging kunt aanvragen.",
+        "EMAIL_CONFIRMATION_NOT_FOUND": "Geen bevestigingsverzoek gevonden voor deze gebruiker.",
+        "OTP_TOO_MANY_ATTEMPTS": "Te veel pogingen. Vraag een nieuwe code aan."
+      }
+    }
+  },
+  "RESETPASSWORD": {
+    "TITLE": "Wachtwoord opnieuw instellen",
+    "SUCCESS": "Je wachtwoord is succesvol bijgewerkt. Je kunt nu inloggen.",
+    "FEEDBACK": "Als er een account bestaat voor dit e-mailadres, is een resetlink verzonden.",
+    "LABEL": {
+      "EMAIL": "E-mailadres"
+    },
+    "BUTTON": {
+      "SUBMIT": "Opnieuw instellen",
+      "TO_LOGIN": "Inloggen"
+    },
+    "ERROR": {
+      "FRONTEND": {
+        "EMAIL_REQUIRED": "E-mailadres is verplicht.",
+        "EMAIL_INVALID": "Voer een geldig e-mailadres in.",
+        "INVALID_LINK": "Deze link is ongeldig of verlopen."
+      },
+      "BACKEND": {
+        "TOO_MANY_TOKEN_REQUESTS": "Te veel pogingen. Probeer het over een paar minuten opnieuw.",
+        "PASSWORD_RESET_SAME_AS_OLD": "Je nieuwe wachtwoord mag niet hetzelfde zijn als het oude.",
+        "PASSWORD_RESET_ALREADY_REQUESTED": "Er is recent al een resetverzoek verzonden. Wacht even voordat je een nieuwe aanvraagt.",
+        "PASSWORD_RESET_TOKEN_INVALID": "De link is ongeldig of al gebruikt.",
+        "PASSWORD_RESET_TOKEN_EXPIRED": "De resetlink is verlopen.",
+        "PASSWORD_RESET_TOKEN_USED": "Deze resetlink is al gebruikt.",
+        "PASSWORD_RESET_FAILED": "Het opnieuw instellen van het wachtwoord is mislukt. Probeer opnieuw."
+      }
+    }
+  },
+  "LEGAL": {
+    "VERSION": "Versie:",
+    "PUBLISHED_ON": "Gepubliceerd op:",
+    "CLOSE": "Sluiten",
+    "DEFAULT_TITLE": "Standaard Titel",
+    "ERROR": "Fout",
+    "ERROR_MESSAGE": "Kan het document niet laden."
+  },
+  "REGISTERCHOICE": {
+    "TITLE": "Kies je accounttype",
+    "BUTTON": {
+      "STUDENT": "Ik ben student",
+      "PRIVATE_LANDLORD": "Ik ben privéverhuurder"
+    },
+    "SUCCESS": {
+      "REDIRECT": "Doorsturen naar het registratieformulier..."
+    },
+    "ERROR": {
+      "FRONTEND": {
+        "INVALID_ROLE": "Ongeldig accounttype. Kies student of privéverhuurder."
+      },
+      "BACKEND": {
+        "REGISTRATION_INIT_FAILED": "Er is een fout opgetreden bij het initialiseren van de registratie. Probeer opnieuw."
+      }
+    }
+  },
+  "CONTACT": {
+    "CHARACTERS_USED": "tekens gebruikt",
+    "LABEL": {
+      "FULLNAME": "Volledige naam",
+      "EMAIL": "E-mailadres",
+      "SUBJECT": "Onderwerp",
+      "MESSAGE": "Bericht",
+      "LANGUAGE": "Voorkeurstaal",
+      "PHONE": "Telefoonnummer"
+    },
+    "BUTTON": {
+      "SUBMIT": "Verzenden"
+    },
+    "ERROR": {
+      "FRONTEND": {
+        "FULLNAME_REQUIRED": "Naam is verplicht",
+        "FULLNAME_MINLENGTH": "Minimaal 2 tekens",
+        "EMAIL_REQUIRED": "E-mail is verplicht",
+        "EMAIL_INVALID": "Ongeldig e-mailadres",
+        "SUBJECT_REQUIRED": "Onderwerp is verplicht",
+        "MESSAGE_REQUIRED": "Bericht is verplicht",
+        "MESSAGE_MINLENGTH": "Minimaal 10 tekens",
+        "CONSENT_REQUIRED": "U moet de algemene gebruiksvoorwaarden accepteren.",
+        "PHONE_INVALID": "Het telefoonnummer is niet geldig."
+      }
+    },
+    "TYPE_LABEL": "Type bericht",
+    "TYPE_REQUIRED": "Type bericht is verplicht",
+    "MESSAGE_SENT_SUCCESS": "Uw bericht is succesvol verzonden."
+  },
+  "CONSENT_REQUIRED": "{{document}}.",
+  "ALL_CONSENTS_REQUIRED": "Alle juridische toestemmingen moeten worden geaccepteerd.",
+  "CONSENT_ERROR_INTRO": "Gelieve de volgende documenten te accepteren:",
+  "LANDING": {
+    "RESULTS": {
+      "TITLE": "Zoekresultaten",
+      "NO_RESULTS": "Nog geen resultaten gevonden. Gebruik de zoekformulieren om mogelijkheden te vinden."
+    }
+  },
+  "SEARCH": {
+    "STUDENT_JOB": {
+      "TITLE": "Zoeken naar studentenjobs",
+      "LABEL": {
+        "KEYWORDS": "Trefwoorden",
+        "LOCATION": "Locatie",
+        "CONTRACT_TYPE": "Contracttype",
+        "SCHEDULE_TYPE": "Werktijd",
+        "MIN_SALARY": "Minimumloon (€/maand)",
+        "REMOTE_POSSIBLE": "Thuiswerk mogelijk"
+      },
+      "PLACEHOLDER": {
+        "KEYWORDS": "Voer trefwoorden in (bijv. kelner, verkoop)",
+        "LOCATION": "Voer een stad of regio in",
+        "CONTRACT_TYPE": "Selecteer een contracttype",
+        "SCHEDULE_TYPE": "Selecteer een werktijd",
+        "MIN_SALARY": "Voer het minimumloon in"
+      },
+      "OPTION": {
+        "ALL": "Alle",
+        "CDD": "Tijdelijk contract",
+        "CDI": "Vast contract",
+        "INTERIM": "Uitzendarbeid",
+        "FULL_TIME": "Voltijds",
+        "PART_TIME": "Deeltijds",
+        "FLEXIBLE": "Flexibele uren"
+      },
+      "BUTTON": {
+        "SUBMIT": "Zoeken"
+      }
+    },
+    "INTERNSHIP": {
+      "TITLE": "Zoeken naar stages",
+      "LABEL": {
+        "KEYWORDS": "Trefwoorden",
+        "STUDY_DOMAIN": "Studierichting",
+        "LOCATION": "Locatie",
+        "MIN_DURATION": "Minimale duur (maanden)",
+        "ECTS_CREDITS": "Minimale ECTS-credits",
+        "REMOTE_POSSIBLE": "Thuiswerk mogelijk"
+      },
+      "PLACEHOLDER": {
+        "KEYWORDS": "Voer trefwoorden in (bijv. ontwikkeling, marketing)",
+        "STUDY_DOMAIN": "Selecteer een richting",
+        "LOCATION": "Voer een stad of regio in",
+        "MIN_DURATION": "Voer de minimale duur in",
+        "ECTS_CREDITS": "Voer de minimale ECTS-credits in"
+      },
+      "OPTION": {
+        "ALL": "Alle",
+        "IT": "Informatica",
+        "MARKETING": "Marketing",
+        "ENGINEERING": "Ingenieurswetenschappen"
+      },
+      "BUTTON": {
+        "SUBMIT": "Zoeken"
+      }
+    },
+    "STUDY": {
+      "TITLE": "Zoeken naar studies en opleidingen",
+      "LABEL": {
+        "KEYWORDS": "Trefwoorden",
+        "STUDY_DOMAIN": "Studierichting",
+        "LOCATION": "Locatie",
+        "DEGREE_TYPE": "Diplomatype",
+        "DELIVERY_MODE": "Onderwijsvorm",
+        "MAX_COST": "Maximale kosten (€/jaar)"
+      },
+      "PLACEHOLDER": {
+        "KEYWORDS": "Voer trefwoorden in (bijv. informatica, recht)",
+        "STUDY_DOMAIN": "Selecteer een richting",
+        "LOCATION": "Voer een stad of regio in",
+        "DEGREE_TYPE": "Selecteer een diplomatype",
+        "DELIVERY_MODE": "Selecteer een vorm",
+        "MAX_COST": "Voer de maximale kosten in"
+      },
+      "OPTION": {
+        "ALL": "Alle",
+        "IT": "Informatica",
+        "LAW": "Recht",
+        "MEDICINE": "Geneeskunde",
+        "BACHELOR": "Bachelor",
+        "MASTER": "Master",
+        "DOCTORATE": "Doctoraat",
+        "IN_PERSON": "Op locatie",
+        "ONLINE": "Online",
+        "HYBRID": "Hybride"
+      },
+      "BUTTON": {
+        "SUBMIT": "Zoeken"
+      }
+    },
+    "EVENT": {
+      "TITLE": "Zoeken naar evenementen",
+      "LABEL": {
+        "KEYWORDS": "Trefwoorden",
+        "LOCATION": "Locatie",
+        "START_DATE": "Startdatum",
+        "ENTITY_TYPE": "Type organisator",
+        "IS_PUBLIC": "Alleen openbare evenementen"
+      },
+      "PLACEHOLDER": {
+        "KEYWORDS": "Voer trefwoorden in (bijv. conferentie, workshop)",
+        "LOCATION": "Voer een stad of regio in",
+        "START_DATE": "Selecteer een datum",
+        "ENTITY_TYPE": "Selecteer een type"
+      },
+      "OPTION": {
+        "ALL": "Alle",
+        "INSTITUTION": "Instelling",
+        "COMPANY": "Bedrijf",
+        "CAMPUS": "Campus"
+      },
+      "BUTTON": {
+        "SUBMIT": "Zoeken"
+      }
+    }
+  },
+  "SEARCH_FORM": {
+    "KEYWORDS": "Trefwoorden",
+    "KEYWORDS_PLACEHOLDER": "Bijv: Webdeveloper",
+    "LOCATION": "Waar?",
+    "LOCATION_PLACEHOLDER": "Bijv: Mons",
+    "SUBMIT": "Zoeken"
+  }
+}

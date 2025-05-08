@@ -1,0 +1,79 @@
+<div class="container confirm-container" *ngIf="!isLoading">
+  <h3 class="text-center">{{ 'CONFIRMEMAIL.TITLE' | translate }}</h3>
+
+  <p class="text-center mt-3" [ngClass]="{ 'text-success': success, 'text-danger': !success }">
+    {{ resultMessage | translate }}
+  </p>
+
+  <div *ngIf="remainingWaitTimeSeconds > 0" class="text-center text-muted mt-2">
+    {{ 'CONFIRMEMAIL.WAIT_BEFORE_RETRY' | translate }} {{ remainingWaitTimeSeconds }}s
+  </div>
+
+  <!-- ✅ Bouton "Aller au login" après confirmation -->
+  <div *ngIf="success && !isLoggedIn" class="text-center mt-4">
+    <button class="btn btn-primary" (click)="goToLogin()">
+      {{ 'CONFIRMEMAIL.BUTTON.TO_LOGIN' | translate }}
+    </button>
+  </div>
+
+  <!-- 🔐 Formulaire OTP (uniquement si pas bloqué) -->
+  <div *ngIf="!success && showOtpForm && !otpTooManyAttempts" class="mt-4">
+    <form [formGroup]="otpForm" (ngSubmit)="submitOtp()" class="form">
+      <div class="form-group">
+        <label>{{ 'CONFIRMEMAIL.LABEL.OTP' | translate }}</label>
+        <input
+          type="text"
+          maxlength="6"
+          class="form-control"
+          formControlName="codeOtp"
+          [ngClass]="{ 'is-invalid': otpForm.get('codeOtp')?.invalid && otpForm.get('codeOtp')?.touched }"
+        />
+        <div class="invalid-feedback" *ngIf="otpForm.get('codeOtp')?.invalid && otpForm.get('codeOtp')?.touched">
+          {{ 'CONFIRMEMAIL.ERROR.FRONTEND.OTP_INVALID' | translate }}
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-success" [disabled]="otpForm.invalid || loadingOtp">
+        {{ loadingOtp ? ('SHARED.LOADING' | translate) : ('CONFIRMEMAIL.BUTTON.VALIDATE_OTP' | translate) }}
+      </button>
+    </form>
+
+    <!-- 🐞 Info debug : tentatives restantes -->
+    <div class="text-muted small text-center mt-2" *ngIf="showResend">
+      {{ 'CONFIRMEMAIL.OTP_ATTEMPTS_LEFT' | translate:{count: otpAttemptsLeft} }}
+    </div>
+  </div>
+
+  <!-- 🔁 Formulaire de renvoi d’email (token expiré ou trop de tentatives OTP) -->
+  <div *ngIf="!success && showResend && !isLoggedIn" class="mt-4">
+    <form (ngSubmit)="resendEmail()" [formGroup]="resendForm" class="form">
+      <app-email-input
+        [form]="resendForm"
+        [fieldError]="fieldError"
+        emailControlName="email"
+        [submitted]="validationTriggered"
+      ></app-email-input>
+
+      <button type="submit" class="btn btn-outline-secondary" [disabled]="resendForm.invalid || loadingResend">
+        {{ loadingResend ? ('SHARED.LOADING' | translate) : ('CONFIRMEMAIL.BUTTON.RESEND_CONFIRMATION' | translate) }}
+      </button>
+    </form>
+
+    <!-- 🐞 Info debug : resends restants -->
+    <div class="text-muted small text-center mt-2">
+      {{ 'CONFIRMEMAIL.REMAINING_RESENDS' | translate:{count: remainingResends} }}
+    </div>
+  </div>
+
+  <!-- 🔁 Bouton renvoi OTP uniquement si connecté -->
+  <div *ngIf="!success && remainingResends>0 && isLoggedIn" class="mt-4 text-center">
+    <button class="btn btn-warning" (click)="resendOtpOnly()">
+      {{ 'CONFIRMEMAIL.BUTTON.RESEND_OTP' | translate }}
+    </button>
+
+    <!-- 🐞 Info debug : resends restants -->
+    <div class="text-muted small text-center mt-2">
+      {{ 'CONFIRMEMAIL.REMAINING_RESENDS' | translate:{count: remainingResends} }}
+    </div>
+  </div>
+</div>
