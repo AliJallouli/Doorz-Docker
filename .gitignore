@@ -1,0 +1,32 @@
+# Ignorer les secrets
+Doors-BE/WebApi/appsettings.*.json
+!Doors-BE/WebApi/appsettings.Development.json
+
+# Ignorer les certificats SSL
+# Certificats backend
+Doors-BE/WebApi/certs/localhost.pem
+Doors-BE/WebApi/certs/localhost-key.pem
+Doors-BE/WebApi/certs/localhost.pfx
+Doors-BE/publish/
+
+# Ignorer les dossiers de build
+Doors-BE/**/bin/
+Doors-BE/**/obj/
+Doors-BE/**/publish/
+
+# Ignorer les fichiers de logs/temp
+*.log
+*.tmp
+*.cache
+*.db
+
+# Ignorer les fichiers et dossiers IDE
+.vscode/
+.idea/
+*.user
+*.suo
+# Certificats SSL frontend (mkcert)
+Doors-FE/localhost.pem
+Doors-FE/localhost-key.pem
+Doors-FE/localhost.pfx
+
