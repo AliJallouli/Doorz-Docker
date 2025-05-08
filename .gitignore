@@ -29,4 +29,5 @@ Doors-BE/**/publish/
 Doors-FE/localhost.pem
 Doors-FE/localhost-key.pem
 Doors-FE/localhost.pfx
+ProdProc.txt
 
