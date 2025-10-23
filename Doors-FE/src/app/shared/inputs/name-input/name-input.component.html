@@ -1,0 +1,96 @@
+<div [formGroup]="form">
+  <!-- Mode FULL -->
+  <div class="name-split-wrapper" *ngIf="mode === 'full'">
+    <div class="form-group">
+      <label>
+        {{ effectiveFullNameLabelKey | translate }}
+        <span class="required">*</span>
+      </label>
+      <input
+        type="text"
+        [formControlName]="fullNameControlName"
+        class="form-control"
+        [placeholder]="effectiveFullNamePlaceholderKey | translate"
+        [ngClass]="{
+          'is-invalid': (submitted || form.get(fullNameControlName)?.touched) &&
+                        (form.get(fullNameControlName)?.invalid || fieldError[fullNameControlName])
+        }"
+        [readonly]="readonly"
+        (input)="sanitizeFullName()"
+      />
+      <div class="invalid-feedback" *ngIf="(submitted || form.get(fullNameControlName)?.touched)">
+        <ng-container *ngIf="fieldError[fullNameControlName]">
+          {{ fieldError[fullNameControlName] | translate }}
+        </ng-container>
+        <ng-container *ngIf="form.get(fullNameControlName)?.hasError('required')">
+          {{ effectiveFullNameRequiredErrorKey | translate }}
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode SPLIT -->
+  <div class="name-split-wrapper" *ngIf="mode === 'split'">
+    <!-- Prénom -->
+    <div class="form-group">
+      <label>
+        {{ effectiveFirstNameLabelKey | translate }}
+        <span class="required">*</span>
+      </label>
+      <input
+        type="text"
+        [formControlName]="firstNameControlName"
+        class="form-control"
+        [placeholder]="effectiveFirstNamePlaceholderKey | translate"
+        [ngClass]="{
+          'is-invalid': (submitted || form.get(firstNameControlName)?.touched) &&
+                        (form.get(firstNameControlName)?.invalid || fieldError[firstNameControlName])
+        }"
+        [readonly]="readonly"
+        (input)="sanitizeFirstName()"
+      />
+      <div class="invalid-feedback" *ngIf="(submitted || form.get(firstNameControlName)?.touched)">
+        <ng-container *ngIf="fieldError[firstNameControlName]">
+          {{ fieldError[firstNameControlName] | translate }}
+        </ng-container>
+        <ng-container *ngIf="form.get(firstNameControlName)?.hasError('required')">
+          {{ effectiveFirstNameRequiredErrorKey | translate }}
+        </ng-container>
+        <ng-container *ngIf="form.get(firstNameControlName)?.hasError('minlength')">
+          {{ effectiveFirstNameMinlengthErrorKey | translate }}
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Nom -->
+    <div class="form-group">
+      <label>
+        {{ effectiveLastNameLabelKey | translate }}
+        <span class="required">*</span>
+      </label>
+      <input
+        type="text"
+        [formControlName]="lastNameControlName"
+        class="form-control"
+        [placeholder]="effectiveLastNamePlaceholderKey | translate"
+        [ngClass]="{
+          'is-invalid': (submitted || form.get(lastNameControlName)?.touched) &&
+                        (form.get(lastNameControlName)?.invalid || fieldError[lastNameControlName])
+        }"
+        [readonly]="readonly"
+        (input)="sanitizeLastName()"
+      />
+      <div class="invalid-feedback" *ngIf="(submitted || form.get(lastNameControlName)?.touched)">
+        <ng-container *ngIf="fieldError[lastNameControlName]">
+          {{ fieldError[lastNameControlName] | translate }}
+        </ng-container>
+        <ng-container *ngIf="form.get(lastNameControlName)?.hasError('required')">
+          {{ effectiveLastNameRequiredErrorKey | translate }}
+        </ng-container>
+        <ng-container *ngIf="form.get(lastNameControlName)?.hasError('minlength')">
+          {{ effectiveLastNameMinlengthErrorKey | translate }}
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

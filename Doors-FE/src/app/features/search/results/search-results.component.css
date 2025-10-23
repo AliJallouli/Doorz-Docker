@@ -1,0 +1,195 @@
+﻿.results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns for desktop */
+  gap: 0.3rem;
+  padding: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.result-card {
+  background-color: var(--background-light, #fff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: clamp(8px, 2vw, 12px); /* Slightly increased padding */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  max-width: 100%;
+  min-height: clamp(120px, 20vw, 150px); /* Increased min-height for mobile */
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.result-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.result-card h4 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(0.875rem, 1.8vw, 1rem); /* Increased min font size */
+  font-weight: 600;
+  color: var(--secondary-secondary-color, #333);
+  white-space: normal;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Increased to 3 lines for mobile readability */
+  -webkit-box-orient: vertical;
+}
+
+.result-card p {
+  margin: 0 0 0.5rem;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem); /* Increased min font size */
+  color: #555;
+  white-space: normal;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Increased to 3 lines for mobile */
+  -webkit-box-orient: vertical;
+}
+
+.company-location,
+.organizer-location,
+.provider-location,
+.institution-location {
+  color: #666;
+}
+
+.details,
+.date,
+.amount,
+.description,
+.deadline,
+.start-date,
+.delivery-mode,
+.status {
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem); /* Consistent with p */
+}
+
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.amount,
+.details .remote {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.deadline,
+.start-date,
+.status {
+  color: #d9534f;
+}
+
+.register-link {
+  color: #007bff;
+  text-decoration: none;
+  margin-left: 8px;
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}
+
+/* Media query for medium screens (tablets and below) */
+@media (max-width: 770px) {
+  .results-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for tablets */
+    gap: 0.5rem; /* Increased gap for better spacing */
+  }
+
+  .result-card {
+    padding: clamp(10px, 2vw, 12px); /* More padding for touch targets */
+    min-height: clamp(140px, 22vw, 160px); /* Adjusted for better fit */
+  }
+
+  .result-card h4 {
+    font-size: clamp(0.875rem, 2vw, 1rem); /* Larger min font size */
+  }
+
+  .result-card p {
+    font-size: clamp(0.75rem, 1.8vw, 0.875rem); /* Larger min font size */
+  }
+}
+
+/* Media query for very small screens (mobile) */
+@media (max-width: 480px) {
+  .results-grid {
+
+    gap: 0.75rem; /* Increased gap for clarity */
+  }
+
+  .result-card {
+    padding: clamp(12px, 3vw, 16px); /* More padding for readability */
+    min-height: clamp(160px, 25vw, 180px); /* Increased for mobile */
+  }
+
+  .result-card h4 {
+    font-size: clamp(1rem, 2.5vw, 1.125rem); /* Larger font for mobile */
+    -webkit-line-clamp: 4; /* More lines for longer translations */
+  }
+
+  .result-card p {
+    font-size: clamp(0.875rem, 2vw, 1rem); /* Larger font for mobile */
+    -webkit-line-clamp: 4; /* More lines for longer translations */
+  }
+
+  .details,
+  .date,
+  .amount,
+  .description,
+  .deadline,
+  .start-date,
+  .delivery-mode,
+  .status {
+    font-size: clamp(0.875rem, 2vw, 1rem); /* Consistent with p */
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .result-card {
+    background-color: #232323;
+    color: #ddd;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .result-card h4 {
+    color: #f0f0f0; /* Higher contrast */
+  }
+
+  .result-card p {
+    color: #ccc; /* Higher contrast for readability */
+  }
+
+  .company-location,
+  .organizer-location,
+  .provider-location,
+  .institution-location {
+    color: #ddd; /* Higher contrast */
+  }
+
+  .amount,
+  .details .remote {
+    color: #34c759;
+  }
+
+  .deadline,
+  .start-date,
+  .status {
+    color: #ff8787; /* Brighter red for visibility */
+  }
+
+  .register-link {
+    color: #66b0ff; /* Brighter blue for dark mode */
+  }
+}

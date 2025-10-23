@@ -18,39 +18,21 @@ public class UserAgentRepository : IUserAgentRepository
     }
 
     
-    // Méthode pour récupérer un user agent existant
+   
     public async Task<UserAgent?> GetAsync(string userAgentValue)
     {
         var existing = await _context.UserAgents
             .AsNoTracking()
             .FirstOrDefaultAsync(ua => ua.UserAgentValue == userAgentValue);
         
-        // Si trouvé, retourne l'ID, sinon retourne 0
+     
         return existing;
     }
 
-    // Méthode pour ajouter un user agent
-    public async Task<int> AddAsync(UserAgent userAgent)
+    public async Task AddAsync(UserAgent userAgent)
     {
-        // Log avant l'ajout
-        _logger.LogInformation("Tentative d'ajout du UserAgent : {UserAgent}", userAgent.UserAgentValue);
-
-        // Ajout du UserAgent
-        _context.UserAgents.Add(userAgent);
-        await _context.SaveChangesAsync(); // Sauvegarde les changements dans la base de données
-
-        // Vérification si l'ajout a réussi
-        if (userAgent.UserAgentId > 0)
-        {
-            _logger.LogInformation("UserAgent ajouté avec succès avec l'ID : {UserAgentId}", userAgent.UserAgentId);
-        }
-        else
-        {
-            _logger.LogWarning("Échec de l'ajout du UserAgent.");
-        }
-
-        // Retourne l'ID du UserAgent ajouté
-        return userAgent.UserAgentId;
+        await _context.UserAgents.AddAsync(userAgent);
+        await _context.SaveChangesAsync();
     }
 
 

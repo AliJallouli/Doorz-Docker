@@ -1,0 +1,69 @@
+<div class="container">
+  <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="doorz-vertical-form">
+    <!-- Date de début -->
+    <div class="form-group">
+      <label for="startDate">
+        {{ 'SEARCH.EVENT.LABEL.START_DATE' | translate }}
+      </label>
+      <input
+        type="date"
+        id="startDate"
+        formControlName="startDate"
+        class="doorz-input"
+        [ngClass]="{
+          'is-invalid': validationTriggered && (searchForm.get('startDate')?.invalid || fieldError['startDate'])
+        }"
+      />
+      <div class="invalid-feedback" *ngIf="fieldError['startDate']">
+        {{ fieldError['startDate'] | translate }}
+      </div>
+    </div>
+
+    <!-- Type d'organisateur -->
+    <div class="form-group">
+      <label for="entityType">
+        {{ 'SEARCH.EVENT.LABEL.ENTITY_TYPE' | translate }}
+      </label>
+      <select
+        id="entityType"
+        formControlName="entityType"
+        class="doorz-select"
+        [ngClass]="{
+          'is-invalid': validationTriggered && (searchForm.get('entityType')?.invalid || fieldError['entityType'])
+        }"
+      >
+        <option value="">{{ 'SEARCH.EVENT.OPTION.ALL' | translate }}</option>
+        <option *ngFor="let type of entityTypes" [value]="type.entity_type_id">
+          {{ type.name }}
+        </option>
+      </select>
+      <div class="invalid-feedback" *ngIf="fieldError['entityType']">
+        {{ fieldError['entityType'] | translate }}
+      </div>
+    </div>
+
+    <!-- Événements publics -->
+    <div class="form-check">
+      <input
+        type="checkbox"
+        id="isPublic"
+        formControlName="isPublic"
+        class="form-check-input"
+        [ngClass]="{
+          'is-invalid': validationTriggered && (searchForm.get('isPublic')?.invalid || fieldError['isPublic'])
+        }"
+      />
+      <label class="form-check-label" for="isPublic">
+        {{ 'SEARCH.EVENT.LABEL.IS_PUBLIC' | translate }}
+      </label>
+      <div class="invalid-feedback" *ngIf="fieldError['isPublic']">
+        {{ fieldError['isPublic'] | translate }}
+      </div>
+    </div>
+
+    <!-- Erreur globale -->
+    <div *ngIf="globalError" class="text-danger text-center mt-2">
+      {{ globalError | translate }}
+    </div>
+  </form>
+</div>

@@ -1,0 +1,143 @@
+/* Conteneur principal */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: transparent;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+
+
+/* Conteneur des sections */
+.section-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+.section-container .top-section {
+  padding: 0 !important;
+}
+
+
+
+/* Conteneur principal pour l'accordéon et les résultats */
+.section-container.middle-section {
+  padding: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+
+/* Suppression des marges et paddings pour le contenu */
+.top-section .section-content {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border-radius: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.top-section .section-content > * {
+  width: 100%;
+  max-width: 100%;
+}
+
+
+/* Disposition en deux colonnes */
+.middle-section {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* Sidebar (accordéon) */
+.sidebar {
+  flex: 0 0 30%;
+  max-width: 30%;
+  min-width: 250px;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+/* Contenu principal (résultats) */
+.main-content {
+  flex: 1 1 70%;
+  max-width: 70%;
+  min-width: 0;
+  padding: 0;
+}
+
+
+
+
+
+
+/* Adaptations responsives */
+
+/* Très petits écrans (≤ 260px) */
+@media (max-width: 260px) {
+  .section-container {
+    margin-bottom: 16px;
+  }
+}
+
+/* Mobile (≤ 574px) */
+@media (max-width: 574px) {
+  .section-container {
+    max-width: 100%;
+  }
+  .middle-section{
+    flex-direction: column;
+    max-width: 100%;
+  }
+  .sidebar,
+  .main-content {
+    flex: 1 1 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+}
+@media (max-width: 574px) {
+  .middle-section {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .sidebar,
+  .main-content {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+
+/* Tablette à mobile large (575px - 991px) */
+@media (max-width: 991px) and (min-width: 575px) {
+  .section-container {
+    max-width: 100%;
+  }
+
+
+}
+
+
+/* Grand écran (≥ 1200px) */
+@media (min-width: 1200px) {
+  .section-container {
+    max-width: 1400px;
+  }
+
+}

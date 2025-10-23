@@ -71,8 +71,18 @@ namespace Infrastructure.Messaging
                     type: ExchangeType.Direct,
                     durable: true
                 );
+                string json;
+                try
+                {
+                     json= JsonSerializer.Serialize(message);
+                    _logger.LogWarning("📤 Sérialisation OK : {Json}", json);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "❌ Échec de la sérialisation dans EmailAuthService !");
+                    throw;
+                }
 
-                var json = JsonSerializer.Serialize(message);
                 var body = Encoding.UTF8.GetBytes(json);
 
                 var properties = _channel.CreateBasicProperties();

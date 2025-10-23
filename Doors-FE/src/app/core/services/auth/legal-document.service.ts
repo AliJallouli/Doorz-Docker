@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import {ApiResponse} from '../../../models/auth.models';
-import {LegalDocumentDTO, LegalDocumentTypeDTO} from '../../../models/legal-document.models';
+import {ApiResponse} from '../../models/auth.models';
+import {LegalDocumentDTO, LegalDocumentTypeDTO} from '../../models/legal-document.models';
 
 @Injectable({
   providedIn: 'root'

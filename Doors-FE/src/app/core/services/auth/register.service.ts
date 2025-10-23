@@ -7,8 +7,8 @@ import {
   RegisterPublicRequestDTO,
   RoleIdRequestDTO,
   RoleIdResponseDTO
-} from '../../../models/auth.models';
-import {RegisterFromInviteRequestDTO} from '../../../models/invite.models';
+} from '../../models/auth.models';
+import {RegisterFromInviteRequestDTO} from '../../models/invite.models';
 import { environment } from '../../../../environments/environment';
 
 
@@ -22,17 +22,17 @@ export class RegisterService {
   constructor(private http: HttpClient) {}
 
   registerPublic(payload: RegisterPublicRequestDTO): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<LoginResponse>>(`${this.apiUrl}/register-public`, payload);
+    return this.http.post<ApiResponse<LoginResponse>>(`${this.apiUrl}/register-public`, payload, { withCredentials: true });
   }
   getRoleId(request: RoleIdRequestDTO): Observable<ApiResponse<RoleIdResponseDTO>> {
     return this.http.post<ApiResponse<RoleIdResponseDTO>>(`${this.apiUrlrole}/get-role-id`, request);
   }
   registerAdminFromInvite(payload: RegisterFromInviteRequestDTO): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/register-admin-from-invite`, payload);
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/register-admin-from-invite`, payload, { withCredentials: true });
   }
 
   registerColleagueFromInvite(payload: RegisterFromInviteRequestDTO): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/register-colleague-from-invite`, payload);
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/register-colleague-from-invite`, payload, { withCredentials: true });
   }
 
 

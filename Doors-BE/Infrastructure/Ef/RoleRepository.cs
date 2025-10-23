@@ -29,14 +29,14 @@ public class RoleRepository : IRoleRepository
     public async Task<Role?> GetByIdAsync(int roleId)
     {
         return await _context.Roles
-            .Include(r => r.EntityType) // Inclut la navigation vers EntityType si nécessaire
+            .Include(r => r.EntityType) 
             .FirstOrDefaultAsync(r => r.RoleId == roleId);
     }
 
     public async Task<Role?> GetByNameAndEntityTypeAsync(string name, int entityTypeId)
     {
         return await _context.Roles
-            .Include(r => r.EntityType) // Optionnel, selon si vous avez besoin de EntityType
+            .Include(r => r.EntityType) 
             .FirstOrDefaultAsync(r => r.Name == name && r.EntityTypeId == entityTypeId);
     }
 
@@ -50,9 +50,9 @@ public class RoleRepository : IRoleRepository
     public async Task<List<Role>> GetRolesByEntityTypeNameAsync(string entityTypeName, string language)
     {
         var roles = await _context.Roles
-            .Include(r => r.EntityType) // Charge la relation EntityType
-            .Include(r => r.Translations) // Charge les traductions
-            .ThenInclude(t => t.Language) // Charge la langue associée à chaque traduction
+            .Include(r => r.EntityType) 
+            .Include(r => r.Translations) 
+            .ThenInclude(t => t.Language) 
             .Where(r => r.EntityType.Name == entityTypeName)
             .ToListAsync();
 
@@ -60,15 +60,15 @@ public class RoleRepository : IRoleRepository
         {
             var translation = role.Translations
                                   .FirstOrDefault(t =>
-                                      t.Language.Code == language) // Recherche la traduction pour la langue demandée
-                              ?? role.Translations.FirstOrDefault(t => t.Language.Code == "en"); // Fallback sur anglais
+                                      t.Language.Code == language) 
+                              ?? role.Translations.FirstOrDefault(t => t.Language.Code == "en"); 
 
             if (translation != null)
             {
-                role.Name = translation.TranslatedName; // Remplace le nom technique par le traduit
-                role.Description = translation.TranslatedDescription; // Remplace la description par la traduite
+                role.Name = translation.TranslatedName; 
+                role.Description = translation.TranslatedDescription; 
             }
-            // Si aucune traduction n’est trouvée, on garde les valeurs par défaut de role.Name et role.Description
+           
         }
 
         return roles;

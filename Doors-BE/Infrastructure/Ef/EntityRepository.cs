@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Ef.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Ef;
 
@@ -36,4 +37,10 @@ public class EntityRepository : IEntityRepository
         // Sauvegarde les modifications dans la base de données
         await _context.SaveChangesAsync();
     }
+    
+    public async Task<bool> ExistNameAsync(string name)
+    {
+        return await _context.Entities.AnyAsync(e => e.Name == name);
+    }
+
 }

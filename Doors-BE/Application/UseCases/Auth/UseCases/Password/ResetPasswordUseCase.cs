@@ -1,5 +1,7 @@
-﻿using Application.UseCases.Auth.DTOs.Password;
+﻿using Application.UseCases.Auth.DTOs;
+using Application.UseCases.Auth.DTOs.Password;
 using Application.UseCases.Auth.Service;
+using Domain.Constants;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Interfaces.Services;
@@ -17,6 +19,7 @@ public class ResetPasswordUseCase
     private readonly ISecurityTokenService _securityTokenService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
+    private readonly ISessionService _sessionService;
 
     public ResetPasswordUseCase(
         IUserRepository userRepository,
@@ -25,7 +28,8 @@ public class ResetPasswordUseCase
         IRefreshTokenRepository refreshTokenRepository,
         IEmailAuthService emailAuthService,
         ILogger<ResetPasswordUseCase> logger,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ISessionService sessionService)
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
@@ -35,9 +39,10 @@ public class ResetPasswordUseCase
         _emailAuthService = emailAuthService ?? throw new ArgumentNullException(nameof(emailAuthService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService));
     }
 
-    public async Task<ConfirmPasswordResetResponseDto> ExecuteAsync(
+    public async Task<ResponseWithSimplKeyDto> ExecuteAsync(
         ConfirmPasswordResetRequestDto request,
         string ipAddress,
         string userAgent,string languageCode)
@@ -65,7 +70,13 @@ public class ResetPasswordUseCase
         {
             await _userRepository.UpdateAsync(user);
             await _securityTokenService.MarkAsUsedAsync(token);
+            
+            // Suppression de tous les refreshTokens de l'utilisateur
             await _refreshTokenRepository.DeleteAllForUserAsync(user.UserId);
+            
+            // Révoquer toutes les sessions de l'utilisateur
+            await _sessionService.RevokeAllSessionsAsync(user.UserId, SessionClosingReasons.PasswordReset);
+
 
             await _unitOfWork.SaveChangesAsync(); 
             await transaction.CommitAsync();
@@ -81,7 +92,7 @@ public class ResetPasswordUseCase
         await _emailAuthService.SendPasswordChangedConfirmationEmailAsync(user, ipAddress, userAgent,languageCode);
 
 
-        return new ConfirmPasswordResetResponseDto
+        return new ResponseWithSimplKeyDto
         {
             Key = "RESETPASSWORD.SUCCESS"
         };

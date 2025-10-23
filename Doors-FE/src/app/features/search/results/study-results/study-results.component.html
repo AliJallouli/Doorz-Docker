@@ -1,0 +1,14 @@
+<div class="results-grid">
+  <div *ngFor="let study of results" class="result-card">
+    <h4>{{ study.title }}</h4>
+    <p class="institution-location">{{ study.institution }} – {{ study.location }}</p>
+    <p class="details">
+      <span>{{ study.degreeType }}</span>
+      <span *ngIf="study.category">{{ study.category }}</span>
+      <span *ngIf="study.duration">{{ study.duration }} {{ study.durationUnit }}</span>
+    </p>
+    <p class="cost" *ngIf="study.cost">{{ study.cost | currency:study.currency }}/an</p>
+    <p class="description" *ngIf="study.description">{{ study.description | slice:0:100 }}...</p>
+    <p class="delivery-mode" *ngIf="study.deliveryMode">{{ study.deliveryMode }}</p>
+  </div>
+</div>

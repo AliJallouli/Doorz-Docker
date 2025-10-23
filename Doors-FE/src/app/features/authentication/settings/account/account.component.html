@@ -1,0 +1,95 @@
+<div class="container">
+
+    <h3>{{ 'ACCOUNT.HEADER_TITLE' | translate }}</h3>
+
+  <div *ngIf="successMessage" class="success-message">
+    {{ successMessage | translate }}
+  </div>
+  <!-- Carte Nom & Prénom -->
+  <div class="card">
+    <div class="header">
+      <h5>{{ 'ACCOUNT.NAME_SECTION.TITLE' | translate }}</h5>
+    </div>
+    <div class="card-body">
+      <div class="field-line">
+        <p>{{ user?.firstName }} {{ user?.lastName }}</p>
+        <app-action-buttons
+          [actions]="[{ action: 'edit-name', labelKey: 'ACTIONS.EDIT', iconClass: 'fas fa-edit', styleClass: 'edit-button' }]"
+          (actionClicked)="toggleEdit('name')"
+        ></app-action-buttons>
+      </div>
+      <div class="container-in" *ngIf="editSection === 'name' && user">
+        <app-change-name-form
+          [user]="user"
+          [form]="form"
+          [errorMessage]="errorMessage"
+          [errorParams]="errorParams"
+          [fieldError]="fieldError"
+          (updated)="onNameUpdated($event)"
+        ></app-change-name-form>
+      </div>
+    </div>
+  </div>
+  <!-- Carte Email -->
+  <div class="card">
+    <div class="header">
+      <h5>{{ 'ACCOUNT.EMAIL_SECTION.TITLE' | translate }}</h5>
+    </div>
+    <div class="card-body">
+      <div class="field-line">
+        <p class="user-info">{{ user?.email }}</p>
+        <app-action-buttons
+          [actions]="[{ action: 'edit-email', labelKey: 'ACTIONS.EDIT', iconClass: 'fas fa-edit', styleClass: 'edit-button' }]"
+          (actionClicked)="toggleEdit('email')"
+        ></app-action-buttons>
+      </div>
+      <div class="container-in" *ngIf="editSection === 'email' && user">
+        <app-change-email-form
+          [user]="user"
+          [form]="form"
+          [errorMessage]="errorMessage"
+          [errorParams]="errorParams"
+          [fieldError]="fieldError"
+          (updated)="onEmailUpdated($event)"
+        ></app-change-email-form>
+      </div>
+    </div>
+  </div>
+  <!-- Carte Mot de passe -->
+  <div class="card">
+    <div class="header">
+      <h5>{{ 'ACCOUNT.PASSWORD_SECTION.TITLE' | translate }}</h5>
+    </div>
+    <div class="card-body">
+      <div class="field-line">
+        <p class="mb-0">***********</p>
+        <app-action-buttons
+          [actions]="[{ action: 'edit-password', labelKey: 'ACTIONS.EDIT', iconClass: 'fas fa-edit', styleClass: 'edit-button' }]"
+          (actionClicked)="toggleEdit('password')"
+        ></app-action-buttons>
+      </div>
+      <div class="container-in" *ngIf="editSection === 'password'">
+        <app-change-password-form
+          [form]="form"
+          [errorMessage]="errorMessage"
+          [errorParams]="errorParams"
+          [fieldError]="fieldError"
+          (updated)="onPasswordUpdated($event)"
+        ></app-change-password-form>
+      </div>
+
+    </div>
+  </div>
+  <div class="form-options">
+  <div class="form-check">
+    <a href="/request-reset-password" class="forgot-password"
+       aria-label="Réinitialiser le mot de passe">{{ 'ACCOUNT.RESET_PASSWORD' | translate }}</a>
+  </div>
+  </div>
+  <!-- Bouton de suppression du compte -->
+  <div class="button-group">
+    <button class="btn-icon-only btn-delete-account" (click)="onDeleteAccount()" aria-label="Supprimer le compte">
+      <i class="fas fa-trash-alt icon"></i> {{ 'ACCOUNT.DELETE_ACCOUNT' | translate }}
+    </button>
+  </div>
+</div>

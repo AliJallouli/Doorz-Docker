@@ -1,0 +1,14 @@
+<div class="results-grid">
+  <div *ngFor="let job of results" class="result-card">
+    <h4>{{ job.title }}</h4>
+    <p class="company-location">{{ job.company }} – {{ job.location }}</p>
+    <p class="details">
+      <span>{{ job.scheduleType }}</span>
+      <span *ngIf="job.salary">{{ job.salary | currency:job.currency }}/h</span>
+    </p>
+    <p class="description" *ngIf="job.description">{{ job.description | slice:0:100 }}...</p>
+    <p class="start-date" *ngIf="job.startDate">
+      Début : {{ job.startDate | date:'mediumDate' }}
+    </p>
+  </div>
+</div>

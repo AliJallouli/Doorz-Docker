@@ -20,4 +20,7 @@ public class Contact
     public ICollection<Campus> Campuses { get; set; } = new List<Campus>();
     public ICollection<Company> Companies { get; set; } = new List<Company>();
     public ICollection<Landlord> Landlords { get; set; } = new List<Landlord>();
+    public ICollection<Association> Associations { get; set; } = new List<Association>();
+    public ICollection<PublicOrganization> PublicOrganizations { get; set; } = new List<PublicOrganization>();
+    public ICollection<StudentMovement> StudentMovements { get; set; } = new List<StudentMovement>();
 }

@@ -1,7 +1,10 @@
 ﻿
+using System.Security.Claims;
+using Application.UseCases.Auth.DTOs;
 using Application.UseCases.Auth.DTOs.Password;
 using Application.UseCases.Auth.UseCases.Password;
-using BackEnd_TI.Utils;
+using WebApi.Utils;
+using Microsoft.AspNetCore.Authorization;
 using WebApi.Constants;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Contracts.Responses;
@@ -16,18 +19,21 @@ public class PasswordController:ControllerBase
     private readonly ResetPasswordUseCase _resetPasswordUseCase;
     private readonly ValidatePasswordResetTokenUseCase _validatePasswordResetTokenUseCase;
     private readonly ValidatePasswordResetOtpUseCase _validatePasswordResetOtpUseCase;
+    private readonly UpdatePasswordUseCase _updatePasswordUseCase;
 
     public PasswordController(
         SendPasswordResetLinkUseCase sendPasswordResetLinkUseCase,
         ValidatePasswordResetTokenUseCase validatePasswordResetTokenUseCase,
         ResetPasswordUseCase resetPasswordUseCase,
-        ValidatePasswordResetOtpUseCase validatePasswordResetOtpUseCase)
+        ValidatePasswordResetOtpUseCase validatePasswordResetOtpUseCase,
+        UpdatePasswordUseCase updatePasswordUseCas)
     {
         
         _requestPasswordResetUseCase = sendPasswordResetLinkUseCase;
         _validatePasswordResetTokenUseCase = validatePasswordResetTokenUseCase;
         _resetPasswordUseCase = resetPasswordUseCase;
         _validatePasswordResetOtpUseCase = validatePasswordResetOtpUseCase;
+        _updatePasswordUseCase = updatePasswordUseCas;
     }
         [HttpPost("request-password-reset")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -37,23 +43,20 @@ public class PasswordController:ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ApiResponse<object>.Fail(
-                ResponseKeys.INVALID_MODEL_STATE,
+                ResponseKeys.InvalidModelState,
                 null
             ));
 
-        var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault()
-                        ?? HttpContext.Connection.RemoteIpAddress?.ToString()
-                        ?? "0.0.0.0";
-
-        var userAgent = HttpContext.Request.Headers["User-Agent"].FirstOrDefault()
-                        ?? "Unknown";
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
+       
+        var ipAddress = HttpContextUtils.ExtractClientIpAddress(Request);
+        var userAgent = HttpContextUtils.ExtractUserAgent(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
 
         await _requestPasswordResetUseCase.ExecuteAsync(request, ipAddress, userAgent,languageCode);
 
         return Ok(ApiResponse<object>.Ok(
             null,
-            ResponseKeys.PASSWORD_RESET_EMAIL_SENT
+            ResponseKeys.PasswordResetEmailSent
         ));
     }
 
@@ -82,22 +85,50 @@ public class PasswordController:ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ApiResponse<object>.Fail(
-                ResponseKeys.INVALID_MODEL_STATE,
+                ResponseKeys.InvalidModelState,
                 null
             ));
 
-        var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault()
-                        ?? HttpContext.Connection.RemoteIpAddress?.ToString()
-                        ?? "0.0.0.0";
-
-        var userAgent = HttpContext.Request.Headers["User-Agent"].FirstOrDefault()
-                        ?? "Unknown";
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
+      
+        var ipAddress = HttpContextUtils.ExtractClientIpAddress(Request);
+        var userAgent = HttpContextUtils.ExtractUserAgent(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
         var result = await _resetPasswordUseCase.ExecuteAsync(request, ipAddress, userAgent, languageCode);
 
-        return Ok(ApiResponse<ConfirmPasswordResetResponseDto>.Ok(
+        return Ok(ApiResponse<ResponseWithSimplKeyDto>.Ok(
             result,
             result.Key
         ));
     }
+    [HttpPut("update")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordRequestDto dto)
+    {
+        
+        if (!ModelState.IsValid)
+            return BadRequest(ApiResponse<object>.Fail(ResponseKeys.InvalidModelState,"modelState"));
+
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var sessionIdClaim = User.FindFirst("sid")?.Value;
+
+        if (string.IsNullOrEmpty(sessionIdClaim))
+            return Unauthorized(ApiResponse<object>.Fail(ResponseKeys.SessionNotFound, "sid"));
+
+        var sessionId = int.Parse(sessionIdClaim);
+      
+        var ipAddress = HttpContextUtils.ExtractClientIpAddress(Request);
+        var userAgent = HttpContextUtils.ExtractUserAgent(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
+
+        var result = await _updatePasswordUseCase.ExecuteAsync(dto, userId, sessionId, ipAddress, userAgent, languageCode);
+
+        return Ok(ApiResponse<ResponseWithSimplKeyDto>.Ok(
+            result,
+            result.Key
+        ));
+    }
+
 }

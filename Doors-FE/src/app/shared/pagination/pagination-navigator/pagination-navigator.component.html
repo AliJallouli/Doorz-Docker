@@ -1,0 +1,32 @@
+<div class="pagination-container">
+  <button
+    class="btn btn-pagination"
+    [disabled]="currentPage === 1"
+    (click)="previousPage()"
+    title="Page précédente"
+  >
+    Précédent
+  </button>
+  <ng-container *ngFor="let page of getPageNumbers()">
+    <button
+      *ngIf="page !== '...'; else ellipsis"
+      class="btn btn-pagination"
+      [ngClass]="{ 'active': page === currentPage }"
+      (click)="typeof page === 'number' && goToPage(page)"
+      [title]="'Page ' + page"
+    >
+      {{ page }}
+    </button>
+    <ng-template #ellipsis>
+      <span class="btn btn-pagination ellipsis">...</span>
+    </ng-template>
+  </ng-container>
+  <button
+    class="btn btn-pagination"
+    [disabled]="currentPage === totalPages"
+    (click)="nextPage()"
+    title="Page suivante"
+  >
+    Suivant
+  </button>
+</div>

@@ -1,0 +1,73 @@
+<div class="student-landingpage-container">
+  <div class="cards-container">
+    <div class="landingpage-card job">
+      <div class="landingpage-card-title">
+        <h2 (click)="onTitleClick('jobs')">
+          <span>{{ 'LANDING.JOBS_NEAR_YOU' | translate }}</span>
+          <svg class="chevron-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </h2>
+      </div>
+      <div class="landingpage-card-content">
+        <app-student-job-results [results]="studentJobsResult"></app-student-job-results>
+      </div>
+    </div>
+
+    <div class="landingpage-card internship">
+      <div class="landingpage-card-title">
+        <h2 (click)="onTitleClick('internships')">
+          <span>{{ 'LANDING.INTERNSHIPS_INTERESTING' | translate }}</span>
+          <svg class="chevron-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </h2>
+      </div>
+      <div class="landingpage-card-content">
+        <app-internship-results [results]="internshipsResult"></app-internship-results>
+      </div>
+    </div>
+
+    <div class="landingpage-card study">
+      <div class="landingpage-card-title">
+        <h2 (click)="onTitleClick('studies')">
+          <span>{{ 'LANDING.STUDIES_TOP' | translate }}</span>
+          <svg class="chevron-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </h2>
+      </div>
+      <div class="landingpage-card-content">
+        <app-study-results [results]="studiesResult"></app-study-results>
+      </div>
+    </div>
+
+    <div class="landingpage-card aid">
+      <div class="landingpage-card-title">
+        <h2 (click)="onTitleClick('aid')">
+          <span>{{ 'LANDING.AIDES_MUST_KNOW' | translate }}</span>
+          <svg class="chevron-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </h2>
+      </div>
+      <div class="landingpage-card-content">
+        <app-aid-results [results]="aidsResult"></app-aid-results>
+      </div>
+    </div>
+
+    <div class="landingpage-card event">
+      <div class="landingpage-card-title">
+        <h2 (click)="onTitleClick('events')">
+          <span>{{ 'LANDING.EVENTS_AROUND' | translate }}</span>
+          <svg class="chevron-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </h2>
+      </div>
+      <div class="landingpage-card-content">
+        <app-event-results [results]="eventsResult"></app-event-results>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+<div class="form-group" [formGroup]="form">
+  <label>
+    {{ 'OTP_INPUT.LABEL.OTP' | translate }}
+    <span class="required">*</span>
+  </label>
+  <input
+    type="text"
+    class="form-control"
+    maxlength="6"
+    [formControlName]="otpControlName"
+    [placeholder]="'OTP_INPUT.PLACEHOLDER.OTP' | translate"
+    [ngClass]="{
+      'is-invalid':
+        (submitted || form.get(otpControlName)?.touched) &&
+        (form.get(otpControlName)?.invalid || fieldError[otpControlName])
+    }"
+  />
+  <div
+    class="invalid-feedback"
+    *ngIf="(submitted || form.get(otpControlName)?.touched) &&
+           (form.get(otpControlName)?.invalid || fieldError[otpControlName])"
+  >
+    <div *ngIf="fieldError[otpControlName]">
+      {{ fieldError[otpControlName] | translate }}
+    </div>
+    <div *ngIf="!fieldError[otpControlName] && form.get(otpControlName)?.invalid">
+      <ng-container *ngIf="form.get(otpControlName)?.hasError('required')">
+        {{ 'OTP_INPUT.ERROR.OTP_REQUIRED' | translate }}
+      </ng-container>
+      <ng-container *ngIf="form.get(otpControlName)?.hasError('minlength') || form.get(otpControlName)?.hasError('maxlength')">
+        {{ 'OTP_INPUT.ERROR.OTP_LENGTH' | translate }}
+      </ng-container>
+    </div>
+  </div>
+</div>

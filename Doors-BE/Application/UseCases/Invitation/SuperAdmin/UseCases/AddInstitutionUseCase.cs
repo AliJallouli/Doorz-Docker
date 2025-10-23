@@ -1,4 +1,5 @@
 ﻿
+using Application.SharedService;
 using Application.Validation;
 using Application.UseCases.Invitation.Service;
 using Application.UseCases.Invitation.SuperAdmin.DTOs;
@@ -27,9 +28,10 @@ public class AddInstitutionUseCase : AddEntityUseCaseBase<CreateInstitutionDto, 
         IMapper mapper,
         IEntityRepository entityRepository,
         ILogger<AddInstitutionUseCase> logger,
-        IInvitationTypeRepository invitationTypeRepository)
+        IInvitationTypeRepository invitationTypeRepository,
+        ISharedUniquenessValidationService sharedUniquenessValidationService)
         : base(invitationService, invitationEmailService, roleRepository, entityTypeRepository, entityRepository,
-            mapper, logger, invitationTypeRepository)
+            mapper, logger, invitationTypeRepository, sharedUniquenessValidationService)
     {
         _institutionRepository =
             institutionRepository ?? throw new ArgumentNullException(nameof(institutionRepository));
@@ -37,39 +39,8 @@ public class AddInstitutionUseCase : AddEntityUseCaseBase<CreateInstitutionDto, 
                                      throw new ArgumentNullException(nameof(institutionTypeRepository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
-
-    protected override Task ValidateInputAsync(CreateInstitutionDto dto)
-    {
-        _logger.LogDebug("Validation des données d'entrée pour la création de l'institution : {InstitutionName}",
-            dto.Name);
-
-        try
-        {
-            InstitutionValidator.Validate(dto);
-            _logger.LogDebug("Données d'entrée validées avec succès pour {InstitutionName}", dto.Name);
-        }
-        catch (ArgumentException ex)
-        {
-            _logger.LogWarning("Échec de la validation des données d'entrée pour {InstitutionName} : {Message}",
-                dto.Name, ex.Message);
-            throw new BusinessException(ErrorCodes.InvalidInstitutionInput, ex.ParamName ?? "institution");
-        }
-
-        return Task.CompletedTask;
-    }
-
-    protected override async Task ValidateUniqueNameAsync(CreateInstitutionDto dto)
-    {
-        _logger.LogDebug("Vérification de l'unicité du nom de l'institution : {InstitutionName}", dto.Name);
-
-        if (await _institutionRepository.ExistNameAsync(dto.Name))
-        {
-            _logger.LogWarning("Le nom de l'institution {InstitutionName} existe déjà.", dto.Name);
-            throw new BusinessException(ErrorCodes.InstitutionNameAlreadyUsed, "name");
-        }
-
-        _logger.LogDebug("Nom de l'institution {InstitutionName} confirmé comme unique.", dto.Name);
-    }
+    
+ 
 
     protected override async Task ValidateDataAsync(CreateInstitutionDto dto)
     {
@@ -96,7 +67,9 @@ public class AddInstitutionUseCase : AddEntityUseCaseBase<CreateInstitutionDto, 
             EntityId = entity.EntityId,
             Name = dto.Name,
             InstitutionTypeId = dto.InstitutionTypeId,
-            CreatedBy = createdBy
+            CreatedBy = createdBy,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
 
         try

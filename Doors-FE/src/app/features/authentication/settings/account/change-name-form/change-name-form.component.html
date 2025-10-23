@@ -1,0 +1,39 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="doorz-vertical-form">
+  <!-- Nom actuel -->
+
+
+  <!-- Mot de passe actuel -->
+  <app-password-input
+    [form]="form"
+    [fieldError]="fieldError"
+    [passwordControlName]="'currentPassword'"
+    [submitted]="submitted"
+    [showPassword]="true"
+    [showConfirmPassword]="false"
+    [passwordType]="'current'"
+  ></app-password-input>
+
+  <!-- Nouveau nom et prénom -->
+  <app-name-input
+    [form]="form"
+    [fieldError]="fieldError"
+    [firstNameControlName]="'firstName'"
+    [lastNameControlName]="'lastName'"
+    [submitted]="submitted"
+    [mode]="'split'"
+    [nameType]="'new'"
+  ></app-name-input>
+
+  <!-- Afficher le error -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage | translate:errorParams }}
+  </div>
+  <!-- Boutons d'action -->
+  <app-action-buttons
+    [actions]="[
+      { action: 'cancel', labelKey: 'ACTIONS.CANCEL', iconClass: 'fas fa-times', styleClass: 'btn-secondary' },
+      { action: 'submit', labelKey: 'ACTIONS.SUBMIT', iconClass: 'fas fa-save', styleClass: 'btn-primary' }
+    ]"
+    (actionClicked)="handleAction($event)"
+  ></app-action-buttons>
+</form>

@@ -1,11 +1,16 @@
 ﻿using System.Security.Claims;
+using Application.UseCases.Invitation.Request.DTOs;
+using Application.UseCases.Invitation.Request.UseCases;
+using Application.UseCases.Invitation.Service;
 using Application.UseCases.Invitation.SuperAdmin.DTOs;
 using Application.UseCases.Invitation.SuperAdmin.UseCases;
-using BackEnd_TI.Utils;
+using Domain.Enums;
+using WebApi.Utils;
 using WebApi.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Contracts.Responses;
+using WebApi.Models;
 
 namespace WebApi.Controllers.v1;
 
@@ -14,28 +19,35 @@ namespace WebApi.Controllers.v1;
 [Authorize(Policy = "SuperAdminOnly")]
 public class SuperAdminController : ControllerBase
 {
+    private readonly IAddEntityStrategyResolver _strategyResolver;
     private readonly AddCompanyUseCase _addCompanyUseCase;
     private readonly AddInstitutionUseCase _addInstitutionUseCase;
+    private readonly AddAssociationUseCase _addAssociationUseCase;
+    private readonly AddStudentMovementUseCase _addStudentMovementUseCase;
+    private readonly AddPublicOrganizationUseCase _addPublicOrganizationUseCase;
+    private readonly GetInvitationRequestsByStatusUseCase _getInvitationRequestsByStatusUseCase;
 
     public SuperAdminController(
+        IAddEntityStrategyResolver strategyResolver,
         AddCompanyUseCase addCompanyUseCase,
-        AddInstitutionUseCase addInstitutionUseCase)
+        AddInstitutionUseCase addInstitutionUseCase,
+        AddAssociationUseCase addAssociationUseCase,
+        AddStudentMovementUseCase addStudentMovementUseCase,
+        AddPublicOrganizationUseCase addPublicOrganizationUseCase,
+        GetInvitationRequestsByStatusUseCase getInvitationRequestsByStatus)
     {
+        _strategyResolver = strategyResolver;
         _addCompanyUseCase = addCompanyUseCase ?? throw new ArgumentNullException(nameof(addCompanyUseCase));
         _addInstitutionUseCase =
             addInstitutionUseCase ?? throw new ArgumentNullException(nameof(addInstitutionUseCase));
+        _addAssociationUseCase = addAssociationUseCase ?? throw new ArgumentNullException(nameof(addAssociationUseCase));
+        _addStudentMovementUseCase = addStudentMovementUseCase ?? throw new ArgumentNullException(nameof(addStudentMovementUseCase));
+        _addPublicOrganizationUseCase = addPublicOrganizationUseCase ?? throw new ArgumentNullException(nameof(addPublicOrganizationUseCase));
+        _getInvitationRequestsByStatusUseCase = getInvitationRequestsByStatus;
+
     }
 
-    /// <summary>
-    ///     Invite un administrateur pour une nouvelle compagnie.
-    ///     Réservé aux SuperAdmins via la politique "SuperAdminOnly".
-    /// </summary>
-    /// <param name="request">Les données de la compagnie à créer.</param>
-    /// <returns>Un objet contenant les informations de la compagnie créée et un message de succès.</returns>
-    /// <response code="200">Compagnie créée avec succès.</response>
-    /// <response code="400">Requête invalide ou erreur lors de la création.</response>
-    /// <response code="401">Utilisateur non authentifié.</response>
-    /// <response code="403">Utilisateur authentifié mais pas SuperAdmin.</response>
+    
     [HttpPost("company")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -47,32 +59,23 @@ public class SuperAdminController : ControllerBase
 
         if (string.IsNullOrEmpty(currentUserIdClaim))
             return Unauthorized(ApiResponse<object>.Fail(
-                ResponseKeys.USER_NOT_AUTHENTICATED,
+                ResponseKeys.UserNotAuthenticated,
                 null
             ));
 
         var currentUserId = int.Parse(currentUserIdClaim);
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
 
         var response = await _addCompanyUseCase.ExecuteAsync(request, currentUserId, languageCode);
 
         return Ok(ApiResponse<object>.Ok(
             response,
-            ResponseKeys.COMPANY_ADMIN_INVITED
+            ResponseKeys.CompanyAdminInvited
         ));
     }
 
 
-    /// <summary>
-    ///     Invite un administrateur pour une nouvelle institution.
-    ///     Réservé aux SuperAdmins via la politique "SuperAdminOnly".
-    /// </summary>
-    /// <param name="request">Les données de l'institution à créer.</param>
-    /// <returns>Un objet contenant les informations de l'institution créée et un message de succès.</returns>
-    /// <response code="200">Institution créée avec succès.</response>
-    /// <response code="400">Requête invalide ou erreur lors de la création.</response>
-    /// <response code="401">Utilisateur non authentifié.</response>
-    /// <response code="403">Utilisateur authentifié mais pas SuperAdmin.</response>
+
     [HttpPost("institution")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -84,18 +87,170 @@ public class SuperAdminController : ControllerBase
 
         if (string.IsNullOrEmpty(currentUserIdClaim))
             return Unauthorized(ApiResponse<object>.Fail(
-                ResponseKeys.USER_NOT_AUTHENTICATED,
+                ResponseKeys.UserNotAuthenticated,
                 null
             ));
 
         var currentUserId = int.Parse(currentUserIdClaim);
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
 
         var response = await _addInstitutionUseCase.ExecuteAsync(request, currentUserId, languageCode);
 
         return Ok(ApiResponse<object>.Ok(
             response,
-            ResponseKeys.INSTITUTION_ADMIN_INVITED
+            ResponseKeys.InstitutionAdminInvited
         ));
     }
+    
+    [HttpPost("association")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> InviteAssociationAdmin([FromBody] CreateAssociationDto request)
+    {
+        var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(currentUserIdClaim))
+            return Unauthorized(ApiResponse<object>.Fail(
+                ResponseKeys.UserNotAuthenticated,
+                null
+            ));
+
+        var currentUserId = int.Parse(currentUserIdClaim);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
+
+        var response = await _addAssociationUseCase.ExecuteAsync(request, currentUserId, languageCode);
+
+        return Ok(ApiResponse<object>.Ok(
+            response,
+            ResponseKeys.AssociationAdminInvited
+        ));
+    }
+    [HttpPost("student-movement")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> InviteStudentMovementAdmin([FromBody] CreateStudentMovementDto request)
+    {
+        var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(currentUserIdClaim))
+            return Unauthorized(ApiResponse<object>.Fail(
+                ResponseKeys.UserNotAuthenticated,
+                null
+            ));
+
+        var currentUserId = int.Parse(currentUserIdClaim);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
+
+        var response = await _addStudentMovementUseCase.ExecuteAsync(request, currentUserId, languageCode);
+
+        return Ok(ApiResponse<object>.Ok(
+            response,
+            ResponseKeys.StudentMovementAdminInvited
+        ));
+    }
+
+    [HttpPost("public-organization")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> InvitePublicOrganizationAdmin([FromBody] CreatePublicOrganizationDto request)
+    {
+        var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(currentUserIdClaim))
+            return Unauthorized(ApiResponse<object>.Fail(
+                ResponseKeys.UserNotAuthenticated,
+                null
+            ));
+
+        var currentUserId = int.Parse(currentUserIdClaim);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
+
+        var response = await _addPublicOrganizationUseCase.ExecuteAsync(request, currentUserId, languageCode);
+
+        return Ok(ApiResponse<object>.Ok(
+            response,
+            ResponseKeys.PublicOrganizationAdminInvited
+        ));
+    }
+    
+    [HttpGet("invitation-requests")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetInvitationRequestsByStatus(
+        [FromQuery] string? status = null,
+        [FromQuery] string? entityTypeName = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
+    {
+        var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(currentUserIdClaim))
+            return Unauthorized(ApiResponse<object>.Fail(
+                ResponseKeys.UserNotAuthenticated,
+                null
+            ));
+
+        InvitationRequestStatus? requestStatus = null;
+        if (!string.IsNullOrEmpty(status))
+        {
+            if (!Enum.TryParse<InvitationRequestStatus>(status, true, out var parsedStatus))
+            {
+                return BadRequest(ApiResponse<object>.Fail(
+                    "Statut invalide",
+                    null
+                ));
+            }
+            requestStatus = parsedStatus;
+        }
+
+        try
+        {
+            var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
+            var result = await _getInvitationRequestsByStatusUseCase.ExecuteAsync(
+                requestStatus,
+                entityTypeName,
+                page,
+                pageSize);
+
+            return Ok(ApiResponse<PagedResult<InvitationRequestDto>>.Ok(
+                result,
+                "INVITATION_REQUESTS.RETRIEVED"
+            ));
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ApiResponse<object>.Fail(ex.Message, null));
+        }
+    }
+    
+    [HttpPost("from-request")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> InviteFromRequest([FromBody] ProcessInvitationRequestDto request)
+    {
+        var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(currentUserIdClaim))
+            return Unauthorized(ApiResponse<object>.Fail("NOT_AUTHENTICATED", null));
+
+        var currentUserId = int.Parse(currentUserIdClaim);
+        
+
+        var result = await _strategyResolver.ExecuteAsync(request, currentUserId);
+
+        return Ok(ApiResponse<object>.Ok(result, "INVITATION_REQUEST.ACCEPTED"));
+    }
+
+
+
 }

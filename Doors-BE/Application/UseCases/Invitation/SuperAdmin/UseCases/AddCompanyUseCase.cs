@@ -1,4 +1,5 @@
 ﻿
+using Application.SharedService;
 using Application.Validation;
 using Application.UseCases.Invitation.Service;
 using Application.UseCases.Invitation.SuperAdmin.DTOs;
@@ -6,6 +7,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
+using Domain.Interfaces.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Application.UseCases.Invitation.SuperAdmin.UseCases;
@@ -25,51 +27,33 @@ public class AddCompanyUseCase : AddEntityUseCaseBase<CreateCompanyDto, Company,
         IMapper mapper,
         IEntityRepository entityRepository,
         ILogger<AddCompanyUseCase> logger,
-        IInvitationTypeRepository invitationTypeRepository)
+        IInvitationTypeRepository invitationTypeRepository,
+        ISharedUniquenessValidationService sharedUniquenessValidationService)
         : base(invitationService, invitationEmailService, roleRepository, entityTypeRepository, entityRepository,
-            mapper, logger, invitationTypeRepository)
+            mapper, logger, invitationTypeRepository, sharedUniquenessValidationService)
     {
         _companyRepository = companyRepository ?? throw new ArgumentNullException(nameof(companyRepository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
+    
 
-    protected override Task ValidateInputAsync(CreateCompanyDto dto)
+ 
+
+    protected override async Task ValidateDataAsync(CreateCompanyDto dto)
     {
-        _logger.LogDebug("Validation des données d'entrée pour la création de l'entreprise : {CompanyName}", dto.Name);
+        _logger.LogDebug("Validation spécifique pour l'entreprise : {CompanyName}", dto.Name);
 
-        try
+        // Valider le format du CompanyNumber
+        if (!CommonFormatValidator.ValidateCompanyNumber(dto.CompanyNumber))
         {
-            CompanyValidator.Validate(dto);
-            _logger.LogDebug("Données d'entrée validées avec succès pour {CompanyName}", dto.Name);
-        }
-        catch (ArgumentException ex)
-        {
-            _logger.LogWarning("Échec de la validation des données d'entrée pour {CompanyName} : {Message}", dto.Name,
-                ex.Message);
-            throw new BusinessException(ErrorCodes.InvalidCompanyInput, ex.ParamName ?? "company");
+            _logger.LogWarning("Le numéro BCE '{CompanyNumber}' est invalide.", dto.CompanyNumber);
+            throw new BusinessException(ErrorCodes.InvalidCompanyNumberFormat, "companyNumber");
         }
 
-        return Task.CompletedTask;
-    }
+        // Valider l'unicité du CompanyNumber
+        await UniquenessValidator.ValidateUniqueCompanyNumberAsync(dto.CompanyNumber);
 
-    protected override async Task ValidateUniqueNameAsync(CreateCompanyDto dto)
-    {
-        _logger.LogDebug("Vérification de l'unicité du nom de l'entreprise : {CompanyName}", dto.Name);
-
-        if (await _companyRepository.ExistNameAsync(dto.Name))
-        {
-            _logger.LogWarning("Le nom de l'entreprise {CompanyName} existe déjà.", dto.Name);
-            throw new BusinessException(ErrorCodes.CaCompanyNameAlreadyUsed, "name");
-        }
-
-        _logger.LogDebug("Nom de l'entreprise {CompanyName} confirmé comme unique.", dto.Name);
-    }
-
-    protected override Task ValidateDataAsync(CreateCompanyDto dto)
-    {
-        _logger.LogDebug("Validation des données supplémentaires pour {CompanyName} (aucune validation spécifique).",
-            dto.Name);
-        return Task.CompletedTask;
+        _logger.LogDebug("Validation spécifique terminée pour {CompanyName}", dto.Name);
     }
 
     protected override async Task<Company> CreateSpecificEntityAsync(CreateCompanyDto dto, Entity entity, int createdBy)
@@ -81,7 +65,9 @@ public class AddCompanyUseCase : AddEntityUseCaseBase<CreateCompanyDto, Company,
             EntityId = entity.EntityId,
             Name = dto.Name,
             CompanyNumber = dto.CompanyNumber,
-            CreatedBy = createdBy
+            CreatedBy = createdBy,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
 
         try

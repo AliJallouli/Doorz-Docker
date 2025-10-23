@@ -1,4 +1,4 @@
-﻿using Domain.Interfaces.Services;
+﻿using Domain.Interfaces;
 using Infrastructure.Ef.Data;
 using Microsoft.EntityFrameworkCore;
 

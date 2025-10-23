@@ -1,7 +1,7 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # Définir les chemins
-$basePath = "C:\Users\alija\Desktop\Doorz"
+$basePath = "C:\Users\alija\Desktop\Projets\Doorz"
 $backendCertsPath = Join-Path $basePath "Doors-BE\WebApi\certs"
 $frontendPath = Join-Path $basePath "Doors-FE"
 $gitBashPath = "C:\Program Files\Git\bin\bash.exe" # Ajustez si Git Bash est installé ailleurs

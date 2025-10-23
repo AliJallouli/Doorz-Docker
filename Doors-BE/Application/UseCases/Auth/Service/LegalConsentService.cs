@@ -18,9 +18,9 @@ public class LegalConsentService : ILegalConsentService
         IUserLegalConsentRepository userLegalConsentRepository,
         ILogger<LegalConsentService> logger)
     {
-        _legalDocumentRepository = legalDocumentRepository;
-        _userLegalConsentRepository = userLegalConsentRepository;
-        _logger = logger;
+        _legalDocumentRepository = legalDocumentRepository ?? throw new ArgumentNullException(nameof(legalDocumentRepository), "Le référentiel des documents légaux ne peut pas être null.");
+        _userLegalConsentRepository = userLegalConsentRepository ?? throw new ArgumentNullException(nameof(userLegalConsentRepository), "Le référentiel des consentements légaux des utilisateurs ne peut pas être null.");
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger), "Le logger ne peut pas être null.");
     }
 
 

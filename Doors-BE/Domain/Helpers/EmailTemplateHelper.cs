@@ -29,6 +29,7 @@ public static class EmailTemplateHelper
             "ColleagueInvitationEmail" => GetColleagueInvitationEmailTranslations(languageCode),
             "ContactUserConfirmationEmail" => GetContactUserConfirmationTranslations(languageCode),
             "ContactSupportNotificationEmail" => GetContactSupportNotificationTranslations(languageCode),
+            "EmailUpdatedConfirmation" => GetEmailUpdatedConfirmationTranslations(languageCode),
             _ => throw new Exception("Template non pris en charge.")
         };
 
@@ -39,6 +40,68 @@ public static class EmailTemplateHelper
 
         return templateSpecific;
     }
+    // Confirmation de changement de l'email
+    private static Dictionary<string, string> GetEmailUpdatedConfirmationTranslations(string lang) =>
+    lang switch
+    {
+        "fr" => new()
+        {
+            { "Subject", "Votre adresse email a été modifiée" },
+            { "EmailTitle", "Confirmation de changement d’adresse email" },
+            { "Greeting", "Bonjour," },
+            { "Intro", "Votre adresse email associée à <strong>[PlatformName]</strong> a été mise à jour avec succès." },
+            { "Instructions", "Pour confirmer ce changement, cliquez sur le bouton ci-dessous :" },
+            { "ValidateButton", "Confirmer mon adresse email" },
+            { "ValidationLink", "[ValidationLink]" }, // remplacé dynamiquement
+            { "OtpInstruction", "Puis, entrez ce code de vérification sur la page de confirmation :" },
+            { "OtpCode", "[OtpCode]" }, // remplacé dynamiquement
+            { "FooterNote", "Ce message a été envoyé automatiquement par <strong>[PlatformName]</strong>. Si vous n’êtes pas à l’origine de ce changement, contactez notre support." },
+            { "Lang", "fr" }
+        },
+        "en" => new()
+        {
+            { "Subject", "Your email address has been updated" },
+            { "EmailTitle", "Email Address Update Confirmation" },
+            { "Greeting", "Hello," },
+            { "Intro", "Your email address associated with <strong>[PlatformName]</strong> has been successfully updated." },
+            { "Instructions", "To confirm this change, click the button below:" },
+            { "ValidateButton", "Confirm my email address" },
+            { "ValidationLink", "[ValidationLink]" },
+            { "OtpInstruction", "Then enter this verification code on the confirmation page:" },
+            { "OtpCode", "[OtpCode]" },
+            { "FooterNote", "This message was sent automatically by <strong>[PlatformName]</strong>. If you did not make this change, please contact our support." },
+            { "Lang", "en" }
+        },
+        "nl" => new()
+        {
+            { "Subject", "Uw e-mailadres is gewijzigd" },
+            { "EmailTitle", "Bevestiging van e-mailadreswijziging" },
+            { "Greeting", "Hallo," },
+            { "Intro", "Uw e-mailadres gekoppeld aan <strong>[PlatformName]</strong> is succesvol bijgewerkt." },
+            { "Instructions", "Klik op de onderstaande knop om deze wijziging te bevestigen:" },
+            { "ValidateButton", "Bevestig mijn e-mailadres" },
+            { "ValidationLink", "[ValidationLink]" },
+            { "OtpInstruction", "Voer vervolgens deze verificatiecode in op de bevestigingspagina:" },
+            { "OtpCode", "[OtpCode]" },
+            { "FooterNote", "Dit bericht is automatisch verzonden door <strong>[PlatformName]</strong>. Als u deze wijziging niet heeft aangebracht, neem dan contact op met onze support." },
+            { "Lang", "nl" }
+        },
+        "de" => new()
+        {
+            { "Subject", "Ihre E-Mail-Adresse wurde geändert" },
+            { "EmailTitle", "Bestätigung der E-Mail-Änderung" },
+            { "Greeting", "Hallo," },
+            { "Intro", "Ihre mit <strong>[PlatformName]</strong> verknüpfte E-Mail-Adresse wurde erfolgreich aktualisiert." },
+            { "Instructions", "Klicken Sie auf die Schaltfläche unten, um diese Änderung zu bestätigen:" },
+            { "ValidateButton", "Meine E-Mail-Adresse bestätigen" },
+            { "ValidationLink", "[ValidationLink]" },
+            { "OtpInstruction", "Geben Sie dann diesen Bestätigungscode auf der Seite ein:" },
+            { "OtpCode", "[OtpCode]" },
+            { "FooterNote", "Diese Nachricht wurde automatisch von <strong>[PlatformName]</strong> gesendet. Wenn Sie diese Änderung nicht vorgenommen haben, kontaktieren Sie bitte unseren Support." },
+            { "Lang", "de" }
+        },
+        _ => throw new Exception("Langue non supportée pour EmailUpdatedConfirmation.")
+    };
 
     // 1️⃣ InvitationEmail
     private static Dictionary<string, string> GetInvitationEmailTemplateTranslations(string lang) =>

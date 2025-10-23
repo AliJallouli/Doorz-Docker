@@ -1,0 +1,110 @@
+<div class="two-section-container">
+  <div class="container left-container">
+    <h3>{{ 'INVITATION_REQUEST.TITLE' | translate }}</h3>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="doorz-vertical-form">
+
+      <!-- Type d'entité -->
+      <app-radio-input
+        [form]="form"
+        [controlName]="'entityTypeName'"
+        [labelKey]="'INVITATION_REQUEST.ENTITY_TYPE_LABEL'"
+        [options]="entityTypeOptions"
+        [submitted]="submitted"
+        [fieldError]="fieldError"
+      ></app-radio-input>
+
+      <!-- Nom de l'entité -->
+      <div class="form-group">
+        <label>
+          {{ 'INVITATION_REQUEST.ENTITY_NAME_LABEL' | translate }}
+          <span class="required">*</span>
+        </label>
+        <input
+          type="text"
+          formControlName="name"
+          class="form-control"
+          [placeholder]="'INVITATION_REQUEST.ENTITY_NAME_PLACEHOLDER' | translate"
+          [ngClass]="{
+      'is-invalid': submitted && (form.get('name')?.invalid || fieldError['name'])
+    }"
+        />
+        <div class="invalid-feedback" *ngIf="submitted && (form.get('name')?.invalid || fieldError['name'])">
+          <div *ngIf="fieldError['name']">
+            {{ fieldError['name'] | translate }}
+          </div>
+          <div *ngIf="form.get('name')?.hasError('required')">
+            {{ 'INVITATION_REQUEST.ENTITY_NAME_REQUIRED' | translate }}
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Email -->
+      <app-email-input
+        [form]="form"
+        [fieldError]="fieldError"
+        emailControlName="invitationEmail"
+        [submitted]="submitted"
+      ></app-email-input>
+
+      <!-- Numéro BCE si Company -->
+      <div *ngIf="form.get('entityTypeName')?.value === 'Company'" class="form-group">
+        <label>
+          {{ 'INVITATION_REQUEST.LABEL.COMPANY_NUMBER' | translate }} <span class="required">*</span>
+        </label>
+        <input
+          type="text"
+          formControlName="companyNumber"
+          class="form-control"
+          [placeholder]="'INVITATION_REQUEST.PLACEHOLDER.COMPANY_NUMBER' | translate"
+          [ngClass]="{
+        'is-invalid': submitted && form.get('companyNumber')?.invalid
+      }"
+        />
+        <div class="invalid-feedback" *ngIf="submitted && form.get('companyNumber')?.invalid">
+          {{ 'INVITATION_REQUEST.COMPANY_NUMBER_REQUIRED' | translate }}
+        </div>
+        <div class="invalid-feedback" *ngIf="form.get('companyNumber')?.errors?.['pattern']">
+          {{ 'INVITATION_REQUEST.COMPANY_NUMBER_PATTERN' | translate }}
+        </div>
+      </div>
+
+      <!-- Type d'institution si Institution -->
+      <div *ngIf="form.get('entityTypeName')?.value === 'Institution'" class="form-group">
+        <label for="institutionTypeId">{{ 'INVITATION_REQUEST.LABEL.INSTITUTION_TYPE' | translate }}</label>
+        <select
+          id="institutionTypeId"
+          formControlName="institutionTypeId"
+          class="doorz-select"
+          [ngClass]="{'is-invalid': submitted && form.get('institutionTypeId')?.invalid}"
+        >
+          <option value="" disabled selected hidden>
+            {{ 'INVITATION_REQUEST.PLACEHOLDER.INSTITUTION_TYPE' | translate }}
+          </option>
+
+          <option *ngFor="let instType of institutionTypes" [ngValue]="instType.institutionTypeId">
+            {{ instType.name }}
+          </option>
+        </select>
+        <div class="invalid-feedback" *ngIf="submitted && form.get('institutionTypeId')?.invalid">
+          {{ 'INVITATION_REQUEST.INSTITUTION_TYPE_REQUIRED' | translate }}
+        </div>
+      </div>
+
+      <!-- Erreur globale -->
+      <div *ngIf="globalError" class="error-message">
+        {{ globalError | translate }}
+      </div>
+
+      <!-- Bouton -->
+      <div class="button-container">
+        <button type="submit" class="btn-submit">
+          {{ 'INVITATION_REQUEST.SUBMIT' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="container right-container">
+    <app-call-to-action [type]="pageType"></app-call-to-action>
+  </div>
+</div>

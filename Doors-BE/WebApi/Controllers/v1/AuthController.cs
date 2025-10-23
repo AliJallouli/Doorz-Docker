@@ -1,11 +1,14 @@
 ﻿
 
+using Application.Configurations;
 using Application.UseCases.Auth.DTOs;
 using Application.UseCases.Auth.UseCases.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using WebApi.Constants;
 using WebApi.Contracts.Responses;
+using WebApi.Utils;
 
 namespace WebApi.Controllers.v1;
 
@@ -18,19 +21,22 @@ public class AuthController : ControllerBase
     private readonly LoginUseCase _loginUseCase;
     private readonly LogoutUseCase _logoutUseCase;
     private readonly RefreshTokenUseCase _refreshTokenUseCase;
+    private readonly AuthSettings _authSettings;
 
     public AuthController(
         LoginUseCase loginUseCase,
         RefreshTokenUseCase refreshTokenUseCase,
         LogoutUseCase logoutUseCase,
         ILogger<AuthController> logger,
-        GetRoleIdByRoleNameANdENtityNameUseCase getRoleIdByRoleNameANdENtityNameUseCase)
+        GetRoleIdByRoleNameANdENtityNameUseCase getRoleIdByRoleNameANdENtityNameUseCase,
+        IOptions<AuthSettings> authSettings)
     {
         _loginUseCase = loginUseCase ?? throw new ArgumentNullException(nameof(loginUseCase));
         _refreshTokenUseCase = refreshTokenUseCase ?? throw new ArgumentNullException(nameof(refreshTokenUseCase));
         _logoutUseCase = logoutUseCase ?? throw new ArgumentNullException(nameof(logoutUseCase));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _getRoleIdByRoleNameANdENtityNameUseCase = getRoleIdByRoleNameANdENtityNameUseCase;
+        _authSettings = authSettings.Value ?? throw new ArgumentNullException(nameof(authSettings));
     }
 
 
@@ -49,17 +55,15 @@ public class AuthController : ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ApiResponse<object>.Fail(
-                ResponseKeys.INVALID_MODEL_STATE,
+                ResponseKeys.InvalidModelState,
                 null
             ));
 
        
 
-        var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault()
-                        ?? HttpContext.Connection.RemoteIpAddress?.ToString()
-                        ?? "0.0.0.0";
-        var userAgent = HttpContext.Request.Headers["User-Agent"].FirstOrDefault()
-                        ?? "Unknown";
+       
+        var ipAddress = HttpContextUtils.ExtractClientIpAddress(Request);
+        var userAgent = HttpContextUtils.ExtractUserAgent(Request);
         var response = await _loginUseCase.ExecuteAsync(request, ipAddress, userAgent);
 
         var cookieOptions = new CookieOptions
@@ -67,7 +71,7 @@ public class AuthController : ControllerBase
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None,
-            Expires = DateTimeOffset.UtcNow.AddDays(30),
+            Expires = DateTimeOffset.UtcNow.AddDays(request.RememberMe ? _authSettings.LongLivedRefreshTokenDays : _authSettings.ShortLivedRefreshTokenDays),
             Path = "/"
         };
 
@@ -79,7 +83,7 @@ public class AuthController : ControllerBase
                 accessToken = response.AccessToken,
                 refreshToken = response.RefreshToken
             },
-            ResponseKeys.LOGIN_SUCCESS
+            ResponseKeys.LoginSuccess
         ));
     }
 
@@ -100,10 +104,9 @@ public class AuthController : ControllerBase
         if (string.IsNullOrWhiteSpace(refreshToken))
             return BadRequest(ApiResponse<object>.Fail("NO_REFRESH_TOKEN", "authCookie"));
 
-        var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault()
-                        ?? HttpContext.Connection.RemoteIpAddress?.ToString()
-                        ?? "0.0.0.0";
-        var userAgent = HttpContext.Request.Headers["User-Agent"].FirstOrDefault() ?? "Unknown";
+
+        var ipAddress = HttpContextUtils.ExtractClientIpAddress(Request);
+        var userAgent = HttpContextUtils.ExtractUserAgent(Request);
 
         var message = await _logoutUseCase.ExecuteAsync(refreshToken, ipAddress, userAgent);
 
@@ -111,7 +114,7 @@ public class AuthController : ControllerBase
 
         return Ok(ApiResponse<object>.Ok(
             new { message },
-            ResponseKeys.LOGOUT_SUCCESS
+            ResponseKeys.LogoutSuccess
         ));
     }
 
@@ -134,27 +137,28 @@ public class AuthController : ControllerBase
         if (string.IsNullOrWhiteSpace(refreshToken))
         {
             return BadRequest(ApiResponse<object>.Fail(
-                ResponseKeys.INVALID_MODEL_STATE,
+                ResponseKeys.InvalidModelState,
                 "refreshToken"
             ));
         }
 
         var dto = new RefreshRequestDto { RefreshToken = refreshToken };
-
+        
         var response = await _refreshTokenUseCase.ExecuteAsync(dto);
+        var durationDays = response.RememberMe ? _authSettings.LongLivedRefreshTokenDays : _authSettings.ShortLivedRefreshTokenDays;
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.None,
-            Expires = DateTimeOffset.UtcNow.AddDays(30),
+            Expires = DateTimeOffset.UtcNow.AddDays(durationDays),
             Path = "/"
         };
         Response.Cookies.Append("authCookie", response.RefreshToken, cookieOptions);
 
         return Ok(ApiResponse<object>.Ok(
             response,
-            ResponseKeys.REFRESH_SUCCESS
+            ResponseKeys.RefreshSuccess
         ));
     }
 
@@ -166,9 +170,9 @@ public class AuthController : ControllerBase
     {
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            return Ok(ApiResponse<object>.Ok(new { IsAuthenticated = true }, ResponseKeys.AUTHENTICATED));
+            return Ok(ApiResponse<object>.Ok(new { IsAuthenticated = true }, ResponseKeys.Authenticated));
         }
-        return Ok(ApiResponse<object>.Ok(new { IsAuthenticated = false }, ResponseKeys.NOT_AUTHENTICATED));
+        return Ok(ApiResponse<object>.Ok(new { IsAuthenticated = false }, ResponseKeys.NotAuthenticated));
     }
 
 
@@ -202,7 +206,7 @@ public class AuthController : ControllerBase
 
         return Ok(ApiResponse<object>.Ok(
             response,
-            ResponseKeys.AUTH_TEST_SUCCESS
+            ResponseKeys.AuthTestSuccess
         ));
     }
 

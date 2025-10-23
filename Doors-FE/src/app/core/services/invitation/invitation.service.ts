@@ -1,13 +1,13 @@
 // src/app/core/services/entity.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import {map, Observable} from 'rxjs';
-import {ApiResponse} from '../../../models/auth.models';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {catchError, Observable, throwError} from 'rxjs';
+import {ApiResponse} from '../../models/auth.models';
 import {
-  RegisterFromInviteRequestDTO,
+  CreateInvitationRequestDto, EntityTypeDto, InvitationRequestDto, PagedResult,
   ValidateInvitationTokenRequestDTO,
   ValidateInvitationTokenResponseDTO
-} from '../../../models/invite.models';
+} from '../../models/invite.models';
 import { environment } from '../../../../environments/environment';
 
 export interface Role {
@@ -32,11 +32,17 @@ export interface EntityType {
 export class InvitationService {
   private readonly apiUrl = environment.apiUrl;
   private readonly baseUrl = `${environment.apiUrl}/invitations`;
+  private readonly adminInvitUrl = `${environment.apiUrl}/admin-invite`;
 
   constructor(private http: HttpClient) {}
 
-  getEntityTypes(): Observable<EntityType[]> {
-    return this.http.get<EntityType[]>(`${this.apiUrl}/entitytypes`);
+  getEntityTypes(): Observable<ApiResponse<EntityTypeDto[]>> {
+    return this.http.get<ApiResponse<EntityTypeDto[]>>(`${this.apiUrl}/entitytypes`).pipe(
+      catchError(error => {
+        console.error('Erreur lors du chargement des types d\'entités:', error);
+        return throwError(() => new Error('Échec du chargement des types d\'entités'));
+      })
+    );
   }
 
   getInstitutionTypes(): Observable<InstitutionType[]> { // Typage ajusté
@@ -68,7 +74,40 @@ validateToken(payload: ValidateInvitationTokenRequestDTO): Observable<ApiRespons
   );
 }
 
+  submitInvitationRequest(playload:CreateInvitationRequestDto): Observable<ApiResponse<string>> {
+    return this.http.post<any>(`${this.baseUrl}/request`, playload);
+  }
 
+
+  getInvitationRequests(
+    page: number = 1,
+    pageSize: number = 4,
+    status?: string,
+    entityTypeName?: string
+  ): Observable<ApiResponse<PagedResult<InvitationRequestDto>>> {
+    let url = `${this.adminInvitUrl}/invitation-requests?page=${page}&pageSize=${pageSize}`;
+    if (status) url += `&status=${encodeURIComponent(status)}`;
+    if (entityTypeName) url += `&entityTypeName=${encodeURIComponent(entityTypeName)}`;
+    return this.http.get<ApiResponse<PagedResult<InvitationRequestDto>>>(url, { withCredentials: true }).pipe(
+      catchError(error => {
+        console.error('Erreur API:', error);
+        return throwError(() => new Error('Échec du chargement des demandes d\'invitation'));
+      })
+    );
+  }
+
+  processInvitationRequest(request: {
+    invitationRequestId: number;
+    action: 'APPROVED' | 'REJECTED';
+    rejectionReason?: string;
+  }): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.adminInvitUrl}/from-request`, request).pipe(
+      catchError(error => {
+        console.error('Erreur lors du traitement de la demande:', error);
+        return throwError(() => new Error('Échec du traitement de la demande'));
+      })
+    );
+  }
 
 
 }

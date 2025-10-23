@@ -1,8 +1,8 @@
 ﻿using Application.UseCases.References.EntityType.UseCase;
-using BackEnd_TI.Utils;
+using WebApi.Utils;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers;
+namespace WebApi.Controllers.v1.References;
 
 [Route("api/v1/roles")]
 [ApiController]
@@ -20,7 +20,7 @@ public class RoleController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(entityTypeName)) return BadRequest("Entity type name is required.");
 
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
 
         var rolesDtos = await _rolesByEntityTypeNameUseCase.ExecuteAsync(entityTypeName, languageCode);
         return Ok(rolesDtos);

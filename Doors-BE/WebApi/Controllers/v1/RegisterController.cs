@@ -1,8 +1,10 @@
-﻿using Application.UseCases.Auth.DTOs;
+﻿using Application.Configurations;
+using Application.UseCases.Auth.DTOs;
 using Application.UseCases.Auth.UseCases.Register;
-using BackEnd_TI.Utils;
+using WebApi.Utils;
 using WebApi.Constants;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using WebApi.Contracts.Responses;
 
 namespace WebApi.Controllers.v1;
@@ -14,11 +16,13 @@ public class RegisterController:ControllerBase
     private readonly RegisterAdminFromInviteUseCase _registerAdminFromInviteUseCase;
     private readonly RegisterColleagueFromInviteUseCase _registerColleagueFromInviteUseCase;
     private readonly RegisterPublicUseCase _registerPublicUseCase;
+    private readonly AuthSettings _authSettings;
 
     public RegisterController(
         RegisterPublicUseCase registerPublicUseCase,
         RegisterAdminFromInviteUseCase registerAdminFromInviteUseCase,
-        RegisterColleagueFromInviteUseCase registerColleagueFromInviteUseCase)
+        RegisterColleagueFromInviteUseCase registerColleagueFromInviteUseCase,
+        IOptions<AuthSettings> authSettings)
     {
         
         _registerPublicUseCase = registerPublicUseCase ?? throw new ArgumentNullException(nameof(registerPublicUseCase));
@@ -27,6 +31,8 @@ public class RegisterController:ControllerBase
         _registerColleagueFromInviteUseCase = registerColleagueFromInviteUseCase ??
                                              throw new ArgumentNullException(
                                                  nameof(registerColleagueFromInviteUseCase));
+        _authSettings = authSettings.Value ?? throw new ArgumentNullException(nameof(authSettings));
+
         
     }
     
@@ -44,19 +50,35 @@ public class RegisterController:ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ApiResponse<object>.Fail(
-                ResponseKeys.INVALID_MODEL_STATE,
+                ResponseKeys.InvalidModelState,
                 null
             ));
-        var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault()
-                        ?? HttpContext.Connection.RemoteIpAddress?.ToString()
-                        ?? "0.0.0.0";
-        var userAgent = HttpContext.Request.Headers["User-Agent"].FirstOrDefault()
-                        ?? "Unknown";
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
-        var response = await _registerPublicUseCase.ExecuteAsync(publicRequest, ipAddress, userAgent,languageCode);
+
+        
+        var ipAddress = HttpContextUtils.ExtractClientIpAddress(Request);
+        var userAgent = HttpContextUtils.ExtractUserAgent(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
+        var response = await _registerPublicUseCase.ExecuteAsync(publicRequest, ipAddress, userAgent, languageCode);
+
+        // Définir le cookie authCookie
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddDays( _authSettings.ShortLivedRefreshTokenDays),
+            Path = "/"
+        };
+
+        HttpContext.Response.Cookies.Append("authCookie", response.RefreshToken, cookieOptions);
+
         return Ok(ApiResponse<object>.Ok(
-            response,
-            ResponseKeys.REGISTRATION_SUCCESS
+            new
+            {
+                accessToken = response.AccessToken,
+                refreshToken = response.RefreshToken
+            },
+            ResponseKeys.RegistrationSuccess
         ));
     }
 
@@ -76,21 +98,35 @@ public class RegisterController:ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ApiResponse<object>.Fail(
-                ResponseKeys.INVALID_MODEL_STATE,
+                ResponseKeys.InvalidModelState,
                 null
             ));
-        var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault()
-                        ?? HttpContext.Connection.RemoteIpAddress?.ToString()
-                        ?? "0.0.0.0";
-        var userAgent = HttpContext.Request.Headers["User-Agent"].FirstOrDefault()
-                        ?? "Unknown";
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
+        
+        var ipAddress = HttpContextUtils.ExtractClientIpAddress(Request);
+        var userAgent = HttpContextUtils.ExtractUserAgent(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
 
         var response = await _registerAdminFromInviteUseCase.ExecuteAsync(request, ipAddress, userAgent, languageCode);
 
+        // Définir le cookie authCookie
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddDays( _authSettings.ShortLivedRefreshTokenDays),
+            Path = "/"
+        };
+
+        HttpContext.Response.Cookies.Append("authCookie", response.RefreshToken, cookieOptions);
+
         return Ok(ApiResponse<object>.Ok(
-            response,
-            ResponseKeys.REGISTRATION_SUCCESS
+            new
+            {
+                accessToken = response.AccessToken,
+                refreshToken = response.RefreshToken
+            },
+            ResponseKeys.RegistrationSuccess
         ));
     }
 
@@ -111,19 +147,33 @@ public class RegisterController:ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ApiResponse<object>.Fail(
-                ResponseKeys.INVALID_MODEL_STATE,
+                ResponseKeys.InvalidModelState,
                 null
             ));
-        var ipAddress = HttpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault()
-                        ?? HttpContext.Connection.RemoteIpAddress?.ToString()
-                        ?? "0.0.0.0";
-        var userAgent = HttpContext.Request.Headers["User-Agent"].FirstOrDefault()
-                        ?? "Unknown";
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
+      
+        var ipAddress = HttpContextUtils.ExtractClientIpAddress(Request);
+        var userAgent = HttpContextUtils.ExtractUserAgent(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
         var response = await _registerColleagueFromInviteUseCase.ExecuteAsync(request, ipAddress, userAgent, languageCode);
+        // Définir le cookie authCookie
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddDays( _authSettings.ShortLivedRefreshTokenDays),
+            Path = "/"
+        };
+
+        HttpContext.Response.Cookies.Append("authCookie", response.RefreshToken, cookieOptions);
+
         return Ok(ApiResponse<object>.Ok(
-            response,
-            ResponseKeys.REGISTRATION_SUCCESS
+            new
+            {
+                accessToken = response.AccessToken,
+                refreshToken = response.RefreshToken
+            },
+            ResponseKeys.RegistrationSuccess
         ));
     }
 

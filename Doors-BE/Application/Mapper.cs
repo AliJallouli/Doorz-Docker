@@ -1,6 +1,7 @@
 ﻿
 using Application.UseCases.UsersSite.DTOs;
 using Application.UseCases.Auth.DTOs;
+using Application.UseCases.Invitation.Request.DTOs;
 using Application.UseCases.Invitation.SuperAdmin.DTOs;
 using Application.UseCases.Legals.DTOs;
 using Application.UseCases.References.EntityType.DTOs;
@@ -25,9 +26,63 @@ public class Mapper : Profile
         // Mapping pour Institution -> InstitutionDto
         CreateMap<Institution, InstitutionDto>()
             .ForMember(dest => dest.Role, opt => opt.Ignore());
+        
+        // Mapping pour Association -> AssociationDto
+        CreateMap<Association, AssociationDto>()
+            .ForMember(dest => dest.Role, opt => opt.Ignore());
+        
+        // Mapping pour StudentMovement -> StudentMovementDto
+        CreateMap<StudentMovement, StudentMovementDto>()
+            .ForMember(dest => dest.Role, opt => opt.Ignore());
+        
+        // Mapping pour StudentMovement -> StudentMovementDto
+        CreateMap<PublicOrganization, PublicOrganizationDto>()
+            .ForMember(dest => dest.Role, opt => opt.Ignore());
 
         // Mapping pour Role -> RoleDto
         CreateMap<Role, RoleDto>();
+
+     CreateMap<InvitationRequest, InvitationRequestDto>()
+            .ForMember(dest => dest.InvitationRequestId, opt => opt.MapFrom(src => src.InvitationRequestId))
+            .ForMember(dest => dest.EntityTypeId, opt => opt.MapFrom(src => src.EntityTypeId))
+            .ForMember(dest => dest.EntityTypeName, opt => opt.MapFrom(src => src.EntityType.Name)) // Mappe EntityType.Name
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.InvitationEmail, opt => opt.MapFrom(src => src.InvitationEmail))
+            .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(src => src.CompanyNumber))
+            .ForMember(dest => dest.InstitutionTypeId, opt => opt.MapFrom(src => src.InstitutionTypeId))
+            .ForMember(dest => dest.InstitutionTypeName, opt => opt.MapFrom(src => src.InstitutionType != null ? src.InstitutionType.Name : null)) // Mappe InstitutionType.Name si non null
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+            .ForMember(dest => dest.RejectionReason, opt => opt.MapFrom(src => src.RejectionReason))
+            .ForMember(dest => dest.SubmittedIp, opt => opt.MapFrom(src => src.SubmittedIp))
+            .ForMember(dest => dest.UserAgent, opt => opt.MapFrom(src => src.UserAgent))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.ToString("o")))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt.ToString("o")));
+
+        // Autres mappages existants
+        CreateMap<InvitationRequest, CreateCompanyDto>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.InvitationEmail, opt => opt.MapFrom(src => src.InvitationEmail))
+            .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(src => src.CompanyNumber));
+
+
+        CreateMap<InvitationRequest, CreateAssociationDto>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.InvitationEmail, opt => opt.MapFrom(src => src.InvitationEmail));
+           
+
+        CreateMap<InvitationRequest, CreateInstitutionDto>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.InvitationEmail, opt => opt.MapFrom(src => src.InvitationEmail))
+            .ForMember(dest => dest.InstitutionTypeId, opt => opt.MapFrom(src => src.InstitutionTypeId));
+
+        CreateMap<InvitationRequest, CreateStudentMovementDto>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.InvitationEmail, opt => opt.MapFrom(src => src.InvitationEmail));
+
+        CreateMap<InvitationRequest, CreatePublicOrganizationDto>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.InvitationEmail, opt => opt.MapFrom(src => src.InvitationEmail));
+    
 
         // Mapping de RegisterPublicRequestDto vers Users
         CreateMap<RegisterPublicRequestDto, Users>()
@@ -36,6 +91,11 @@ public class Mapper : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
             .ForMember(dest => dest.IsVerified, opt => opt.MapFrom(_ => false));
+        
+        CreateMap<CreateInvitationRequestDto, InvitationRequest>()
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => "PENDING"))
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore()); 
 
         // Mapping pour Student
         CreateMap<RegisterPublicRequestDto, Student>()
@@ -144,6 +204,10 @@ public class Mapper : Profile
             .ForMember(dest => dest.LanguageId, opt => opt.MapFrom(src => src.LanguageId))
             .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Code))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
+        
+        CreateMap<SessionEvent, SessionDto>()
+            .ForMember(dest => dest.UserAgent, opt => opt.MapFrom(src => src.UserAgent != null ? src.UserAgent.UserAgentValue : null));
+
 
     }
 }

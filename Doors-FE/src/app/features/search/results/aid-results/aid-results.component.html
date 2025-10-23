@@ -1,0 +1,11 @@
+<div class="results-grid">
+  <div *ngFor="let aid of results" class="result-card">
+    <h4>{{ aid.title }}</h4>
+    <p class="provider-location">{{ aid.provider }} – {{ aid.location }}</p>
+    <p class="amount" *ngIf="aid.amount">{{ aid.amount | currency:aid.currency }}</p>
+    <p class="description" *ngIf="aid.description">{{ aid.description | slice:0:100 }}...</p>
+    <p class="deadline" *ngIf="aid.applicationDeadline">
+      Candidature avant le {{ aid.applicationDeadline | date:'mediumDate' }}
+    </p>
+  </div>
+</div>

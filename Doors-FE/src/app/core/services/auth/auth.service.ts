@@ -1,24 +1,25 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpBackend, HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
+import {NavigationEnd, Router} from '@angular/router';
 import {
   BehaviorSubject,
   catchError,
   delay,
-  EMPTY,
+  EMPTY, filter,
   finalize,
   map,
   Observable,
   of,
   shareReplay,
-  switchMap,
+  switchMap, take,
   tap,
   throwError
 } from 'rxjs';
-import { ApiResponse, LoginRequest, LoginResponse } from '../../../models/auth.models';
+import { ApiResponse, LoginRequest, LoginResponse } from '../../models/auth.models';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import {LoggerService} from '../logger/logger.service';
+import {UserService} from '../user/user.service';
 
 const API_BASE_URL = `${environment.apiUrl}/auth`;
 const VALID_ROLES = ['student', 'landlord', 'company', 'institution', 'superadmin'] as const;
@@ -34,40 +35,51 @@ export class AuthService {
   private readonly loginUrl = `${API_BASE_URL}/login`;
   private readonly logoutUrl = `${API_BASE_URL}/logout`;
   private readonly refreshUrl = `${API_BASE_URL}/refresh`;
-  private readonly jwtHelper = new JwtHelperService();
 
+  private readonly jwtHelper = new JwtHelperService();
   private isAuthenticated$ = new BehaviorSubject<boolean>(false);
   private currentRole$ = new BehaviorSubject<Role | null>(null);
   private currentSubRole$ = new BehaviorSubject<SubRole>(null);
+
   private refreshTokenTimeout: any;
   private refreshTokenInProgress$: Observable<LoginResponse> | null = null;
   private authReady$ = new BehaviorSubject<boolean>(false);
   public authStateReady$ = this.authReady$.asObservable();
   private suppressRedirectOnce = false;
-  private readonly RECENT_LOGOUT_KEY = 'recentLogout';
-
-  // Propriétés en mémoire
-  private lastPrivateRoute: string | null = null;
-  private recentLogout: boolean = false;
+  private recentLogout: boolean = false; // Géré en mémoire
   private lastRefresh: number = 0;
   private authInitInProgress: boolean = true;
+  private pendingRoute: string | null = null; // Route demandée temporaire
+  private pendingLogin: LoginResponse | null = null;
 
   private accessToken: string | null = null;
   private authHttp: HttpClient;
 
   constructor(
+    private readonly userService: UserService,
     private readonly router: Router,
     httpBackend: HttpBackend,
     private readonly logger: LoggerService,
   ) {
     this.authHttp = new HttpClient(httpBackend);
-    // Restaurer recentLogout depuis sessionStorage au démarrage
-    this.recentLogout = sessionStorage.getItem(this.RECENT_LOGOUT_KEY) === 'true';
+
+    if (!document.cookie || document.cookie.trim() === '') {
+      this.logger.log('🔧 Pas de cookies → recentLogout à false');
+      this.recentLogout = false;
+    }
     this.logger.log('AuthService initialized, recentLogout:', this.recentLogout);
     this.initializeAuthState();
     this.setupVisibilityListener();
     this.setupBroadcastListener();
   }
+
+  // Nouvelle méthode pour stocker la route demandée
+  public setPendingRoute(route: string): void {
+    this.pendingRoute = route;
+    this.logger.log('📍 Route en attente enregistrée :', route);
+  }
+
+
 
   private setupBroadcastListener(): void {
     this.broadcastChannel.onmessage = (event) => {
@@ -76,12 +88,13 @@ export class AuthService {
 
       if (data === 'logout') {
         this.logger.log('📡 Déconnexion détectée dans un autre onglet');
-        this.recentLogout = true; // Marquer le logout dans cet onglet
-        sessionStorage.setItem(this.RECENT_LOGOUT_KEY, 'true'); // Persister
-        this.clearAuthState(false, false); // Ne pas rediffuser logout
-        this.logger.log('🔁 Forcer la redirection vers / dans cet onglet');
-        this.router.navigate(['/']).catch(err => this.logger.error('Navigation error:', err));
-      } else if (data?.type === 'login') {
+        this.recentLogout = true;
+        this.clearAuthState(false, false);
+        // Ne pas rediriger automatiquement, laisser la logique de Visibilité gérer
+        return;
+      }
+
+      if (data?.type === 'login') {
         this.logger.log('📡 Connexion détectée dans un autre onglet, synchronisation...');
         const receivedToken = data.token;
         if (receivedToken && !this.jwtHelper.isTokenExpired(receivedToken)) {
@@ -90,44 +103,64 @@ export class AuthService {
             accessToken: receivedToken,
             refreshToken: ''
           };
-          this.handleLoginSuccess(loginResponse, false);
-          this.authReady$.next(true);
+          if (document.visibilityState === 'visible') {
+            this.logger.log('✅ Onglet visible, traitement immédiat');
+            this.handleLoginSuccess(loginResponse, false);
+            this.authReady$.next(true);
+          } else {
+            this.logger.log('ℹ Non visible, stockage du jeton');
+            this.accessToken = receivedToken;
+            this.isAuthenticated$.next(true);
+            const { role, subRole } = this.extractRoleFromToken(receivedToken);
+            this.currentRole$.next(role);
+            this.currentSubRole$.next(subRole);
+            this.authReady$.next(true);
+            this.pendingLogin = loginResponse;
+            this.logger.log('🔄 Connexion en attente définie:', loginResponse);
+          }
         } else {
-          this.logger.warn('⚠️ Token invalide ou absent, vérification backend');
-          this.refreshToken().subscribe({
-            next: () => this.logger.log('✅ État synchronisé après login broadcast'),
-            error: () => {
-              this.logger.warn('❌ Échec de synchronisation, nettoyage');
-              this.clearAuthState(true, false);
-            }
-          });
+          this.logger.warn('⚠️ Token invalide ou absent');
+          if (document.visibilityState === 'visible') {
+            this.refreshToken().subscribe({
+              next: () => this.logger.log('✅ État synchronisé'),
+              error: () => {
+                this.logger.warn('❌ Échec de synchronisation');
+                this.clearAuthState(false, false);
+              }
+            });
+          } else {
+            this.logger.log('ℹ Non visible, attente de visibilité');
+            this.isAuthenticated$.next(false);
+          }
         }
       } else if (data === 'refresh') {
-        this.logger.log('📡 Rafraîchissement détecté dans un autre onglet');
+        this.logger.log('📡 Rafraîchissement détecté');
         const token = this.getToken();
         if (token && !this.jwtHelper.isTokenExpired(token)) {
-          this.logger.log('✅ Token local valide, pas de rafraîchissement nécessaire');
+          this.logger.log('✅ Token local valide');
           this.authReady$.next(true);
           return;
         }
-        this.logger.log('🔄 Token expiré ou absent, tentative de rafraîchissement');
-        this.refreshToken().subscribe({
-          next: () => this.logger.log('✅ Rafraîchissement réussi après broadcast'),
-          error: () => {
-            this.logger.warn('❌ Échec du rafraîchissement, nettoyage');
-            this.clearAuthState(true, false);
-          }
-        });
+        if (document.visibilityState === 'visible') {
+          this.refreshToken().subscribe({
+            next: () => this.logger.log('✅ Rafraîchissement réussi'),
+            error: () => {
+              this.logger.warn('❌ Échec du rafraîchissement');
+              this.clearAuthState(false, false);
+            }
+          });
+        } else {
+          this.logger.log('ℹ Non visible, attente de visibilité');
+        }
       } else {
-        this.logger.warn('⚠️ Message BroadcastChannel inconnu:', data);
+        this.logger.warn('⚠️ Message inconnu:', data);
       }
     };
   }
 
-
-
   checkForSession(): Observable<boolean> {
     this.logger.log('🔍 Envoi de la requête /api/check-session avec withCredentials: true');
+    this.logger.log('Current router URL:', this.router.url);
     return this.authHttp.get<ApiResponse<{ isAuthenticated?: boolean; IsAuthenticated?: boolean }>>(
       `${API_BASE_URL}/check-session`,
       { withCredentials: true }
@@ -146,7 +179,13 @@ export class AuthService {
         return false;
       }),
       catchError((error) => {
-        this.logger.error('❌ Erreur lors de la vérification de session:', error);
+        this.logger.error('❌ Erreur lors de la vérification de session:', {
+          status: error.status,
+          statusText: error.statusText,
+          message: error.message,
+          error: error.error,
+          routerUrl: this.router.url
+        });
         if (error?.error?.errorKey === 'INTERNAL_SERVER_ERROR') {
           this.logger.warn('⛔ Erreur serveur interne détectée');
           return throwError(() => new Error('INTERNAL_SERVER_ERROR'));
@@ -158,33 +197,59 @@ export class AuthService {
   }
 
   private initializeAuthState(): void {
-    this.logger.log(' Initialisation de l’état d’authentification...');
-    this.logger.log('Cookies actuels (peut être vide si HttpOnly):', document.cookie);
+    this.logger.log('🔄 Initialisation de l’état d’authentification...');
+    this.logger.log('Cookies actuels:', document.cookie);
+    this.logger.log('recentLogout:', this.recentLogout);
+    this.logger.log('Token local:', this.getToken());
+    this.logger.log('Current router URL:', this.router.url);
 
     this.authInitInProgress = true;
 
-    if (this.recentLogout) {
-      this.logger.log('ℹ️ Déconnexion récente détectée, initialisation sans rafraîchissement');
-      this.clearAuthState(false, false);
-      this.authReady$.next(true);
-      this.authInitInProgress = false;
-      return;
-    }
+    // Réinitialiser complètement l’état
+    this.isAuthenticated$.next(false);
+    this.currentRole$.next(null);
+    this.currentSubRole$.next(null);
+    this.accessToken = null;
+    this.pendingLogin = null;
+    this.recentLogout = false; // Réinitialiser recentLogout
+    this.pendingRoute = null;
 
-    // Tenter directement un rafraîchissement du token
-    this.refreshToken().pipe(
-      tap(() => this.logger.log('✅ Rafraîchissement initial réussi')),
-      catchError((err) => {
-        this.logger.warn('❌ Échec du rafraîchissement initial:', err);
-        this.clearAuthState(false, false);
-        return of(null);
-      }),
-      finalize(() => {
-        this.logger.log('✅ Initialisation terminée, authStateReady TRUE');
-        this.authInitInProgress = false;
+    // Attendre que le routeur ait résolu la route initiale
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      take(1)
+    ).subscribe(() => {
+      this.logger.log('✅ Route initiale résolue:', this.router.url);
+
+      const token = this.getToken();
+      if (token && !this.jwtHelper.isTokenExpired(token)) {
+        this.logger.log('✅ Token local valide, restauration immédiate');
+        const { role, subRole } = this.extractRoleFromToken(token);
+        this.isAuthenticated$.next(true);
+        this.currentRole$.next(role);
+        this.currentSubRole$.next(subRole);
+        this.userService.loadUser();
+        this.scheduleTokenRefresh(token);
         this.authReady$.next(true);
-      })
-    ).subscribe();
+        this.authInitInProgress = false;
+        return;
+      }
+
+      this.logger.log('🔄 Tentative de rafraîchissement du token');
+      this.refreshToken().pipe(
+        tap((response) => this.logger.log('✅ Rafraîchissement initial réussi:', response)),
+        catchError((err) => {
+          this.logger.warn('❌ Échec du rafraîchissement initial:', err);
+          this.clearAuthState(false, false);
+          return of(null);
+        }),
+        finalize(() => {
+          this.logger.log('✅ Initialisation terminée, authStateReady TRUE');
+          this.authInitInProgress = false;
+          this.authReady$.next(true);
+        })
+      ).subscribe();
+    });
   }
 
   private setupVisibilityListener(): void {
@@ -192,11 +257,34 @@ export class AuthService {
       if (document.visibilityState !== 'visible') return;
 
       this.logger.log('👁️ Onglet redevient actif → vérification de l’état');
+      console.log('Onglet redevient actif, route actuelle:', this.router.url);
+
+      const currentRoute = this.router.url.split('?')[0];
+      const normalizedRoute = currentRoute.replace(/\/[^\/]+$/, '/:section').replace(/\/[^\/]+$/, '/:roleName');
+
+      // Vérifier si une connexion est en attente
+      if (this.pendingLogin) {
+        this.logger.log('🔄 Traitement d’une connexion en attente');
+        this.handleLoginSuccess(this.pendingLogin, false);
+        this.pendingLogin = null;
+        return;
+      }
+
+      // En mode déconnecté sur une route publique, ne rien faire
+      if (!this.isAuthenticated$.value && this.isPublicRoute(currentRoute, normalizedRoute)) {
+        this.logger.log('ℹ️ Mode déconnecté sur une route publique, aucune action nécessaire');
+        return;
+      }
 
       if (this.recentLogout) {
-        this.logger.log('ℹ️ Déconnexion récente, redirection vers /');
+        this.logger.log('ℹ️ Déconnexion récente détectée');
         this.clearAuthState(false, false);
-        this.router.navigate(['/']).catch(err => this.logger.error('Navigation error:', err));
+        if (!this.isPublicRoute(currentRoute, normalizedRoute)) {
+          this.logger.log('🚪 Redirection vers / depuis une route non publique');
+          this.router.navigate(['/']).catch(err => this.logger.error('Navigation error:', err));
+        } else {
+          this.logger.log('ℹ️ Déconnexion sur une route publique, pas de redirection');
+        }
         return;
       }
 
@@ -205,21 +293,57 @@ export class AuthService {
         this.logger.log('✅ Token local valide, restauration de l’état');
         this.isAuthenticated$.next(true);
         this.authReady$.next(true);
+        const { role, subRole } = this.extractRoleFromToken(token);
+        this.currentRole$.next(role);
+        this.currentSubRole$.next(subRole);
+
+        this.userService.loadUser();
+        this.logger.log('📤 Chargement des données utilisateur déclenché');
+
+        if (!this.isPublicRoute(currentRoute, normalizedRoute)) {
+          this.logger.log('ℹ️ Connecté sur une route privée, pas de redirection :', currentRoute);
+          return;
+        }
+
+        if (this.isPublicRoute(currentRoute, normalizedRoute) && currentRoute !== '/login' && currentRoute !== '/') {
+          this.logger.log('ℹ️ Connecté sur une route publique, pas de redirection :', currentRoute);
+          return;
+        }
+
+        if (role && (currentRoute === '/login' || currentRoute === '/')) {
+          this.logger.log('🔁 Redirection vers la page d’accueil pour le rôle :', role);
+          this.redirectToHome(role);
+        }
         return;
       }
 
-      this.logger.log('🔄 Token expiré ou absent, tentative de rafraîchissement');
-      this.refreshToken().subscribe({
-        next: () => this.logger.log('✅ Rafraîchissement réussi après retour visibilité'),
+      this.logger.log('🔄 Vérification de session pour synchronisation');
+      this.checkForSession().subscribe({
+        next: (isAuthenticated) => {
+          if (isAuthenticated) {
+            this.logger.log('✅ Session active détectée, tentative de rafraîchissement');
+            this.refreshToken().subscribe({
+              next: () => this.logger.log('✅ Rafraîchissement réussi'),
+              error: () => {
+                this.logger.warn('❌ Échec du rafraîchissement');
+                this.clearAuthState(false, false);
+              }
+            });
+          } else {
+            this.logger.log('ℹ️ Aucune session active, réinitialisation');
+            this.isAuthenticated$.next(false);
+            this.authReady$.next(true);
+          }
+        },
         error: () => {
-          this.logger.warn('❌ Échec du rafraîchissement, nettoyage');
-          this.clearAuthState(true);
+          this.logger.warn('❌ Échec de la vérification de session');
+          this.clearAuthState(false, false);
         }
       });
     });
   }
 
-  login(email: string, password: string, retryCount = 0): Observable<LoginResponse> {
+  login(email: string, password: string,rememberMe :boolean, retryCount = 0): Observable<LoginResponse> {
     const MAX_RETRIES = 1;
     if (!email || !password) {
       return throwError(() => ({
@@ -229,7 +353,7 @@ export class AuthService {
       }));
     }
 
-    const request: LoginRequest = { Email: email, Password: password };
+    const request: LoginRequest = { Email: email, Password: password,RememberMe : rememberMe };
     this.logger.log('📤 Tentative de connexion :', { email, retryCount });
 
     return this.authHttp.post<ApiResponse<LoginResponse>>(this.loginUrl, request, { withCredentials: true }).pipe(
@@ -254,7 +378,7 @@ export class AuthService {
           this.logger.warn('⚠️ Déjà authentifié, tentative de déconnexion et reconnexion...');
           return this.logout().pipe(
             tap(() => this.logger.log('🔁 Déconnexion effectuée, nouvelle tentative de connexion')),
-            switchMap(() => this.login(email, password, retryCount + 1))
+            switchMap(() => this.login(email, password,rememberMe, retryCount + 1))
           );
         }
 
@@ -267,7 +391,20 @@ export class AuthService {
       }),
       catchError((error: any) => {
         this.logger.error('❌ Erreur de connexion :', { error, retryCount, cookies: document.cookie });
-        return throwError(() => error);
+        this.logger.log(error.error.error.key);
+
+        const backendError = error?.error?.error || error?.error || error;
+
+        const parsed = {
+          key: backendError?.key || 'UnknownError',
+          message: backendError?.key || 'Erreur inconnue',
+          field: backendError?.field || null,
+          extraData: backendError?.extraData || null,
+          httpStatus: error.status || null
+        };
+
+        this.logger.error('❌ Erreur de connexion  :', parsed);
+        return throwError(() => parsed);
       })
     );
   }
@@ -281,12 +418,16 @@ export class AuthService {
       '/register/public/:roleName', '/confirm-email',
       '/request-reset-password', '/reset-password', '/contact'
     ];
-    return publicRoutes.includes(route) || publicRoutes.includes(normalized);
+    const isPublic = publicRoutes.includes(route) || publicRoutes.includes(normalized);
+    this.logger.log(`🔍 Vérification isPublicRoute: route=${route}, normalized=${normalized}, isPublic=${isPublic}`);
+    return isPublic;
   }
 
   refreshToken(): Observable<LoginResponse> {
     this.logger.log('🔄 Tentative de rafraîchissement du token...');
     this.logger.log('Cookies actuels:', document.cookie);
+    this.logger.log('recentLogout:', this.recentLogout);
+    this.logger.log('isAuthenticated:', this.isAuthenticated$.value);
 
     if (this.recentLogout) {
       this.logger.log('🚫 Déconnexion récente, aucun rafraîchissement');
@@ -310,13 +451,15 @@ export class AuthService {
       return this.refreshTokenInProgress$;
     }
 
-    if (document.visibilityState !== 'visible') {
+    // Supprimer la restriction de visibilité pour l'initialisation
+    if (document.visibilityState !== 'visible' && !this.authInitInProgress) {
       this.logger.log('🚫 Onglet non actif — report du rafraîchissement');
       return EMPTY;
     }
 
     const attemptRefresh = (retryCount = 0, maxRetries = 2): Observable<LoginResponse> => {
       const startTime = Date.now();
+      this.logger.log(`🔄 Envoi de la requête /refresh, tentative ${retryCount + 1}/${maxRetries}`);
       return this.authHttp.post<ApiResponse<LoginResponse>>(
         this.refreshUrl,
         {},
@@ -325,12 +468,13 @@ export class AuthService {
         tap(() => this.logger.log(`🔄 Requête /refresh terminée en ${Date.now() - startTime}ms`)),
         map(response => {
           if (!response.data?.accessToken) {
+            this.logger.warn('❌ Aucun token d’accès retourné');
             throw new Error('Aucun token d’accès retourné');
           }
           return response.data;
         }),
         tap(loginResponse => {
-          this.logger.log('✅ Token rafraîchi avec succès');
+          this.logger.log('✅ Token rafraîchi avec succès:', loginResponse);
           this.handleLoginSuccess(loginResponse, false);
           this.lastRefresh = Date.now();
           this.broadcastChannel.postMessage('refresh');
@@ -341,7 +485,8 @@ export class AuthService {
             statusText: error.statusText,
             message: error.message,
             error: error.error,
-            cookies: document.cookie
+            cookies: document.cookie,
+            retryCount
           });
           if (error.status === 0) {
             this.logger.warn('🔐 Erreur CORS ou serveur inaccessible');
@@ -370,14 +515,13 @@ export class AuthService {
             this.logger.warn('🔐 Requête de rafraîchissement invalide:', error.error);
             if (error.error?.key === 'NO_REFRESH_TOKEN' || error.error?.key === 'INVALID_MODEL_STATE') {
               this.logger.log('ℹ️ Aucun refresh token, état non authentifié');
-              this.clearAuthState(false);
+              this.clearAuthState(false, false);
               return throwError(() => ({
                 key: 'NO_REFRESH_TOKEN',
                 message: 'Aucune session active'
               }));
             }
-
-            this.clearAuthState(false);
+            this.clearAuthState(false, false);
             return throwError(() => ({
               key: 'REQUETE_INVALIDE',
               message: 'Requête de rafraîchissement invalide - veuillez vous reconnecter'
@@ -400,15 +544,13 @@ export class AuthService {
     this.refreshTokenInProgress$ = attemptRefresh();
     return this.refreshTokenInProgress$;
   }
-
   logout(): Observable<void> {
-    this.logger.log(' Tentative de déconnexion...');
+    this.logger.log('📴 Tentative de déconnexion...');
     this.logger.log('Cookies actuels:', document.cookie);
     return this.authHttp.post<void>(this.logoutUrl, {}, { withCredentials: true }).pipe(
       tap(() => {
         this.logger.log('🔁 Déconnexion effectuée');
         this.recentLogout = true;
-        sessionStorage.setItem(this.RECENT_LOGOUT_KEY, 'true');
         this.clearAuthState(true, true);
         this.router.navigate(['/']).catch(err => this.logger.error('Navigation error:', err));
       }),
@@ -421,14 +563,12 @@ export class AuthService {
           cookies: document.cookie
         });
         this.recentLogout = true;
-        sessionStorage.setItem(this.RECENT_LOGOUT_KEY, 'true');
         this.clearAuthState(true, true);
         this.router.navigate(['/']).catch(err => this.logger.error('Navigation error:', err));
         return throwError(() => error);
       })
     );
   }
-
   public handleLoginSuccess(response: LoginResponse, sendBroadcast: boolean = true): void {
     if (!response.accessToken) {
       this.logger.warn('Aucun accessToken reçu');
@@ -441,36 +581,72 @@ export class AuthService {
     this.currentRole$.next(role);
     this.currentSubRole$.next(subRole);
 
+    this.userService.loadUser();
+    this.logger.log('📤 Chargement des données utilisateur déclenché');
+
     this.recentLogout = false;
-    sessionStorage.removeItem(this.RECENT_LOGOUT_KEY);
+    this.logger.log('🗑️ recentLogout réinitialisé');
 
     this.scheduleTokenRefresh(response.accessToken);
 
     this.logger.log('✅ Connexion réussie, cookies actuels :', document.cookie);
-    this.logger.log('🚪 Redirection vers la page d’accueil pour le rôle :', role);
+    this.logger.log('Rôle:', role, 'Sub-rôle:', subRole);
+    this.logger.log('sendBroadcast:', sendBroadcast, 'suppressRedirectOnce:', this.suppressRedirectOnce);
+
     if (sendBroadcast) {
-      this.logger.log('📡 Diffusion de l’événement login avec token');
+      this.logger.log('📡 Diffusion de l’événement login avec token:', response.accessToken);
       this.broadcastChannel.postMessage({ type: 'login', token: response.accessToken });
     }
     this.authReady$.next(true);
     this.suppressRedirectOnce = true;
 
     const currentUrlTree = this.router.parseUrl(this.router.url);
-    const returnUrl = currentUrlTree.queryParams['returnUrl'];
+    const returnUrl = currentUrlTree.queryParams['returnUrl'] || this.pendingRoute;
+
+    this.logger.log('Current route:', this.router.url, 'Return URL:', returnUrl, 'Pending route:', this.pendingRoute);
+
+    const currentRoute = this.router.url.split('?')[0];
+    const normalizedRoute = currentRoute.replace(/\/[^\/]+$/, '/:section').replace(/\/[^\/]+$/, '/:roleName');
+    this.logger.log('🔍 Route actuelle:', currentRoute, 'Normalisée:', normalizedRoute, 'isPublic:', this.isPublicRoute(currentRoute, normalizedRoute));
 
     if (returnUrl) {
-      this.logger.log('🔁 Redirection vers returnUrl depuis l’URL :', returnUrl);
-      this.router.navigateByUrl(returnUrl).catch(err => this.logger.error('Navigation error:', err));
+      this.logger.log('🔁 Redirection vers returnUrl :', returnUrl);
+      this.router.navigateByUrl(returnUrl).then(success => {
+        this.logger.log(success ? '✅ Navigation réussie vers returnUrl' : '⚠️ Échec de navigation vers returnUrl');
+      }).catch(err => this.logger.error('❌ Erreur de navigation vers returnUrl:', err));
+      this.pendingRoute = null;
       return;
     }
 
-    const lastRoute = this.getLastPrivateRoute();
-    if (lastRoute && !this.isPublicRoute(lastRoute, lastRoute)) {
-      this.logger.log('🔁 Redirection vers la dernière route privée :', lastRoute);
-      this.router.navigateByUrl(lastRoute).catch(err => this.logger.error('Navigation error:', err));
-    } else {
-      this.redirectToHome(role);
+    if (currentRoute === '/confirm-email' && this.router.url.includes('token')) {
+      this.logger.log('ℹ️ Route confirm-email avec token détectée, pas de redirection');
+      this.pendingRoute = null;
+      return;
     }
+
+    if (currentRoute === '/login') {
+      this.logger.log('🔁 Connexion depuis /login, redirection vers la page d’accueil pour le rôle :', role);
+      this.redirectToHome(role);
+      this.pendingRoute = null;
+      return;
+    }
+
+    if (this.isPublicRoute(currentRoute, normalizedRoute) && currentRoute !== '/' && currentRoute !== '/login') {
+      this.logger.log('ℹ️ Rechargement ou rafraîchissement sur une route publique, pas de redirection :', currentRoute);
+      this.pendingRoute = null;
+      return;
+    }
+
+    if (!sendBroadcast && this.isPublicRoute(currentRoute, normalizedRoute)) {
+      this.logger.log('🔁 Synchronisation via BroadcastChannel, redirection vers la page d’accueil pour le rôle :', role);
+      this.redirectToHome(role);
+      this.pendingRoute = null;
+      return;
+    }
+
+    this.logger.log('🔁 Redirection vers la page d’accueil pour le rôle :', role);
+    this.redirectToHome(role);
+    this.pendingRoute = null;
   }
 
   public getToken(): string | null {
@@ -506,15 +682,12 @@ export class AuthService {
   public updateLastPrivateRoute(route: string): void {
     const isPublic = this.isPublicRoute(route, route);
     if (!isPublic) {
-      this.lastPrivateRoute = route;
     }
   }
 
-  public getLastPrivateRoute(): string | null {
-    return this.lastPrivateRoute;
-  }
 
-  clearAuthState(shouldRedirect: boolean = true, broadcastLogout: boolean = true): void {
+
+  clearAuthState(shouldRedirect: boolean = false, broadcastLogout: boolean = true): void {
     if (this.refreshTokenTimeout) {
       clearTimeout(this.refreshTokenTimeout);
       this.refreshTokenTimeout = null;
@@ -523,8 +696,8 @@ export class AuthService {
     this.currentRole$.next(null);
     this.currentSubRole$.next(null);
     this.accessToken = null;
-
-    this.lastPrivateRoute = null;
+    this.pendingRoute = null;
+    this.pendingLogin = null;
 
     this.logger.log('🔒 Auth state cleared', { shouldRedirect, broadcastLogout, currentPath: this.router.url });
 
@@ -532,13 +705,15 @@ export class AuthService {
       const currentRoute = this.router.url.split('?')[0];
       const normalizedRoute = currentRoute.replace(/\/[^\/]+$/, '/:section').replace(/\/[^\/]+$/, '/:roleName');
       if (!this.isPublicRoute(currentRoute, normalizedRoute)) {
-        this.logger.log('🚪 Redirection immédiate vers / depuis la route :', currentRoute);
-        this.router.navigate(['/']).catch(err => this.logger.error('Navigation error:', err));
+        this.logger.log('🚪 Redirection immédiate vers /login depuis la route :', currentRoute);
+        this.router.navigate(['/login'], { queryParams: { returnUrl: currentRoute } })
+          .catch(err => this.logger.error('Navigation error:', err));
       } else {
         this.logger.log('ℹ️ Déjà sur une route publique, pas de redirection', { currentRoute, normalizedRoute });
       }
     } else {
       this.suppressRedirectOnce = false;
+      this.logger.log('🚫 Redirection supprimée :', { suppressRedirectOnce: this.suppressRedirectOnce, authInitInProgress: this.authInitInProgress });
     }
 
     if (broadcastLogout) {
@@ -548,7 +723,6 @@ export class AuthService {
 
     this.authReady$.next(true);
   }
-
   isLoggedIn(): Observable<boolean> {
     return this.isAuthenticated$.asObservable();
   }
@@ -582,7 +756,10 @@ export class AuthService {
       superadmin: '/superadmin-home'
     };
     const route = routes[role] || '/';
-    this.router.navigate([route]).catch(err => this.logger.error('Navigation error:', err));
+    this.logger.log('🚀 Tentative de redirection vers:', route, 'pour le rôle:', role);
+    this.router.navigate([route]).then(success => {
+      this.logger.log(success ? '✅ Navigation réussie vers:' : '⚠️ Échec de navigation vers:', route);
+    }).catch(err => this.logger.error('❌ Erreur de navigation:', err));
   }
 
   private extractRoleFromToken(token: string): { role: Role; subRole: SubRole } {
@@ -627,4 +804,25 @@ export class AuthService {
       return { role: 'student', subRole: null };
     }
   }
+
+  private shouldAllowRefresh(): boolean {
+    const token = this.getToken();
+
+    // 1. Si token local encore valide, pas besoin de refresh
+    if (token && !this.jwtHelper.isTokenExpired(token)) {
+      this.logger.log('✅ Token local encore valide, pas besoin de refresh');
+      return false;
+    }
+
+    // 2. Si token expiré mais utilisateur connu comme connecté en mémoire → oui
+    if (this.isAuthenticated$.value === true) {
+      this.logger.log('ℹ️ Token expiré mais utilisateur marqué comme connecté, refresh autorisé');
+      return true;
+    }
+
+    // 3. Sinon (aucun token, pas d’état mémoire) → refuse
+    this.logger.log('🚫 Refresh refusé — pas d’état utilisateur connecté');
+    return false;
+  }
+
 }

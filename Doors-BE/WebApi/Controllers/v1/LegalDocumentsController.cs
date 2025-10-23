@@ -1,8 +1,7 @@
 ﻿using Application.UseCases.Legals.DTOs;
 using Application.UseCases.Legals.UseCases;
 using WebApi.Constants;
-using BackEnd_TI.Utils;
-using Domain.Exceptions;
+using WebApi.Utils;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Contracts.Responses;
 
@@ -28,25 +27,25 @@ public class LegalDocumentsController:ControllerBase
         if (string.IsNullOrWhiteSpace(documentTypeName))
         {
             return BadRequest(ApiResponse<object>.Fail(
-                ResponseKeys.INVALID_MODEL_STATE,
+                ResponseKeys.InvalidModelState,
                 null
             ));
         }
 
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
 
         var result = await _getActiveLegalDocumentUseCase.ExecuteAsync(documentTypeName, languageCode);
 
         return Ok(ApiResponse<LegalDocumentDto>.Ok(
             result,
-            ResponseKeys.SUCCESS
+            ResponseKeys.Success
         ));
     }
 
     [HttpGet("document-types")]
     public async Task<IActionResult> GetAllLegalDocumentTypes()
     {
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
 
         var types = await _getAllLegalDocumentTypesUseCase.ExecuteAsync(languageCode);
 
@@ -54,7 +53,7 @@ public class LegalDocumentsController:ControllerBase
 
         return Ok(ApiResponse<List<LegalDocumentTypeDto>>.Ok(
             types,
-            ResponseKeys.SUCCESS
+            ResponseKeys.Success
         ));
     }
 

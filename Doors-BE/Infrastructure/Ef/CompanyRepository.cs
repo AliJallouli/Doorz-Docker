@@ -18,7 +18,7 @@ public class CompanyRepository : ICompanyRepository
     {
         _context.Companies.Add(company);
         await _context.SaveChangesAsync();
-        return company; // Retourne l’entité avec l’ID généré
+        return company; 
     }
 
     public async Task<Company?> GetByIdAsync(int companyId)
@@ -38,4 +38,13 @@ public class CompanyRepository : ICompanyRepository
         return await _context.Companies
             .AnyAsync(c => c.Name.ToLower() == name.ToLower());
     }
+    public async Task<bool> ExistsCompanyNumberAsync(string companyNumber)
+    {
+        if (string.IsNullOrWhiteSpace(companyNumber))
+            return false;
+
+        return await _context.InvitationRequests
+            .AnyAsync(r => r.CompanyNumber != null && r.CompanyNumber == companyNumber.Trim());
+    }
+
 }

@@ -1,7 +1,0 @@
-﻿namespace Application.UseCases.Auth.DTOs.EmailConfirmation;
-
-public class ConfirmEmailRequestDto
-{
-    public string? CodeOtp { get; set; }
-    public string? Token { get; set; }
-}

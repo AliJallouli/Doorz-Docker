@@ -16,13 +16,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Service\"/>
         <Folder Include="UseCases\Company\"/>
         <Folder Include="UseCases\Institution\"/>
-        <Folder Include="UseCases\Invitation\"/>
-        <Folder Include="UseCases\Invitation\EntityAdmin\ColleagueInvitation\"/>
-        <Folder Include="UseCases\Invitation\EntityAdmin\SubEntityInvitation\DTos\"/>
-        <Folder Include="UseCases\Invitation\EntityAdmin\SubEntityInvitation\UseCase\"/>
         <Folder Include="UseCases\LandLord\"/>
         <Folder Include="UseCases\Student\"/>
     </ItemGroup>

@@ -2,38 +2,30 @@
 
 public static class ResponseKeys
 {
-    public const string NOT_AUTHENTICATED="NOT_AUTHENTICATED";
-    public const string AUTHENTICATED ="AUTHENTICATED";
+    public const string SessionNotFound = "SESSION_NOT_FOUND";
+    public const string NotAuthenticated="NOT_AUTHENTICATED";
+    public const string Authenticated ="AUTHENTICATED";
 
-    public const string REFRESH_SUCCESS = "REFRESH_SUCCESS";
+    public const string RefreshSuccess = "REFRESH_SUCCESS";
     // Global
-    public const string SUCCESS = "SUCCESS";
-    public const string INVALID_MODEL_STATE = "INVALID_MODEL_STATE";
-    public const string INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
+    public const string Success = "SUCCESS";
+    public const string InvalidModelState = "INVALID_MODEL_STATE";
 
     // Auth
-    public const string ALREADY_AUTHENTICATED = "ALREADY_AUTHENTICATED";
-    public const string LOGIN_SUCCESS = "LOGIN_SUCCESS";
-    public const string LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
-    public const string REGISTRATION_SUCCESS = "REGISTRATION_SUCCESS";
-    public const string EMAIL_CONFIRMATION_SENT = "EMAIL_CONFIRMATION_SENT";
+    public const string LoginSuccess = "LOGIN_SUCCESS";
+    public const string LogoutSuccess = "LOGOUT_SUCCESS";
+    public const string RegistrationSuccess = "REGISTRATION_SUCCESS";
 
     // Invitation
-    public const string INVITATION_SENT = "INVITATION_SENT";
-    public const string INVITATION_ACCEPTED = "INVITATION_ACCEPTED";
-
-    // Validation
-    public const string FIELD_REQUIRED = "FIELD_REQUIRED";
-    public const string ENTITY_NAME_ALREADY_USED = "ENTITY_NAME_ALREADY_USED";
-
-    // Fallback
-    public const string UNKNOWN_ERROR = "UNKNOWN_ERROR";
-    public const string EMAIL_CONFIRMATION_SUCCESS = "EMAIL_CONFIRMATION_SUCCESS";
-    public const string AUTH_TEST_SUCCESS = "AUTH_TEST_SUCCESS";
-    public const string USER_NOT_AUTHENTICATED = "USER_NOT_AUTHENTICATED";
-    public const string COLLEAGUE_INVITED = "COLLEAGUE_INVITED";
-    public const string COMPANY_ADMIN_INVITED = "COMPANY_ADMIN_INVITED";
-    public const string INSTITUTION_ADMIN_INVITED = "INSTITUTION_ADMIN_INVITED";
-
-    public const string PASSWORD_RESET_EMAIL_SENT = "PASSWORD_RESET_EMAIL_SENT";
+    public const string ColleagueInvited = "COLLEAGUE_INVITED";
+    public const string CompanyAdminInvited = "COMPANY_ADMIN_INVITED";
+    public const string InstitutionAdminInvited = "INSTITUTION_ADMIN_INVITED";
+    public const string AssociationAdminInvited = "ASSOCIATION_ADMIN_INVITED";
+    public const string StudentMovementAdminInvited = "STUDENT_MOVEMENT_ADMIN_INVITED";
+    public const string PublicOrganizationAdminInvited = "PUBLIC_ORGANIZATION_ADMIN_INVITED";
+    
+    public const string AuthTestSuccess = "AUTH_TEST_SUCCESS";
+    public const string UserNotAuthenticated = "USER_NOT_AUTHENTICATED";
+    
+    public const string PasswordResetEmailSent = "PASSWORD_RESET_EMAIL_SENT";
 }

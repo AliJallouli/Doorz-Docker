@@ -33,14 +33,14 @@ public class SecurityTokenService : ISecurityTokenService
         IOtpSendLogRepository otpSendLogRepository,
         IUnitOfWork unitOfWork)
     {
-        _securityTokenRepository = securityTokenRepository;
-        _tokenTypeRepository = tokenTypeRepository;
-        _passwordHasher = passwordHasher;
-        _tokenService = tokenService;
-        _logger = logger;
-        _authService = authService;
-        _otpSendLogRepository = otpSendLogRepository;
-        _unitOfWork = unitOfWork;
+        _securityTokenRepository = securityTokenRepository ?? throw new ArgumentNullException(nameof(securityTokenRepository), "Le référentiel de jetons de sécurité ne peut pas être null.");
+        _tokenTypeRepository = tokenTypeRepository ?? throw new ArgumentNullException(nameof(tokenTypeRepository), "Le référentiel des types de jetons ne peut pas être null.");
+        _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher), "Le service de hachage de mot de passe ne peut pas être null.");
+        _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService), "Le service de jetons ne peut pas être null.");
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger), "Le logger ne peut pas être null.");
+        _authService = authService ?? throw new ArgumentNullException(nameof(authService), "Le service d'authentification ne peut pas être null.");
+        _otpSendLogRepository = otpSendLogRepository ?? throw new ArgumentNullException(nameof(otpSendLogRepository), "Le référentiel des journaux d'envoi d'OTP ne peut pas être null.");
+        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork), "L'unité de travail ne peut pas être null.");
     }
 
     public async Task<GeneratedTokenResultDto> ReGenerateAndStoreAsync(

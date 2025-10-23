@@ -1,0 +1,68 @@
+.container,.header {
+  max-width: 770px;
+  padding-top: 0.5rem;
+}
+
+
+@media (min-width: 770px){
+  .container,.header {
+    max-width: 770px;
+  }
+
+
+}
+.header {
+  padding: 0;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 0;
+}
+
+
+.field-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.button-group {
+  margin: 0;
+  padding: 0;
+  gap: 1rem;
+}
+
+
+.btn-icon-only {
+  padding: 1rem 0;
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.btn-icon-only:hover {
+  color: #0056b3;
+}
+
+.icon {
+  font-size: 16px;
+}
+
+.btn-delete-account {
+  color: #dc2626;
+}
+
+.btn-delete-account:hover {
+  color: #b91c1c;
+}
+
+.btn-delete-account:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.3);
+}
+
+.btn-delete-account:disabled {
+  color: #f87171;
+  cursor: not-allowed;
+}
+

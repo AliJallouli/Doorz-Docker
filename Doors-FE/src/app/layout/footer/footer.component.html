@@ -1,0 +1,77 @@
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-row">
+      <!-- Navigation -->
+      <div class="footer-column">
+        <h5 class="footer-title">{{ 'FOOTER.NAVIGATION' | translate }}</h5>
+        <ul class="footer-list">
+          <li *ngFor="let item of commonMenu">
+            <a class="footer-link" [routerLink]="item.link" (click)="scrollToTop()">{{ item.label | translate }}</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="footer-column">
+        <h5 class="footer-title">{{ 'FOOTER.CONTACT' | translate }}</h5>
+        <ul class="footer-list">
+          <li>
+            <a href="mailto:{{ 'FOOTER.CONTACT_EMAIL' | translate }}" class="footer-link">
+              {{ 'FOOTER.CONTACT_EMAIL' | translate }}
+            </a>
+          </li>
+          <li>
+            <a href="tel:{{ 'FOOTER.CONTACT_PHONE' | translate }}" class="footer-link">
+              {{ 'FOOTER.CONTACT_PHONE' | translate }}
+            </a>
+          </li>
+          <li>{{ 'FOOTER.CONTACT_ADDRESS' | translate }}</li>
+        </ul>
+      </div>
+
+      <!-- Réseaux sociaux (commented out) -->
+      <!--
+      <div class="footer-column">
+        <h5 class="footer-title">{{ 'FOOTER.FOLLOW_US' | translate }}</h5>
+        <ul class="footer-list footer-social-list">
+          <li>
+            <a href="https://x.com" target="_blank" class="footer-social" aria-label="Twitter/X">
+              <i class="bi bi-twitter-x"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://linkedin.com" target="_blank" class="footer-social" aria-label="LinkedIn">
+              <i class="bi bi-linkedin"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://facebook.com" target="_blank" class="footer-social" aria-label="Facebook">
+              <i class="bi bi-facebook"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+      -->
+
+      <!-- Langues -->
+      <div class="footer-column">
+        <h5 class="footer-title">{{ 'FOOTER.LANGUAGE' | translate }}</h5>
+        <ul class="footer-list lang-list">
+          <li *ngFor="let lang of languages">
+            <a class="footer-link lang-link" href="#" (click)="changeLang(lang.code, $event)">
+              {{ lang.display }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Mentions légales -->
+    <div class="footer-legal-section">
+      <p class="footer-legal">
+        © {{ currentYear }} {{ 'FOOTER.BRAND' | translate }}. {{ 'FOOTER.RIGHTS' | translate }}
+        <a class="footer-link" routerLink="/privacy">{{ 'FOOTER.PRIVACY' | translate }}</a>.
+      </p>
+    </div>
+  </div>
+</footer>

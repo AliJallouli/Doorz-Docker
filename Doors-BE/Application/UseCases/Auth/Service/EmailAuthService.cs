@@ -1,29 +1,40 @@
 ﻿using Domain.Entities;
 using Domain.Helpers;
-using Domain.Interfaces.Services;
 using Domain.Messaging.Interfaces;
+using Infrastructure.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Application.UseCases.Auth.Service;
 
 public class EmailAuthService : IEmailAuthService
 {
-    private readonly IEmailService _emailService;
     private readonly ILogger<EmailAuthService> _logger;
     private readonly string _frontendBaseUrl;
     private readonly IMailQueuePublisher<SendTemplatedEmailMessage> _mailQueuePublisher;
+    private readonly EmailSenderOptions _emailOptions;
+
 
     public EmailAuthService(
-        IEmailService emailService,
         ILogger<EmailAuthService> logger,
         IConfiguration config,
+        IOptions<EmailSenderOptions> emailOptions,
         IMailQueuePublisher<SendTemplatedEmailMessage> mailQueuePublisher)
     {
-        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _frontendBaseUrl = config.GetSection("Frontend:BaseUrl").Value?.TrimEnd('/') ?? "https://localhost:4200";
         _mailQueuePublisher = mailQueuePublisher ?? throw new ArgumentNullException(nameof(mailQueuePublisher));
+        _emailOptions = emailOptions.Value ?? throw new ArgumentNullException(nameof(emailOptions));    
+    }
+    private string GetSenderName(Dictionary<string, string> senderNames, string languageCode, string defaultName = "DOORZ")
+    {
+        if (senderNames.TryGetValue(languageCode, out var translatedName) && !string.IsNullOrEmpty(translatedName))
+        {
+            return translatedName;
+        }
+
+        return defaultName;
     }
 
 public async Task SendConfirmationEmailLinkAsync(Users user, string confirmationToken, string codeOtp, string languageCode)
@@ -72,8 +83,9 @@ public async Task SendConfirmationEmailLinkAsync(Users user, string confirmation
             TemplateName = "ConfirmationEmail",
             TemplateData = templateData,
             Language = languageCode,
-            From = "noreply@doorz.be",
-            FromName = "DOORZ"
+            From = _emailOptions.NoReply.Address,
+            FromName = GetSenderName(_emailOptions.NoReply.SenderName, languageCode)
+
         });
 
         _logger.LogInformation("Email de confirmation publié dans la file pour {Email}", user.Email);
@@ -129,8 +141,9 @@ public async Task SendOtpCodeEmailAsync(Users user, string codeOtp, string langu
             TemplateName = "ResentOtpEmail",
             TemplateData = templateData,
             Language = languageCode,
-            From = "noreply@doorz.be",
-            FromName = "DOORZ"
+            From = _emailOptions.NoReply.Address,
+            FromName = GetSenderName(_emailOptions.NoReply.SenderName, languageCode)
+
         });
 
         _logger.LogInformation("Email OTP publié dans la file pour {Email}", user.Email);
@@ -147,7 +160,7 @@ public async Task SendPasswordReseLinkEmailAsync(Users user, string token, strin
     var encodedToken = Uri.EscapeDataString(token);
     var resetLink = $"{_frontendBaseUrl}/reset-password?token={encodedToken}";
 
-    _logger.LogDebug("Lien de réinitialisation généré : {ResetLink}", resetLink);
+    _logger.LogInformation("Lien de réinitialisation généré : {ResetLink}", resetLink);
 
     // Données dynamiques
     var baseData = new Dictionary<string, string>
@@ -186,8 +199,9 @@ public async Task SendPasswordReseLinkEmailAsync(Users user, string token, strin
             TemplateName = "ResetPasswordEmail",
             TemplateData = finalData,
             Language = languageCode,
-            From = "noreply@doorz.be",
-            FromName = "DOORZ"
+            From = _emailOptions.NoReply.Address,
+            FromName = GetSenderName(_emailOptions.NoReply.SenderName, languageCode)
+
         });
 
         _logger.LogInformation("Email de réinitialisation publié dans la file pour {Email}", user.Email);
@@ -244,8 +258,9 @@ public async Task SendPasswordChangedConfirmationEmailAsync(Users user, string i
             TemplateName = "PasswordChangedConfirmation",
             TemplateData = templateData,
             Language = languageCode,
-            From = "noreply@doorz.be",
-            FromName = "DOORZ"
+            From = _emailOptions.NoReply.Address,
+            FromName = GetSenderName(_emailOptions.NoReply.SenderName, languageCode)
+
         };
 
         await _mailQueuePublisher.PublishAsync(message);
@@ -258,6 +273,63 @@ public async Task SendPasswordChangedConfirmationEmailAsync(Users user, string i
         // Non bloquant : on log mais on continue
     }
 }
+
+public async Task SendEmailUpdatedConfirmationEmailAsync(
+    Users user,
+    string confirmationToken,
+    string otpCode,
+    string languageCode)
+{
+    var encodedToken = Uri.EscapeDataString(confirmationToken);
+    var confirmationLink = $"{_frontendBaseUrl}/confirm-new-email?token={encodedToken}";
+
+    _logger.LogDebug("🔗 Lien de confirmation du nouvel email : {Link}", confirmationLink);
+
+    var templateData = new Dictionary<string, string>
+    {
+        { "FirstName", user.FirstName ?? "Utilisateur" },
+        { "LastName", user.LastName ?? "" },
+        { "PlatformName", "DOORZ" },
+        { "ValidationLink", confirmationLink },
+        { "OtpCode", otpCode }
+    };
+
+    var translations = EmailTemplateHelper.LoadEmailTranslations("EmailUpdatedConfirmation", languageCode);
+
+    foreach (var key in translations.Keys.ToList())
+    {
+        translations[key] = ReplacePlaceholders(translations[key], templateData);
+    }
+
+    foreach (var translation in translations)
+    {
+        templateData[translation.Key] = translation.Value;
+    }
+
+    var subject = translations.ContainsKey("Subject") ? translations["Subject"] : translations["EmailTitle"];
+
+    try
+    {
+        await _mailQueuePublisher.PublishAsync(new SendTemplatedEmailMessage
+        {
+            To = user.Email,
+            Subject = subject,
+            TemplateName = "EmailUpdatedConfirmation",
+            TemplateData = templateData,
+            Language = languageCode,
+            From = _emailOptions.NoReply.Address,
+            FromName = GetSenderName(_emailOptions.NoReply.SenderName, languageCode)
+        });
+
+        _logger.LogInformation("📧 Email de confirmation d'adresse email mis à jour envoyé à {Email}", user.Email);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogWarning(ex, "❌ Échec de l'envoi de l'email de changement d'adresse à {Email}", user.Email);
+        throw;
+    }
+}
+
 private string ReplacePlaceholders(string text, Dictionary<string, string> data)
 {
     foreach (var kv in data)

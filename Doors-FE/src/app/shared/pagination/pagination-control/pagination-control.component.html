@@ -1,0 +1,17 @@
+<div class="pagination-control">
+  <div class="filter-group">
+    <label for="pageSize" class="filter-label">Résultats par page</label>
+    <div class="select-wrapper">
+      <select
+        id="pageSize"
+        [(ngModel)]="pageSize"
+        (ngModelChange)="onPageSizeChange()"
+        class="filter-select"
+      >
+        <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+      </select>
+      <span class="select-icon">▼</span>
+    </div>
+  </div>
+  <div class="result-range">{{ getResultRange() }}</div>
+</div>

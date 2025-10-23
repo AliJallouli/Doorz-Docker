@@ -5,5 +5,5 @@ namespace Domain.Interfaces;
 public interface IUserAgentRepository
 {
     Task<UserAgent?> GetAsync(string userAgentValue);
-    Task<int> AddAsync(UserAgent userAgent);
+    Task AddAsync(UserAgent userAgent);
 }

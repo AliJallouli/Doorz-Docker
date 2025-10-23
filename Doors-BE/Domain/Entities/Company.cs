@@ -39,6 +39,5 @@ public class Company:IHasUpdatedAt,IHasCreatedAt
     public Users? Creator { get; set; }
     public Users? Updater { get; set; }
     public ICollection<Offer>? Offers { get; set; }= new List<Offer>();
-    public ICollection<CompanyInvitation>? CompanyInvitations { get; set; }= new List<CompanyInvitation>();
     public ICollection<DegreePartnership>? DegreePartnerships { get; set; }= new List<DegreePartnership>();
 }

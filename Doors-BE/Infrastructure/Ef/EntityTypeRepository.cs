@@ -14,19 +14,19 @@ public class EntityTypeRepository : IEntityTypeRepository
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    public async Task<EntityType> GetByNameAsync(string name)
+    public async Task<EntityType?> GetByNameAsync(string name)
     {
         return await _context.EntityTypes
             .FirstOrDefaultAsync(et => et.Name == name);
     }
 
-    public async Task<EntityType> GetByIdAsync(int id)
+    public async Task<EntityType?> GetByIdAsync(int id)
     {
         return await _context.EntityTypes
             .FirstOrDefaultAsync(et => et.EntityTypeId == id);
     }
 
-    public async Task<EntityType> GetByEntityIdAsync(int entityId)
+    public async Task<EntityType?> GetByEntityIdAsync(int entityId)
     {
         return await _context.EntityTypes
             .Include(u => u.Entities)

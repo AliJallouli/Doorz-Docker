@@ -1,0 +1,139 @@
+<div class="container">
+  <h2>Gestion des demandes d'invitation</h2>
+
+  <!-- Filtres -->
+  <div class="filter-container">
+    <div class="filter-group">
+      <label for="statusFilter" class="filter-label">Filtrer par statut</label>
+      <div class="select-wrapper">
+        <select
+          id="statusFilter"
+          [(ngModel)]="statusFilter"
+          (ngModelChange)="applyFilter()"
+          class="filter-select"
+        >
+          <option value="">Tous les statuts</option>
+          <option value="PENDING">En attente</option>
+          <option value="APPROVED">Approuvée</option>
+          <option value="REJECTED">Rejetée</option>
+        </select>
+        <span class="select-icon">▼</span>
+      </div>
+    </div>
+    <div class="filter-group">
+      <label for="entityTypeFilter" class="filter-label">Filtrer par type d'entité</label>
+      <div class="select-wrapper">
+        <select
+          id="entityTypeFilter"
+          [(ngModel)]="entityTypeFilter"
+          (ngModelChange)="applyFilter()"
+          class="filter-select"
+        >
+          <option value="">Tous les types</option>
+          <option *ngFor="let type of entityTypes" [value]="type.name">{{ type.nameTranslation }}</option>
+        </select>
+        <span class="select-icon">▼</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination Control -->
+  <app-pagination-control
+    [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    [totalItems]="totalItems"
+    [currentPage]="currentPage"
+    (pageSizeChange)="onPageSizeChange($event)"
+  ></app-pagination-control>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="spinner"></div>
+
+  <!-- Table -->
+  <div *ngIf="!isLoading" class="table-container">
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Email</th>
+        <th>Type d'entité</th>
+        <th>Type d'institution</th>
+        <th>Numéro d'entreprise</th>
+        <th>Statut</th>
+        <th>Créé le</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let request of dataSource">
+        <td>{{ request.invitationRequestId }}</td>
+        <td>{{ request.name || '-' }}</td>
+        <td>{{ request.invitationEmail || '-' }}</td>
+        <td>{{ request.entityTypeName || '-' }}</td>
+        <td>{{ request.institutionTypeName || '-' }}</td>
+        <td>{{ request.companyNumber || '-' }}</td>
+        <td>{{ request.status | translateStatus }}</td>
+        <td>{{ request.createdAt | date: 'medium' }}</td>
+        <td>
+          <button
+            class="btn btn-accept"
+            [disabled]="request.status !== 'PENDING'"
+            (click)="acceptRequest(request.invitationRequestId)"
+          >
+            Approuver
+          </button>
+          <button
+            class="btn btn-refuse"
+            [disabled]="request.status !== 'PENDING'"
+            (click)="refuseRequest(request.invitationRequestId)"
+          >
+            Rejeter
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <!-- Pagination -->
+    <app-pagination-navigator
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      [maxPagesToShow]="5"
+      (pageChange)="goToPage($event)"
+    ></app-pagination-navigator>
+  </div>
+
+  <!-- Refusal Modal -->
+  <div
+    class="modal"
+    [ngClass]="{ 'modal-open': showRefusalModal }"
+    *ngIf="showRefusalModal"
+  >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Rejeter la demande d'invitation</h3>
+        <button class="close-btn" (click)="closeRefusalModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <label for="rejectionReason">Raison du rejet</label>
+        <textarea
+          id="rejectionReason"
+          [(ngModel)]="rejectionReason"
+          required
+        ></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeRefusalModal()">Annuler</button>
+        <button
+          class="btn btn-refuse"
+          [disabled]="!rejectionReason"
+          (click)="submitRefusal()"
+        >
+          Soumettre
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

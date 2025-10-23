@@ -11,20 +11,22 @@ namespace Infrastructure.Service;
 
 public class TokenService : ITokenService
 {
-    private readonly string _audience; // Audience du token (ex. vos clients)
-    private readonly string _issuer; // Émetteur du token (ex. votre API)
-    private readonly string _secretKey; // Clé secrète pour signer les tokens
+    private readonly string _audience; 
+    private readonly string _issuer; 
+    private readonly string _secretKey; 
+    private readonly int _accessTokenExpirationMinutes;
     private readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
 
 
     public TokenService(IConfiguration configuration)
     {
-        _secretKey = configuration["Jwt:Key"] ?? throw new ArgumentNullException("Jwt:SecretKey n'est pas configuré.");
+        _secretKey = configuration["Jwt:Key"] ?? throw new ArgumentNullException();
         _issuer = configuration["Jwt:Issuer"] ?? "doors-api";
         _audience = configuration["Jwt:Audience"] ?? "doors-clients";
+        _accessTokenExpirationMinutes = configuration.GetValue("Jwt:AccessTokenExpirationMinutes", 15);
     }
 
-    public string GenerateAccessToken(Users users)
+    public string GenerateAccessToken(Users users,int sessionEventId)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -38,14 +40,15 @@ public class TokenService : ITokenService
             new(JwtRegisteredClaimNames.Sub, users.UserId.ToString()),
             new(JwtRegisteredClaimNames.Email, users.Email),
             new(ClaimTypes.Role, userRole),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new("sid", sessionEventId.ToString())
         };
 
         var token = new JwtSecurityToken(
             _issuer,
             _audience,
             claims,
-            expires: DateTime.UtcNow.AddMinutes(15), // Durée de vie courte pour l'access token
+            expires: DateTime.UtcNow.AddMinutes(_accessTokenExpirationMinutes),
             signingCredentials: creds
         );
 
@@ -78,14 +81,12 @@ public class TokenService : ITokenService
     }
     public string GenerateOtpCode()
     {
-        var buffer = new byte[4]; // 4 octets = 32 bits
+        var buffer = new byte[4]; 
         _rng.GetBytes(buffer);
-        int code = BitConverter.ToInt32(buffer, 0) & 0x7FFFFFFF; // Valeur positive
-
-        // Réduire à un nombre entre 0 et 999999
+        int code = BitConverter.ToInt32(buffer, 0) & 0x7FFFFFFF; 
+        
         code %= 1000000;
-
-        // Formater sur 6 chiffres avec padding
+        
         return code.ToString("D6");
     }
 }

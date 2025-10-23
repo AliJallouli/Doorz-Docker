@@ -17,7 +17,7 @@ public class LandLordRepository : ILandLordRepository
     {
         _context.Landlords.Add(landlord);
         await _context.SaveChangesAsync();
-        return landlord; // Retourne l’entité avec l’ID généré
+        return landlord; 
     }
 
 

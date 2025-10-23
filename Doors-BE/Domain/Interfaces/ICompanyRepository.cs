@@ -8,4 +8,5 @@ public interface ICompanyRepository
     Task<Company?> GetByIdAsync(int companyId);
     Task<bool> ExistsAsync(int companyId);
     Task<bool> ExistNameAsync(string name);
+    Task<bool> ExistsCompanyNumberAsync(string companyNumber);
 }

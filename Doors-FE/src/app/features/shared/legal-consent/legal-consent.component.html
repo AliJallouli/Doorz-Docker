@@ -1,0 +1,20 @@
+<div class="legal-consent-container">
+  <div *ngFor="let doc of documentTypes" class="form-group-container">
+    <div class="form-check">
+      <label class="form-check-label">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          [id]="doc.name"
+          [(ngModel)]="selectedConsents[doc.name]"
+          (ngModelChange)="onCheckboxChange(doc.name)"
+          name="consent_{{ doc.name }}"
+          [ngClass]="{'is-invalid': isInvalid(doc.name)}"
+        />
+        {{ doc.label || doc.name }}
+        <span class="required" *ngIf="requiredDocumentTypes.includes(doc.name)">*</span>
+      </label>
+    </div>
+    <p class="description-consent" (click)="openFloatingWindow(doc.name)">{{ doc.description }}</p>
+  </div>
+</div>

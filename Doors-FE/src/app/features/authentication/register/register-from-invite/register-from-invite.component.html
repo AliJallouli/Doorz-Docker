@@ -1,0 +1,88 @@
+<div class="two-section-container">
+<div class="container left-container" id="invitation-form-container" *ngIf="!isLoading">
+  <ng-container *ngIf="isValid && invitationInfo; else invalidToken">
+    <h3>{{ 'REGISTERFROMINVITE.TITLE' | translate }}</h3>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="doorz-vertical-form">
+      <!-- Email (readonly, pas d'étoile car non obligatoire) -->
+      <app-email-input
+        [form]="form"
+        [fieldError]="fieldError"
+        emailControlName="email"
+        [submitted]="validationTriggered"
+        [readonly]="true"
+      ></app-email-input>
+
+      <!-- Prénom -->
+      <!-- Nom -->
+      <app-name-input
+        [form]="form"
+        [fieldError]="fieldError"
+        [submitted]="validationTriggered"
+      ></app-name-input>
+
+
+      <!-- Champs de mot de passe -->
+      <app-password-input
+        [form]="form"
+        [fieldError]="fieldError"
+        [passwordControlName]="'password'"
+        [confirmPasswordControlName]="'confirmPassword'"
+        [submitted]="validationTriggered"
+        [showConfirmPassword]="true"
+        [passwordType]="'default'"
+      ></app-password-input>
+
+      <!-- Legal Consent Component -->
+      <div class="form-group">
+        <div class="legal-consent-container" [ngClass]="{'is-invalid': validationTriggered && consentError}">
+          <app-legal-consent
+            source="register-form"
+            (consentsChanged)="onConsentsChanged($event)"
+            (documentTypesLoaded)="setExpectedConsentKeys($event)"
+          ></app-legal-consent>
+          <div *ngIf="validationTriggered && consentError" class="invalid-feedback consent-error">
+            <p *ngIf="hasMissingConsents()" class="error-intro">
+              {{ 'REGISTER.CONSENT_ERROR_INTRO' | translate }}
+            </p>
+            <ul class="error-list">
+              <ng-container *ngFor="let key of expectedConsentKeys">
+                <li *ngIf="!legalConsents[key]">
+                  {{ 'REGISTER.CONSENT_REQUIRED' | translate: { document: documentMap[key].name || key } }}
+                </li>
+              </ng-container>
+            </ul>
+            <ng-container *ngIf="expectedConsentKeys.length === 0">
+              {{ 'REGISTER.ALL_CONSENTS_REQUIRED' | translate }}
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- Erreur globale -->
+      <div *ngIf="globalError" class="error-message">
+        {{ globalError | translate }}
+      </div>
+
+      <!-- Bouton -->
+      <div class="button-submit-container">
+        <button
+          type="submit"
+          class="btn-submit"
+        >
+          {{ 'REGISTERFROMINVITE.BUTTON.SUBMIT' | translate }}
+        </button>
+      </div>
+    </form>
+  </ng-container>
+
+  <ng-template #invalidToken>
+    <div class="error-message">
+      {{ 'REGISTERFROMINVITE.ERROR.FRONTEND.INVALID_TOKEN' | translate }}
+    </div>
+  </ng-template>
+</div>
+<div class="container right-container">
+  <app-call-to-action [type]="pageType"></app-call-to-action>
+</div>
+</div>

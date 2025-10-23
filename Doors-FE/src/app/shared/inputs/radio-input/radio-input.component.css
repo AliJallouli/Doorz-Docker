@@ -1,0 +1,24 @@
+.radio-group-horizontal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+}
+
+.form-option {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.form-option input[type="radio"] {
+  margin: 0;
+}
+
+.form-option label {
+  margin: 0;
+  white-space: nowrap; /* Pour éviter que le texte du label aille à la ligne */
+}

@@ -1,0 +1,91 @@
+
+  <div class="container">
+
+
+    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="doorz-vertical-form">
+
+
+
+      <!-- Type de contrat -->
+      <div class="form-group">
+        <label>
+          {{ 'SEARCH.STUDENT_JOB.LABEL.CONTRACT_TYPE' | translate }}
+        </label>
+        <select
+          formControlName="contractType"
+          class="doorz-select"
+          [ngClass]="{
+            'is-invalid': searchForm.get('contractType')?.touched && fieldError['contractType']
+          }"
+        >
+          <option value="">{{ 'SEARCH.STUDENT_JOB.OPTION.ALL' | translate }}</option>
+          <option *ngFor="let type of contractTypes" [value]="type.contract_type_id">
+            {{ type.name }}
+          </option>
+        </select>
+        <div class="invalid-feedback" *ngIf="fieldError['contractType']">
+          {{ fieldError['contractType'] | translate }}
+        </div>
+      </div>
+
+      <!-- Type d'horaire -->
+      <div class="form-group">
+        <label>
+          {{ 'SEARCH.STUDENT_JOB.LABEL.SCHEDULE_TYPE' | translate }}
+        </label>
+        <select
+          formControlName="scheduleType"
+          class="doorz-select"
+          [ngClass]="{
+            'is-invalid': searchForm.get('scheduleType')?.touched && fieldError['scheduleType']
+          }"
+        >
+          <option value="">{{ 'SEARCH.STUDENT_JOB.OPTION.ALL' | translate }}</option>
+          <option *ngFor="let type of scheduleTypes" [value]="type.schedule_type_id">
+            {{ type.name }}
+          </option>
+        </select>
+        <div class="invalid-feedback" *ngIf="fieldError['scheduleType']">
+          {{ fieldError['scheduleType'] | translate }}
+        </div>
+      </div>
+
+      <!-- Salaire minimum -->
+      <div class="form-group">
+        <label>
+          {{ 'SEARCH.STUDENT_JOB.LABEL.MIN_SALARY' | translate }}
+        </label>
+        <input
+          type="number"
+          formControlName="minSalary"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid': searchForm.get('minSalary')?.touched && (searchForm.get('minSalary')?.invalid || fieldError['minSalary'])
+          }"
+        />
+        <div class="invalid-feedback" *ngIf="searchForm.get('minSalary')?.touched">
+          <ng-container *ngIf="searchForm.get('minSalary')?.hasError('min')">
+            {{ 'SHARED.ERROR.FRONTEND.MIN_SALARY_INVALID' | translate }}
+          </ng-container>
+          <ng-container *ngIf="fieldError['minSalary']">
+            {{ fieldError['minSalary'] | translate }}
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Travail à distance -->
+      <div class="form-check">
+        <label class="form-check-label"  for="remotePossible">
+          <input type="checkbox" id="remotePossible" formControlName="remotePossible" class="form-check-input"/>
+          {{ 'SEARCH.STUDENT_JOB.LABEL.REMOTE_POSSIBLE' | translate }}
+        </label>
+      </div>
+
+      <!-- Erreur globale -->
+      <div *ngIf="globalError" class="text-danger text-center mt-2">
+        {{ globalError | translate }}
+      </div>
+
+
+    </form>
+  </div>

@@ -1,0 +1,74 @@
+<div [formGroup]="form">
+  <div class="name-split-wrapper">
+    <!-- Email -->
+    <div class="form-group">
+      <label>
+        {{ effectiveEmailLabelKey | translate }}
+        <span class="required" *ngIf="!readonly">*</span>
+      </label>
+      <input
+        type="email"
+        [formControlName]="emailControlName"
+        class="form-control"
+        [placeholder]="effectiveEmailPlaceholderKey | translate"
+        [ngClass]="{
+          'is-invalid': (submitted || form.get(emailControlName)?.touched) && (form.get(emailControlName)?.invalid || fieldError[emailControlName]),
+          'readonly': readonly
+        }"
+        [readonly]="readonly"
+        (input)="sanitizeEmail()"
+      />
+      <div
+        class="invalid-feedback"
+        *ngIf="(submitted || form.get(emailControlName)?.touched) && (form.get(emailControlName)?.invalid || fieldError[emailControlName])"
+      >
+        <div *ngIf="fieldError[emailControlName]">
+          {{ fieldError[emailControlName] | translate }}
+        </div>
+        <div *ngIf="!fieldError[emailControlName] && form.get(emailControlName)?.invalid && !readonly">
+          <ng-container *ngIf="form.get(emailControlName)?.hasError('required')">
+            {{ effectiveRequiredErrorKey | translate }}
+          </ng-container>
+          <ng-container *ngIf="form.get(emailControlName)?.hasError('pattern')">
+            {{ 'EMAIL_INPUT.ERROR.EMAIL_INVALID' | translate }}
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation email -->
+    <div class="form-group" *ngIf="showConfirmEmail">
+      <label>
+        {{ effectiveConfirmEmailLabelKey | translate }}
+        <span class="required">*</span>
+      </label>
+      <input
+        type="email"
+        [formControlName]="confirmEmailControlName"
+        class="form-control"
+        [placeholder]="effectiveConfirmEmailPlaceholderKey | translate"
+        [ngClass]="{
+          'is-invalid': (submitted || form.get(confirmEmailControlName)?.touched) && (form.get(confirmEmailControlName)?.invalid || form.hasError('emailMismatch') || fieldError[confirmEmailControlName])
+        }"
+        [readonly]="readonly"
+        (input)="sanitizeConfirmEmail()"
+      />
+      <div
+        class="invalid-feedback"
+        *ngIf="(submitted || form.get(confirmEmailControlName)?.touched) && (form.get(confirmEmailControlName)?.invalid || form.hasError('emailMismatch') || fieldError[confirmEmailControlName])"
+      >
+        <div *ngIf="fieldError[confirmEmailControlName]">
+          {{ fieldError[confirmEmailControlName] | translate }}
+        </div>
+        <div *ngIf="!fieldError[confirmEmailControlName]">
+          <ng-container *ngIf="form.get(confirmEmailControlName)?.hasError('required')">
+            {{ effectiveConfirmRequiredErrorKey | translate }}
+          </ng-container>
+          <ng-container *ngIf="form.hasError('emailMismatch') && form.get(confirmEmailControlName)?.value">
+            {{ 'EMAIL_INPUT.ERROR.EMAIL_MISMATCH' | translate }}
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

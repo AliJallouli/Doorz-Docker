@@ -1,0 +1,20 @@
+
+
+/* Résultats */
+.results-container {
+  border-radius: 0;
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+.results-header {
+margin-bottom: 10px;
+}
+
+
+.no-results{
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+  color: #555;
+  text-align: center;
+  padding: clamp(0.5rem, 1vw, 0.75rem);
+}
+

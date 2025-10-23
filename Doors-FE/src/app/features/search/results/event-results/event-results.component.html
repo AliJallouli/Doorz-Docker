@@ -1,0 +1,15 @@
+<div class="results-grid">
+  <div *ngFor="let event of results" class="result-card">
+    <h4>{{ event.title }}</h4>
+    <p class="organizer-location">{{ event.organizer }} – {{ event.location }}</p>
+    <p class="date">
+      {{ event.startDate | date:'mediumDate' }}
+      <span *ngIf="event.endDate"> au {{ event.endDate | date:'mediumDate' }}</span>
+    </p>
+    <p class="description" *ngIf="event.description">{{ event.description | slice:0:100 }}...</p>
+    <p class="status" *ngIf="event.registrationRequired">
+      Inscription requise
+      <a *ngIf="event.registrationLink" [href]="event.registrationLink" target="_blank" class="register-link">S'inscrire</a>
+    </p>
+  </div>
+</div>

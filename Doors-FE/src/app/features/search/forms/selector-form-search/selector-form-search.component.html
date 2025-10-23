@@ -1,0 +1,19 @@
+<ng-container *ngFor="let item of searchItems">
+  <div class="accordion-item" *ngIf="activePanel === item.index">
+    <div class="accordion-header search-header" [ngClass]="{ 'active-panel': isPanelOpen }" (click)="togglePanel(item.index)">
+      <h3>{{ 'SEARCH.FILTER' | translate }} | {{ item.titleKey | translate }}</h3>
+      <app-accordion-icon [type]="item.component"></app-accordion-icon>
+    </div>
+
+    <div class="accordion-content" [ngClass]="{ 'active-panel': isPanelOpen }">
+      <ng-container [ngSwitch]="item.component">
+        <app-student-job-search *ngSwitchCase="'job'" (searchResults)="onSearchResults($event)"></app-student-job-search>
+        <app-internship-search *ngSwitchCase="'internship'" (searchResults)="onSearchResults($event)"></app-internship-search>
+        <app-study-search *ngSwitchCase="'study'" (searchResults)="onSearchResults($event)"></app-study-search>
+        <app-event-search *ngSwitchCase="'event'" (searchResults)="onSearchResults($event)"></app-event-search>
+        <app-aid-search *ngSwitchCase="'aid'" (searchResults)="onSearchResults($event)"></app-aid-search>
+        <app-kot-search *ngSwitchCase="'kot'" (searchResults)="onSearchResults($event)"></app-kot-search>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>

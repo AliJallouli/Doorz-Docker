@@ -6,7 +6,7 @@ import {
   PasswordResetRequestDTO,
   PasswordResetResponseDTO, ValidatePasswordResetTokenAndOTPRequestDTO,
   ValidatePasswordResetTokenRequestDTO, ValidatePasswordResetTokenResponseDTO
-} from '../../../models/auth.models';
+} from '../../models/auth.models';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 
@@ -30,4 +30,5 @@ export class PasswordResetService {
   validateResetPasswordOtp(request: ValidatePasswordResetTokenAndOTPRequestDTO): Observable<ApiResponse<ValidatePasswordResetTokenResponseDTO>> {
     return this.http.post<ApiResponse<ValidatePasswordResetTokenResponseDTO>>(`${this.apiUrl}/validate-password-reset-otp`, request);
   }
+
 }

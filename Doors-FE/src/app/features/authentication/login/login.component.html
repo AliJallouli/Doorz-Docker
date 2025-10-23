@@ -1,0 +1,53 @@
+<div class="two-section-container">
+  <div class="container left-container">
+    <h3>{{ 'LOGIN.TITLE' | translate }}</h3>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="doorz-vertical-form">
+      <!-- Email avec EmailInputComponent -->
+      <app-email-input
+        [form]="form"
+        [fieldError]="fieldError"
+        emailControlName="email"
+        [submitted]="validationTriggered"
+      ></app-email-input>
+
+      <!-- Password avec PasswordInputComponent -->
+      <app-password-input
+        [form]="form"
+        [fieldError]="fieldError"
+        [passwordControlName]="'password'"
+        [submitted]="validationTriggered"
+        [showConfirmPassword]="false"
+        [passwordType]="'default'"
+      ></app-password-input>
+
+      <!-- Options -->
+      <div class="form-options">
+        <div class="form-check">
+          <label class="form-check-label">
+            <input type="checkbox" formControlName="rememberMe" class="form-check-input"/>
+            {{ 'LOGIN.STAY_LOGGED_IN' | translate }}
+          </label>
+        </div>
+        <div class="form-check">
+          <a href="/request-reset-password" class="forgot-password">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</a>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="button-submit-container">
+        <button type="submit" class="btn-submit" [disabled]="form.invalid">
+          {{ 'LOGIN.BUTTON' | translate }}
+        </button>
+      </div>
+
+      <!-- Erreur API -->
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage | translate }}</p>
+    </form>
+  </div>
+
+  <!-- Cartes d'action -->
+  <div class="container right-container">
+    <app-call-to-action [type]="pageType"></app-call-to-action>
+  </div>
+</div>

@@ -1,7 +1,9 @@
-﻿using Application.UseCases.Auth.DTOs;
+﻿using Application.SharedService;
+using Application.UseCases.Auth.DTOs;
 using Application.UseCases.Auth.Service;
 using Application.Validation;
 using AutoMapper;
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
@@ -30,6 +32,7 @@ public class RegisterPublicUseCase
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
     private readonly ILegalConsentService _legalConsentService;
+    private readonly ISharedUniquenessValidationService _uniquenessValidator;
 
     public RegisterPublicUseCase(
         IUserRepository userRepository,
@@ -47,7 +50,8 @@ public class RegisterPublicUseCase
         ILogger<RegisterPublicUseCase> logger,
         IEmailAuthService emailAuthService,
         ISecurityTokenService securityTokenService,
-        ILegalConsentService legalConsentService)
+        ILegalConsentService legalConsentService,
+        ISharedUniquenessValidationService uniquenessValidator)
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository),
             "Le référentiel utilisateur ne peut pas être null.");
@@ -77,47 +81,50 @@ public class RegisterPublicUseCase
         _emailAuthService = emailAuthService;
         _securityTokenService = securityTokenService;
         _legalConsentService = legalConsentService;
+        _uniquenessValidator = uniquenessValidator;
     }
 
 
     public async Task<AuthResponseDto> ExecuteAsync(RegisterPublicRequestDto publicRequest, string ipAddress,
-        string userAgent,string languageCode)
+        string userAgent, string languageCode)
     {
         _logger.LogInformation("Début de l'inscription pour l'email {Email}", publicRequest.Email);
 
-        // Valide l'email et le mot de passe fournis
-        try
+        // Vérification des formats
+        if (!CommonFormatValidator.ValidateEmail(publicRequest.Email))
         {
-            CommonValidator.ValidateEmail(publicRequest.Email);
-            CommonValidator.ValidatePassword(publicRequest.Password);
-            _logger.LogDebug("Validation de l'email et du mot de passe réussie pour {Email}", publicRequest.Email);
+            _logger.LogWarning("format de l'email invalide  pour enregistrer  l'utilisateur");
+            throw new BusinessException(ErrorCodes.InvalidEmailFormat, "email");
         }
-        catch (Exception ex)
+
+        if (!CommonFormatValidator.ValidatePassword(publicRequest.Password))
         {
-            _logger.LogError(ex, "Échec de la validation des données d'entrée pour l'email {Email}",
-                publicRequest.Email);
-            throw;
+            _logger.LogWarning("format du mot de passe invalide  pour enregistrer  l'utilisateur");
+            throw new BusinessException(ErrorCodes.PasswordInvalid, "password");
+        }
+
+        if (!CommonFormatValidator.ValidateFirstName(publicRequest.FirstName) ||
+            !CommonFormatValidator.ValidateLastName(publicRequest.LastName))
+        {
+            _logger.LogWarning("format du Prénom ou du Nom invalide  pour enregistrer  l'utilisateur");
+            throw new BusinessException(ErrorCodes.InvalidNameFields, "firstNameLastName ");
         }
 
         // Vérifie si l'email est déjà utilisé dans le système
-        if (await _userRepository.ExistsByEmailAsync(publicRequest.Email))
-        {
-            _logger.LogWarning("Tentative d'inscription avec un email déjà utilisé : {Email}", publicRequest.Email);
-            throw new BusinessException(ErrorCodes.EmailAlreadyUsed, "email");
-        }
+        // Validation de l'unicité des données (email, nom d'entité et BCE si Entreprise
+        await _uniquenessValidator.ValidateUniqueEmailInInvitationRequestsAsync(publicRequest.Email,"RegisterPublicEmpail");
+        await _uniquenessValidator.ValidateUniqueEmailInUsersAsync(publicRequest.Email,"RegisterPublicEmpail");
+        await _uniquenessValidator.ValidateUniqueEmailInSuperAdminInvitationAsync(publicRequest.Email,"RegisterPublicEmpail");
 
 
         // Mappe les données du DTO vers une entité utilisateur
         var user = _mapper.Map<Users>(publicRequest);
-        user.PasswordHash = _passwordHasher.Hash(publicRequest.Password); // Hache le mot de passe
-        user.SuperRoleId =
-            await _superRoleRepository.GetSuperRoleIdAsync("Others"); // Assigne un rôle global par défaut
+        user.PasswordHash = _passwordHasher.Hash(publicRequest.Password); 
+        user.SuperRoleId = await _superRoleRepository.GetSuperRoleIdAsync("Others"); 
 
-        user.IsVerified = false; // L'utilisateur n'est pas encore vérifié
+        user.IsVerified = false;
 
-        // création de l'email token
-
-
+        // Enregistrement
         AuthResponseDto authResponse;
         await using var transaction = await _unitOfWork.BeginTransactionAsync(); // Démarre une transaction
         try
@@ -127,13 +134,15 @@ public class RegisterPublicUseCase
             _logger.LogDebug("Utilisateur ajouté à la base de données pour {Email}", user.Email);
             await _unitOfWork.SaveChangesAsync();
 
-         
+
             user.CreatedBy = user.UserId;
-        
-         
+            user.CreatedAt = DateTime.UtcNow;
+            user.UpdatedAt = DateTime.UtcNow;
+
+
             await _userRepository.UpdateAsync(user);
-            
-            // Ajoute une entrée dans la table email_confirmation
+
+            // Génération du token de validation de l'émail
             var generatedTokenResult = await _securityTokenService.GenerateAndStoreAsync(
                 user.UserId,
                 TokenTypeName,
@@ -141,7 +150,7 @@ public class RegisterPublicUseCase
                 userAgent
             );
 
-            _logger.LogDebug("Token de confirmation email généré pour {Email}", publicRequest.Email);
+            _logger.LogDebug("Token du lien et Otp de confirmation email générés pour {Email}", publicRequest.Email);
 
             // Récupère le rôle spécifié dans la requête
             var role = await _roleRepository.GetByIdAsync(publicRequest.RoleId)
@@ -158,27 +167,34 @@ public class RegisterPublicUseCase
                 user,
                 ipAddress, // Utilise une adresse IP par défaut si non fournie
                 "Inscription et connexion réussies. Veuillez vérifier votre email pour confirmer votre compte.",
-                userAgent
+                userAgent,
+                false,
+                SessionOpeningReasons.Registration
             );
             _logger.LogDebug("Connexion automatique effectuée pour l'utilisateur {UserId}", user.UserId);
-            
+
+            // Validation du token du lien et de l'otp
             if (generatedTokenResult.RawToken is null)
                 throw new BusinessException(ErrorCodes.TokenGenerationFailed, "token");
 
             if (generatedTokenResult.CodeOtp != null)
                 await _emailAuthService.SendConfirmationEmailLinkAsync(user, generatedTokenResult.RawToken,
                     generatedTokenResult.CodeOtp, languageCode);
+            
             _logger.LogInformation("Email de confirmation envoyé à {Email}", user.Email);
 
+            // Récupération de l'userAgent
             var userAgentId = await _authService.ProcessUserAgentAsync(userAgent);
-            await _legalConsentService.RegisterPrivacyPolicyConsentAsync(user, ipAddress, userAgentId,publicRequest.LegalConsents);
             
+            // Enregistrement des documents  légaux accepté
+            await _legalConsentService.RegisterPrivacyPolicyConsentAsync(user, ipAddress, userAgentId,
+                publicRequest.LegalConsents);
+
             // Persiste toutes les modifications dans la base de données
             await _unitOfWork.SaveChangesAsync();
             await transaction.CommitAsync(); // Valide la transaction
             _logger.LogInformation("Inscription réussie et transaction validée pour l'utilisateur {UserId}",
                 user.UserId);
-
         }
         catch (BusinessException)
         {
@@ -194,7 +210,6 @@ public class RegisterPublicUseCase
 
         return authResponse;
     }
-
 
 
     private async Task<Users> HandleRoleSpecificEntityAsync(Users user, Role role,
@@ -224,6 +239,8 @@ public class RegisterPublicUseCase
                     EntityTypeId = entityTypeId,
                     Name = $"{user.FirstName} {user.LastName}",
                     CreatedBy = user.UserId,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
                 await _entityRepository.AddAsync(studentEntity);
                 _logger.LogDebug("Entité polymorphique créée pour l'étudiant avec ID {EntityId}",
@@ -247,6 +264,8 @@ public class RegisterPublicUseCase
                     EntityTypeId = entityTypeId,
                     Name = $"{user.FirstName} {user.LastName}",
                     CreatedBy = user.UserId,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
                 await _entityRepository.AddAsync(landlordEntity);
                 _logger.LogDebug("Entité polymorphique créée pour le bailleur avec ID {EntityId}",
@@ -274,6 +293,7 @@ public class RegisterPublicUseCase
         entityUser.UserId = user.UserId;
         entityUser.EntityId = entityId;
         entityUser.RoleId = publicRequest.RoleId;
+        entityUser.CreatedAt = DateTime.UtcNow;
         await _entityUserRepository.AddAsync(entityUser);
         _logger.LogDebug("Association EntityUser créée pour UserId {UserId} et EntityId {EntityId}", user.UserId,
             entityId);
@@ -285,7 +305,4 @@ public class RegisterPublicUseCase
         _logger.LogDebug("Utilisateur rechargé avec succès pour l'email {Email}", user.Email);
         return updatedUser;
     }
-    
-   
-
 }

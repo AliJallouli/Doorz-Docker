@@ -1,0 +1,131 @@
+<li class="nav-item dropdown" *ngIf="user; else loading">
+  <button
+    class="nav-link dropdown-toggle d-flex align-items-center"
+    id="profileDropdown"
+    type="button"
+    [ngClass]="{'open': isDropdownOpen}"
+    [attr.aria-expanded]="isDropdownOpen"
+    [attr.aria-controls]="'profileDropdownMenu'"
+    (click)="toggleDropdown($event)"
+    [attr.aria-label]="'NAV.PROFILE_DROPDOWN' | translate"
+  >
+    <span class="avatar" aria-hidden="true">{{ getInitials() }}</span>
+
+  </button>
+
+  <ul
+    id="profileDropdownMenu"
+    class="dropdown-menu profile-dropdown"
+    [ngClass]="{'open': isDropdownOpen}"
+    aria-labelledby="profileDropdown"
+  >
+    <!-- Bouton de fermeture (croix) -->
+    <li class="profile-close-btn-container">
+      <button
+        class="profile-close-btn"
+        (click)="closeDropdown()"
+        [attr.aria-label]="'NAV.CLOSE_PROFILE_MENU' | translate"
+      >
+        <span class="profile-close-icon"></span>
+      </button>
+    </li>
+
+    <!-- En-tête -->
+    <li class="dropdown-header text-center" role="heading" aria-level="3">
+      <strong>{{ user.firstName }} {{ user.lastName }}</strong><br />
+      <small class="text-muted">{{ user.email }}</small>
+    </li>
+    <li><hr class="dropdown-divider" /></li>
+
+    <!-- Options spécifiques par rôle -->
+    <li *ngIf="currentRole === 'company' && currentSubRole === 'admin'">
+      <a class="dropdown-item" routerLink="/company-home" (click)="closeDropdown(); navbarClosed.emit()">
+        {{ 'NAV.COMPANY.HOME' | translate }}
+      </a>
+    </li>
+    <li *ngIf="currentRole === 'company' && currentSubRole === 'admin'">
+      <a class="dropdown-item" routerLink="/company/invitations" (click)="closeDropdown(); navbarClosed.emit()">
+        {{ 'NAV.INVITE_COLLEAGUES' | translate }}
+      </a>
+    </li>
+
+    <li *ngIf="currentRole === 'institution' && currentSubRole === 'admin'">
+      <a class="dropdown-item" routerLink="/institution-home" (click)="closeDropdown(); navbarClosed.emit()">
+        {{ 'NAV.INSTITUTION.HOME' | translate }}
+      </a>
+    </li>
+    <li *ngIf="currentRole === 'institution' && currentSubRole === 'admin'">
+      <a class="dropdown-item" routerLink="/institution/invitations" (click)="closeDropdown(); navbarClosed.emit()">
+        {{ 'NAV.INVITE_COLLEAGUES' | translate }}
+      </a>
+    </li>
+
+    <li *ngIf="currentRole === 'company' && currentSubRole !== 'admin'">
+      <a class="dropdown-item" routerLink="/company-home" (click)="closeDropdown(); navbarClosed.emit()">
+        {{ 'NAV.COMPANY.HOME' | translate }}
+      </a>
+    </li>
+
+    <li *ngIf="currentRole === 'institution' && currentSubRole !== 'admin'">
+      <a class="dropdown-item" routerLink="/institution-home" (click)="closeDropdown(); navbarClosed.emit()">
+        {{ 'NAV.INSTITUTION.HOME' | translate }}
+      </a>
+    </li>
+
+    <li *ngIf="currentRole === 'student'">
+      <a class="dropdown-item" routerLink="/student-home" (click)="closeDropdown(); navbarClosed.emit()">
+        {{ 'NAV.STUDENT.CV' | translate }}
+      </a>
+    </li>
+    <li *ngIf="currentRole === 'student'">
+      <a class="dropdown-item" routerLink="/student/studies" (click)="closeDropdown(); navbarClosed.emit()">
+        {{ 'NAV.STUDENT.SEARCHES' | translate }}
+      </a>
+    </li>
+    <li *ngIf="currentRole === 'student'">
+      <a class="dropdown-item" routerLink="/student/internships" (click)="closeDropdown(); navbarClosed.emit()">
+        {{ 'NAV.STUDENT.APPLICATIONS' | translate }}
+      </a>
+    </li>
+
+    <li *ngIf="currentRole === 'superadmin'">
+      <a class="dropdown-item" routerLink="/superadmin-home" (click)="closeDropdown(); navbarClosed.emit()">
+        {{ 'NAV.SUPERADMIN.DASHBOARD' | translate }}
+      </a>
+    </li>
+    <li *ngIf="currentRole === 'superadmin'">
+      <a class="dropdown-item" routerLink="/superadmin/invitations" (click)="closeDropdown(); navbarClosed.emit()">
+        {{ 'NAV.SUPERADMIN.INVITE' | translate }}
+      </a>
+    </li>
+
+    <li *ngIf="currentRole === 'landlord' && currentSubRole === 'privateLandlord'">
+      <a class="dropdown-item" routerLink="/landlord-home" (click)="closeDropdown(); navbarClosed.emit()">
+        {{ 'NAV.LANDLORD.ANNOUNCES' | translate }}
+      </a>
+    </li>
+    <li><hr class="dropdown-divider" /></li>
+    <!-- Options communes -->
+    <li>
+      <a class="dropdown-item" (click)="goToProfile(); closeDropdown(); navbarClosed.emit()">
+        {{ 'NAV.PARAMETERS' | translate }}
+      </a>
+    </li>
+    <li><hr class="dropdown-divider" /></li>
+    <li>
+      <a class="dropdown-item logout-icon" (click)="logout(); closeDropdown()">
+        {{ 'NAV.LOGOUT' | translate }}
+      </a>
+    </li>
+  </ul>
+</li>
+
+<!-- État de chargement -->
+<ng-template #loading>
+  <li class="nav-item">
+    <span class="nav-link disabled">
+      <span class="avatar">?</span>
+      <span class="visually-hidden">{{ 'NAV.LOADING' | translate }}</span>
+    </span>
+  </li>
+</ng-template>

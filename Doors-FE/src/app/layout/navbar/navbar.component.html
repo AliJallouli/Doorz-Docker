@@ -1,0 +1,177 @@
+<nav class="navbar fixed-top">
+  <div class="nav-container">
+    <!-- Bouton burger -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      [attr.aria-expanded]="isNavbarOpen"
+      aria-label="Toggle navigation"
+      (click)="toggleNavbar()"
+    >
+      <span class="toggler-icon"></span>
+    </button>
+
+    <!-- Logo principal (affiché sauf pour ≤ 260px) -->
+    <a class="navbar-brand" (click)="navigateToHome()">{{ 'NAV.BRAND' | translate }}</a>
+
+    <!-- Menu principal -->
+    <div class="navbar-menu"
+         [ngClass]="{
+       'open': isNavbarOpen,
+       'closing': isClosingMenu,
+       'menu-visible': isNavbarOpen || isClosingMenu
+     }">
+
+
+    <!-- En-tête du menu mobile avec bouton de fermeture et logo pour ≤ 260px -->
+      <div class="mobile-menu-header"  *ngIf="isNavbarOpen || isClosingMenu" [ngClass]="{'closing': isClosingMenu}">
+        <!-- Logo spécifique pour mobile (≤ 260px) -->
+        <a class="mobile-brand" (click)="navigateToHome()">{{ 'NAV.BRAND' | translate }}</a>
+        <button class="close-menu-btn" (click)="closeNavbar()" aria-label="Close menu">
+          <span class="close-icon"></span>
+        </button>
+      </div>
+
+      <!-- Liste des éléments du menu principal -->
+      <ul class="nav-list">
+        <!-- Menu public (non connecté) -->
+        <ng-container *ngIf="!isAuthenticated">
+          <!-- Menu étudiant public -->
+          <ng-container *ngIf="requestor === 'student'">
+            <li class="nav-item" *ngFor="let item of publicStudentMenu">
+              <a class="nav-link" [routerLink]="item.link" (click)="clickStudent()">
+                <span class="nav-label">{{ item.label | translate }}</span>
+              </a>
+            </li>
+
+
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/professionnel" (click)="clickProfessionel()">{{ 'NAV.PROFESSIONEL' | translate }}</a>
+            </li>
+          </ng-container>
+
+          <!-- Menu professionnel public -->
+          <ng-container *ngIf="requestor === 'professionnel'">
+            <li class="nav-item" *ngFor="let item of publicProfessionalMenu">
+              <a class="nav-link" [routerLink]="item.link" (click)="clickProfessionel()">{{ item.label | translate }}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/student" (click)="clickStudent()">{{ 'NAV.STUDENTITEM' | translate }}</a>
+            </li>
+          </ng-container>
+        </ng-container>
+
+        <!-- Menu étudiant connecté -->
+        <ng-container *ngIf="isAuthenticated && currentRole === 'student'">
+          <li class="nav-item" *ngFor="let item of studentMenu">
+            <a class="nav-link" [routerLink]="item.link" (click)="closeNavbar()">{{ item.label | translate }}</a>
+          </li>
+        </ng-container>
+
+        <!-- Menu professionnel connecté (company, institution, association, public_organisation, landlord) -->
+        <ng-container *ngIf="isAuthenticated && isProfessionalRole()">
+          <li class="nav-item" *ngFor="let item of professionalMenu">
+            <!-- Lien simple (sans sous-menu) -->
+            <a
+              class="nav-link"
+              *ngIf="!item.subMenu"
+              [routerLink]="item.link"
+              (click)="closeNavbar()"
+            >
+              {{ item.label | translate }}
+            </a>
+            <!-- Sous-menu Publier -->
+            <div class="nav-item dropdown" *ngIf="item.subMenu">
+              <a
+                class="nav-link dropdown-toggle"
+                [ngClass]="{'open': isPublishDropdownOpen}"
+                href="#"
+                id="publishDropdown"
+                role="button"
+                [attr.aria-expanded]="isPublishDropdownOpen"
+                (click)="togglePublishDropdown($event)"
+              >
+                {{ item.label | translate }}
+              </a>
+              <ul
+                class="dropdown-menu publish-dropdown-menu"
+                [ngClass]="{'open': isPublishDropdownOpen}"
+                aria-labelledby="publishDropdown"
+              >
+                <li *ngFor="let subItem of item.subMenu">
+                  <a
+                    class="dropdown-item"
+                    [routerLink]="subItem.link"
+                    (click)="closeNavbar()"
+                  >
+                    {{ subItem.label | translate }}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <!-- Menu admin (inviter collègues) -->
+          <li
+            class="nav-item"
+            *ngIf="currentSubRole === 'admin' && ['company', 'institution', 'association', 'public_organisation'].includes(currentRole || '')"
+          >
+            <a class="nav-link" [routerLink]="getAdminInviteLink()" (click)="closeNavbar()">{{ 'NAV.INVITE_COLLEAGUES' | translate }}</a>
+          </li>
+        </ng-container>
+
+        <!-- Menu superadmin -->
+        <ng-container *ngIf="isAuthenticated && currentRole === 'superadmin'">
+          <li class="nav-item" *ngFor="let item of superadminMenu">
+            <a class="nav-link" [routerLink]="item.link" (click)="closeNavbar()">{{ item.label | translate }}</a>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+
+    <!-- Profil et langues (desktop et mobile) -->
+    <ul class="nav-list secondary">
+      <!-- Menu déroulant pour les langues -->
+      <li class="nav-item dropdown">
+        <a
+          class="nav-link dropdown-toggle lang-link"
+          [ngClass]="{'open': isLanguageDropdownOpen}"
+          href="#"
+          id="languageDropdown"
+          role="button"
+          [attr.aria-expanded]="isLanguageDropdownOpen"
+          (click)="toggleLanguageDropdown($event)"
+        >
+          {{ getCurrentLanguageDisplay() }}
+        </a>
+        <ul
+          class="dropdown-menu lang-dropdown-menu"
+          [ngClass]="{'open': isLanguageDropdownOpen}"
+          aria-labelledby="languageDropdown"
+        >
+          <li *ngFor="let lang of languages">
+            <a
+              class="dropdown-item lang-link"
+              href="#"
+              (click)="changeLang(lang.code, $event)"
+            >
+              {{ lang.display }}
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Connexion / Profil -->
+      <li class="nav-item" *ngIf="!isAuthenticated">
+        <a class="nav-link" id="connect" (click)="redirectToLogin()">{{ 'NAV.LOGIN' | translate }}</a>
+      </li>
+      <li class="nav-item profile-dropdown" *ngIf="isAuthenticated">
+
+        <app-profile-dropdown
+          (navbarClosed)="onNavbarClosed()"
+          (closeLanguageMenu)="onCloseLanguageMenu()"
+        ></app-profile-dropdown>
+
+      </li>
+    </ul>
+  </div>
+</nav>

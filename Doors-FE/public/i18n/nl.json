@@ -1,27 +1,148 @@
 ﻿{
-  "EMAIL_INPUT": {
-    "LABEL": {
-      "EMAIL": "E-mailadres"
+  "CALL_TO_ACTION": {
+    "REGISTER": {
+      "STUDENT_TITLE": "Studentenruimte",
+      "STUDENT_DESCRIPTION": "Vind je <strong>studentenjob</strong>, <strong>stage</strong>, <strong>kot</strong>, <strong>opleiding</strong> of <strong>evenement</strong> met één klik! Sluit je aan bij de <strong>studentenvibe</strong>!",
+      "LANDLORD_TITLE": "Registratie als particuliere verhuurder",
+      "LANDLORD_DESCRIPTION": "Bied je <strong>koten</strong> aan en maak in no-time contact met <strong>studenten</strong>.",
+      "PROFESSIONAL_TITLE": "Professionele ruimte",
+      "PROFESSIONAL_DESCRIPTION": "Boost je aanbiedingen voor <strong>studentenjobs</strong>, <strong>stages</strong>, <strong>opleidingen</strong>, <strong>verhuur van koten</strong> of <strong>evenementen</strong> voor <strong>studenten</strong>."
     },
-    "PLACEHOLDER": {
-      "EMAIL": "Vul je e-mailadres in"
+    "ISSUES": {
+      "REGISTER_ISSUE_TITLE": "Probleem met registratie",
+      "REGISTER_ISSUE_DESCRIPTION": "Als je problemen ondervindt tijdens de registratie, neem dan contact op met ons supportteam.",
+      "INVITATION_ISSUE_TITLE": "Probleem met uitnodigingsverzoek",
+      "INVITATION_ISSUE_DESCRIPTION": "Als je problemen hebt met je uitnodiging, neem dan contact op met ons supportteam voor hulp."
+    }
+  },
+  "ACCOUNT": {
+    "DELETE_ACCOUNT": "Mijn account verwijderen",
+    "RESET_PASSWORD": "Wachtwoord vergeten? Klik hier om het te herstellen",
+    "NAME_UPDATE_SUCCESS": "Voor- en achternaam succesvol bijgewerkt",
+    "NO_CHANGES": "Geen wijzigingen aangebracht",
+    "EMAIL_UPDATE_SUCCESS": "Uw e-mailadres is bijgewerkt. Bevestig uw nieuwe e-mailadres via het bericht dat we u hebben gestuurd.",
+    "HEADER_TITLE": "Accountinstellingen",
+    "NAME_SECTION": {
+      "TITLE": "Voor- en achternaam"
+    },
+    "EMAIL_SECTION": {
+      "TITLE": "E-mailadres"
+    },
+    "PASSWORD_SECTION": {
+      "TITLE": "Wachtwoord"
     },
     "ERROR": {
-      "EMAIL_REQUIRED": "E-mailadres is vereist.",
-      "EMAIL_INVALID": "E-mailadres moet geldig zijn."
+      "BACKEND": {
+        "RATE_LIMIT_EXCEEDED_WITH_TIME": "Te veel pogingen. Probeer opnieuw over {{days}} dagen en {{hours}} uur.",
+        "RATE_LIMIT_EXCEEDED_WITH_HOURS": "Te veel pogingen. Probeer opnieuw over {{hours}} uur en {{minutes}} minuten.",
+        "RATE_LIMIT_EXCEEDED_WITH_MINUTES": "Te veel pogingen. Probeer opnieuw over {{minutes}} minuten."
+      }
+    }
+  },
+  "OPTION_INPUT": {
+    "REQUIRED": "Je moet een optie selecteren."
+  },
+  "ACTIONS": {
+    "CANCEL": "Annuleren",
+    "SUBMIT": "Opslaan",
+    "EDIT": "Bewerken"
+  },
+  "EMAIL_INPUT": {
+    "LABEL": {
+      "EMAIL": "E-mailadres",
+      "NEW_EMAIL": "Nieuw e-mailadres",
+      "CONFIRM_EMAIL": "E-mail bevestigen",
+      "NEW_CONFIRM_EMAIL": "Nieuw e-mailadres bevestigen"
+    },
+    "PLACEHOLDER": {
+      "EMAIL": "Voer uw e-mailadres in",
+      "NEW_EMAIL": "Voer uw nieuw e-mailadres in",
+      "CONFIRM_EMAIL": "Bevestig uw e-mailadres",
+      "NEW_CONFIRM_EMAIL": "Bevestig uw nieuw e-mailadres"
+    },
+    "ERROR": {
+      "EMAIL_REQUIRED": "Het e-mailadres is verplicht",
+      "NEW_EMAIL_REQUIRED": "Het nieuwe e-mailadres is verplicht",
+      "EMAIL_INVALID": "Het e-mailadres is ongeldig",
+      "CONFIRM_EMAIL_REQUIRED": "E-mailbevestiging is verplicht",
+      "NEW_CONFIRM_EMAIL_REQUIRED": "Bevestiging van het nieuwe e-mailadres is verplicht",
+      "EMAIL_MISMATCH": "De e-mailadressen komen niet overeen"
+    }
+  },
+
+  "NAME_INPUT": {
+    "LABEL": {
+      "FULLNAME": "Volledige naam",
+      "NEW_FULLNAME": "Nieuwe volledige naam",
+      "FIRSTNAME": "Voornaam",
+      "NEW_FIRSTNAME": "Nieuwe voornaam",
+      "LASTNAME": "Achternaam",
+      "NEW_LASTNAME": "Nieuwe achternaam"
+    },
+    "PLACEHOLDER": {
+      "FULLNAME": "Voer uw volledige naam in",
+      "NEW_FULLNAME": "Voer uw nieuwe volledige naam in",
+      "FIRSTNAME": "Voer uw voornaam in",
+      "NEW_FIRSTNAME": "Voer uw nieuwe voornaam in",
+      "LASTNAME": "Voer uw achternaam in",
+      "NEW_LASTNAME": "Voer uw nieuwe achternaam in"
+    },
+    "ERROR": {
+      "FRONTEND": {
+        "FULLNAME_REQUIRED": "De volledige naam is verplicht",
+        "NEW_FULLNAME_REQUIRED": "De nieuwe volledige naam is verplicht",
+        "FIRSTNAME_REQUIRED": "De voornaam is verplicht",
+        "NEW_FIRSTNAME_REQUIRED": "De nieuwe voornaam is verplicht",
+        "FIRSTNAME_MINLENGTH": "De voornaam moet minimaal 2 tekens lang zijn",
+        "NEW_FIRSTNAME_MINLENGTH": "De nieuwe voornaam moet minimaal 2 tekens lang zijn",
+        "LASTNAME_REQUIRED": "De achternaam is verplicht",
+        "NEW_LASTNAME_REQUIRED": "De nieuwe achternaam is verplicht",
+        "LASTNAME_MINLENGTH": "De achternaam moet minimaal 2 tekens lang zijn",
+        "NEW_LASTNAME_MINLENGTH": "De nieuwe achternaam moet minimaal 2 tekens lang zijn"
+      }
+    }
+  },
+
+  "OTP_INPUT": {
+    "LABEL": {
+      "OTP": "Verificatiecode"
+    },
+    "PLACEHOLDER": {
+      "OTP": "Voer de OTP-code in"
+    },
+    "ERROR": {
+      "OTP_REQUIRED": "De OTP-code is verplicht.",
+      "OTP_LENGTH": "De OTP-code moet exact 6 cijfers bevatten."
     }
   },
   "PASSWORD_INPUT": {
     "LABEL": {
       "PASSWORD": "Wachtwoord",
-      "CONFIRM_PASSWORD": "Wachtwoord bevestigen"
+      "CURRENT_PASSWORD": "Huidig wachtwoord",
+      "NEW_PASSWORD": "Nieuw wachtwoord",
+      "CONFIRM_PASSWORD": "Wachtwoord bevestigen",
+      "NEW_CONFIRM_PASSWORD": "Nieuw wachtwoord bevestigen"
+    },
+    "PLACEHOLDER": {
+      "PASSWORD": "Voer uw wachtwoord in",
+      "CURRENT_PASSWORD": "Voer uw huidig wachtwoord in",
+      "NEW_PASSWORD": "Voer uw nieuw wachtwoord in",
+      "CONFIRM_PASSWORD": "Bevestig uw wachtwoord",
+      "NEW_CONFIRM_PASSWORD": "Bevestig uw nieuw wachtwoord"
     },
     "ERROR": {
-      "PASSWORD_REQUIRED": "Het wachtwoord is verplicht.",
-      "CONFIRM_PASSWORD_REQUIRED": "De wachtwoordbevestiging is verplicht.",
-      "PASSWORD_MINLENGTH": "Het wachtwoord moet minimaal 6 tekens lang zijn.",
-      "PASSWORD_PATTERN": "Het wachtwoord moet minimaal één letter en één cijfer bevatten.",
-      "PASSWORD_MISMATCH": "De wachtwoorden komen niet overeen."
+      "PASSWORD_REQUIRED": "Het wachtwoord is verplicht",
+      "CURRENT_PASSWORD_REQUIRED": "Het huidig wachtwoord is verplicht",
+      "NEW_PASSWORD_REQUIRED": "Het nieuw wachtwoord is verplicht",
+      "PASSWORD_MINLENGTH": "Het wachtwoord moet minimaal 8 tekens lang zijn",
+      "CURRENT_PASSWORD_MINLENGTH": "Het huidig wachtwoord moet minimaal 8 tekens lang zijn",
+      "NEW_PASSWORD_MINLENGTH": "Het nieuw wachtwoord moet minimaal 8 tekens lang zijn",
+      "PASSWORD_PATTERN": "Het wachtwoord moet voldoen aan het vereiste formaat",
+      "CURRENT_PASSWORD_PATTERN": "Het huidig wachtwoord moet voldoen aan het vereiste formaat",
+      "NEW_PASSWORD_PATTERN": "Het nieuw wachtwoord moet voldoen aan het vereiste formaat",
+      "CONFIRM_PASSWORD_REQUIRED": "Wachtwoordbevestiging is verplicht",
+      "NEW_CONFIRM_PASSWORD_REQUIRED": "Bevestiging van het nieuwe wachtwoord is verplicht",
+      "PASSWORD_MISMATCH": "De wachtwoorden komen niet overeen"
     }
   },
   "PHONE_INPUT": {
@@ -58,16 +179,7 @@
         "LOGIN_ATTEMPT_SAVE_FAILED": "Er is een fout opgetreden bij het opslaan van de inlogpoging.",
         "LOGIN_FINALIZATION_FAILED": "Er is een fout opgetreden bij het afronden van de inlog."
       }
-    },
-    "STUDENT_TITLE": "Studentenruimte",
-    "STUDENT_DESCRIPTION": "Vind je <strong>studentenjob</strong>, <strong>stage</strong>, <strong>kot</strong>, <strong>opleiding</strong> of <strong>evenement</strong> in één klik! Sluit je aan bij de <strong>studentenvibe</strong>!",
-    "STUDENT_REGISTER": "Let's do this!",
-    "LANDLORD_TITLE": "Inschrijving Private Verhuurder",
-    "LANDLORD_DESCRIPTION": "Bied je <strong>kots</strong> aan en maak contact met <strong>studenten</strong> in een oogwenk.",
-    "LANDLORD_REGISTER": "Verhuurder worden",
-    "PROFESSIONAL_TITLE": "Professionele Ruimte",
-    "PROFESSIONAL_DESCRIPTION": "Geef je aanbiedingen voor <strong>studentenjobs</strong>, <strong>stages</strong>, <strong>opleidingen</strong>, <strong>kotverhuur</strong> of <strong>evenementen</strong> een boost richting <strong>studenten</strong>.",
-    "PROFESSIONAL_CONTACT": "Contacteer ons"
+    }
   },
   "FOOTER": {
     "NAVIGATION": "Navigatie",
@@ -83,49 +195,56 @@
   },
   "NAV": {
     "BRAND": "DOORZ",
-    "ABOUT": "Over Ons",
     "STUDENTJOB": "Studentenjob",
     "INTERSHIP": "Stage",
-    "AIDES": "Steun voor studenten",
+    "AIDES": "Hulp",
     "EVENTS": "Evenementen",
+    "KOTS": "Studentenkot",
+    "STUDIES": "Studies en Opleidingen",
     "PROFESSIONEL": "Professioneel",
     "STUDENTITEM": "Studenten",
     "RECRUITER": "Bedrijven",
     "INSTITUTIONS": "Instellingen",
-    "ORGANISATIONS": "Publieke organisaties",
+    "ORGANISATIONS": "Publieke Organisaties",
     "ASSOCIATIONS": "Verenigingen",
     "MOUVEMENT": "Studentenbeweging",
+    "ABOUT": "Over Ons",
     "FEATURES": "Functies",
     "CONTACT": "Contact",
     "LOGIN": "Inloggen",
-    "PROFILE": "Profiel",
+    "PUBLISH": "Publiceren",
+    "PARAMETERS": "Instellingen",
     "LOGOUT": "Uitloggen",
-    "INVITE_COLLEAGUES": "Collega’s",
+    "INVITE_COLLEAGUES": "Collega's",
     "STUDENT": {
+      "CV": "Mijn CV Beheren",
+      "SEARCHES": "Mijn Zoekopdrachten",
+      "APPLICATIONS": "Mijn Sollicitaties",
+      "JOBS": "Studentenjob",
+      "INTERSHIPS": "Stage",
+      "AIDES": "Hulp",
+      "EVENTS": "Evenementen",
       "DASHBOARD": "Dashboard",
-      "STUDIES": "Studies",
-      "INTERNSHIPS": "Stages",
-      "JOBS": "Banen",
-      "EVENTS": "Evenementen"
+      "STUDIES": "Studies en Opleidingen"
     },
     "SUPERADMIN": {
       "DASHBOARD": "Dashboard",
       "INVITE": "Uitnodigen"
     },
     "COMPANY": {
-      "HOME": "Bedrijf",
+      "HOME": "Mijn Bedrijf",
       "ADMIN": "Bedrijfsbeheerder",
       "RECRUITER": "Bedrijfsrecruiter",
       "VIEWER": "Bedrijfskijker"
     },
     "INSTITUTION": {
-      "HOME": "Instelling",
+      "HOME": "Mijn Instelling",
       "ADMIN": "Instellingsbeheerder",
       "EDITOR": "Instellingseditor",
       "VIEWER": "Instellingskijker"
     },
     "LANDLORD": {
-      "DASHBOARD": "Verhuurder Dashboard"
+      "ANNOUNCES": "Mijn Aankondigingen"
     }
   },
   "INVITE": {
@@ -208,7 +327,9 @@
         "INTERNAL_SERVER_ERROR": "Er is een interne fout opgetreden. Probeer het later opnieuw.",
         "TOKEN_INVALID": "Ongeldig token!",
         "OTP_INVALID": "Ongeldige code. Probeer opnieuw.",
-        "TOO_MANY_OTP_RESENDS": "Je hebt te veel OTP-codes aangevraagd. Wacht even voordat je het opnieuw probeert."
+        "TOO_MANY_OTP_RESENDS": "Je hebt te veel OTP-codes aangevraagd. Wacht even voordat je het opnieuw probeert.",
+        "ACTUAL_PASSWORD_INVALID": "Het huidige wachtwoord dat is opgegeven, is onjuist.",
+        "ENTITY_NAME_ALREADY_USED": "Deze naam wordt al door een andere entiteit gebruikt."
       }
     }
   },
@@ -310,33 +431,33 @@
     }
   },
   "RESETPASSWORD": {
-    "TITLE": "Wachtwoord opnieuw instellen",
+    "TITLE": "Wachtwoord Herstellen",
     "SUCCESS": "Je wachtwoord is succesvol bijgewerkt. Je kunt nu inloggen.",
-    "FEEDBACK": "Als er een account bestaat voor dit e-mailadres, is een resetlink verzonden.",
+    "FEEDBACK": "Als er een account bestaat met dit e-mailadres, is er een resetlink verzonden.",
     "LABEL": {
       "EMAIL": "E-mailadres"
     },
     "BUTTON": {
-      "SUBMIT": "Opnieuw instellen",
+      "SUBMIT": "Herstellen",
+      "VALIDATE_OTP": "Valideren",
       "TO_LOGIN": "Inloggen"
     },
     "ERROR": {
       "FRONTEND": {
-        "EMAIL_REQUIRED": "E-mailadres is verplicht.",
-        "EMAIL_INVALID": "Voer een geldig e-mailadres in.",
         "INVALID_LINK": "Deze link is ongeldig of verlopen."
       },
       "BACKEND": {
-        "TOO_MANY_TOKEN_REQUESTS": "Te veel pogingen. Probeer het over een paar minuten opnieuw.",
+        "TOO_MANY_TOKEN_REQUESTS": "Te veel pogingen. Probeer het over enkele minuten opnieuw.",
         "PASSWORD_RESET_SAME_AS_OLD": "Je nieuwe wachtwoord mag niet hetzelfde zijn als het oude.",
-        "PASSWORD_RESET_ALREADY_REQUESTED": "Er is recent al een resetverzoek verzonden. Wacht even voordat je een nieuwe aanvraagt.",
-        "PASSWORD_RESET_TOKEN_INVALID": "De link is ongeldig of al gebruikt.",
+        "PASSWORD_RESET_ALREADY_REQUESTED": "Er is recent al een resetverzoek gedaan. Even geduld a.u.b.",
+        "PASSWORD_RESET_TOKEN_INVALID": "De link is ongeldig of is al gebruikt.",
         "PASSWORD_RESET_TOKEN_EXPIRED": "De resetlink is verlopen.",
         "PASSWORD_RESET_TOKEN_USED": "Deze resetlink is al gebruikt.",
-        "PASSWORD_RESET_FAILED": "Het opnieuw instellen van het wachtwoord is mislukt. Probeer opnieuw."
+        "PASSWORD_RESET_FAILED": "Wachtwoord herstellen is mislukt. Probeer opnieuw."
       }
     }
-  },
+  }
+,
   "LEGAL": {
     "VERSION": "Versie:",
     "PUBLISHED_ON": "Gepubliceerd op:",
@@ -399,17 +520,70 @@
   "LANDING": {
     "RESULTS": {
       "TITLE": "Zoekresultaten",
-      "NO_RESULTS": "Nog geen resultaten gevonden. Gebruik de zoekformulieren om mogelijkheden te vinden."
-    }
+      "NO_RESULTS": "Momenteel geen resultaten. Gebruik de zoekformulieren om kansen te vinden."
+    },
+    "JOBS_NEAR_YOU": "STUDENTENJOB BIJ JOU IN DE BUURT",
+    "INTERNSHIPS_INTERESTING": "INTERESSANTE STAGES",
+    "STUDIES_TOP": "TOPSTUDIES",
+    "AIDES_MUST_KNOW": "HULP DIE JE NIET MAG MISSEN",
+    "EVENTS_AROUND": "EVENEMENTEN IN DE BUURT"
+  },
+  "INVITATION_REQUEST": {
+    "LABEL": {
+      "COMPANY_NUMBER": "Ondernemingsnummer",
+      "INSTITUTION_TYPE": "Type instelling"
+    },
+    "PLACEHOLDER": {
+      "COMPANY_NUMBER": "bv. 0123.456.789",
+      "INSTITUTION_TYPE": "Kies een type instelling"
+    },
+    "COMPANY_NUMBER_PATTERN": "Het ondernemingsnummer moet het formaat XXXX.XXX.XXX hebben",
+    "COMPANY_NUMBER_REQUIRED": "Het ondernemingsnummer is verplicht",
+    "INSTITUTION_TYPE_REQUIRED": "Het type instelling is verplicht.",
+    "TITLE": "Uitnodigingsverzoek",
+    "ENTITY_TYPE_LABEL": "Entiteittype",
+    "ENTITY_NAME_LABEL": "Naam van de entiteit",
+    "ENTITY_NAME_PLACEHOLDER": "bv. Universiteit van Luik",
+    "ENTITY_NAME_REQUIRED": "De naam van de entiteit is verplicht"
   },
   "SEARCH": {
+    "FILTER": "Filter",
+    "LABEL": "Zoeken",
+    "KOT": {
+      "TITLE": "Beschikbare Kots",
+      "LABEL": {
+        "KEYWORDS": "Trefwoorden",
+        "LOCATION": "Locatie",
+        "KOT_TYPE": "Kot-type",
+        "LANDLORD_TYPE": "Type verhuurder",
+        "IS_FURNISHED": "Alleen gemeubileerde kots"
+      },
+      "PLACEHOLDER": {
+        "KEYWORDS": "Voer trefwoorden in (bijv. studio, gedeeld)",
+        "LOCATION": "Voer een stad of regio in",
+        "KOT_TYPE": "Selecteer een kot-type",
+        "LANDLORD_TYPE": "Selecteer een type verhuurder"
+      },
+      "OPTION": {
+        "ALL": "Alle",
+        "STUDIO": "Studio",
+        "SHARED_ROOM": "Gedeelde kamer",
+        "APARTMENT": "Appartement",
+        "PRIVATE": "Particulier",
+        "AGENCY": "Makelaar",
+        "UNIVERSITY": "Universiteit"
+      },
+      "BUTTON": {
+        "SUBMIT": "Zoeken"
+      }
+    },
     "STUDENT_JOB": {
-      "TITLE": "Zoeken naar studentenjobs",
+      "TITLE": "Studentenjob",
       "LABEL": {
         "KEYWORDS": "Trefwoorden",
         "LOCATION": "Locatie",
         "CONTRACT_TYPE": "Contracttype",
-        "SCHEDULE_TYPE": "Werktijd",
+        "SCHEDULE_TYPE": "Urenregeling",
         "MIN_SALARY": "Minimumloon (€/maand)",
         "REMOTE_POSSIBLE": "Thuiswerk mogelijk"
       },
@@ -417,7 +591,7 @@
         "KEYWORDS": "Voer trefwoorden in (bijv. kelner, verkoop)",
         "LOCATION": "Voer een stad of regio in",
         "CONTRACT_TYPE": "Selecteer een contracttype",
-        "SCHEDULE_TYPE": "Selecteer een werktijd",
+        "SCHEDULE_TYPE": "Selecteer een urenregeling",
         "MIN_SALARY": "Voer het minimumloon in"
       },
       "OPTION": {
@@ -433,60 +607,88 @@
         "SUBMIT": "Zoeken"
       }
     },
+    "AID": {
+      "TITLE": "Beschikbare steun",
+      "LABEL": {
+        "KEYWORDS": "Trefwoorden",
+        "LOCATION": "Locatie",
+        "AID_TYPE": "Type steun",
+        "PROVIDER_TYPE": "Aanbieder",
+        "IS_PUBLIC": "Alleen publieke steun"
+      },
+      "PLACEHOLDER": {
+        "KEYWORDS": "Voer trefwoorden in (bijv. huisvesting, beurs)",
+        "LOCATION": "Voer een stad of regio in",
+        "AID_TYPE": "Selecteer een type steun",
+        "PROVIDER_TYPE": "Selecteer een aanbieder"
+      },
+      "OPTION": {
+        "ALL": "Alle",
+        "SCHOLARSHIP": "Beurs",
+        "HOUSING": "Huisvesting",
+        "FOOD": "Voeding",
+        "STATE": "Overheid",
+        "NGO": "NGO",
+        "UNIVERSITY": "Universiteit"
+      },
+      "BUTTON": {
+        "SUBMIT": "Zoeken"
+      }
+    },
     "INTERNSHIP": {
-      "TITLE": "Zoeken naar stages",
+      "TITLE": "Stages",
       "LABEL": {
         "KEYWORDS": "Trefwoorden",
         "STUDY_DOMAIN": "Studierichting",
         "LOCATION": "Locatie",
-        "MIN_DURATION": "Minimale duur (maanden)",
-        "ECTS_CREDITS": "Minimale ECTS-credits",
+        "MIN_DURATION": "Minimumduur (maanden)",
+        "ECTS_CREDITS": "Minimum ECTS-credits",
         "REMOTE_POSSIBLE": "Thuiswerk mogelijk"
       },
       "PLACEHOLDER": {
         "KEYWORDS": "Voer trefwoorden in (bijv. ontwikkeling, marketing)",
-        "STUDY_DOMAIN": "Selecteer een richting",
+        "STUDY_DOMAIN": "Selecteer een studierichting",
         "LOCATION": "Voer een stad of regio in",
-        "MIN_DURATION": "Voer de minimale duur in",
-        "ECTS_CREDITS": "Voer de minimale ECTS-credits in"
+        "MIN_DURATION": "Voer de minimumduur in",
+        "ECTS_CREDITS": "Voer het minimum aantal ECTS-credits in"
       },
       "OPTION": {
         "ALL": "Alle",
-        "IT": "Informatica",
+        "IT": "IT",
         "MARKETING": "Marketing",
-        "ENGINEERING": "Ingenieurswetenschappen"
+        "ENGINEERING": "Engineering"
       },
       "BUTTON": {
         "SUBMIT": "Zoeken"
       }
     },
     "STUDY": {
-      "TITLE": "Zoeken naar studies en opleidingen",
+      "TITLE": "Studies en opleidingen",
       "LABEL": {
         "KEYWORDS": "Trefwoorden",
         "STUDY_DOMAIN": "Studierichting",
         "LOCATION": "Locatie",
-        "DEGREE_TYPE": "Diplomatype",
-        "DELIVERY_MODE": "Onderwijsvorm",
+        "DEGREE_TYPE": "Type diploma",
+        "DELIVERY_MODE": "Lesmethode",
         "MAX_COST": "Maximale kosten (€/jaar)"
       },
       "PLACEHOLDER": {
-        "KEYWORDS": "Voer trefwoorden in (bijv. informatica, recht)",
-        "STUDY_DOMAIN": "Selecteer een richting",
+        "KEYWORDS": "Voer trefwoorden in (bijv. IT, recht)",
+        "STUDY_DOMAIN": "Selecteer een studierichting",
         "LOCATION": "Voer een stad of regio in",
-        "DEGREE_TYPE": "Selecteer een diplomatype",
-        "DELIVERY_MODE": "Selecteer een vorm",
+        "DEGREE_TYPE": "Selecteer een type diploma",
+        "DELIVERY_MODE": "Selecteer een lesmethode",
         "MAX_COST": "Voer de maximale kosten in"
       },
       "OPTION": {
         "ALL": "Alle",
-        "IT": "Informatica",
+        "IT": "IT",
         "LAW": "Recht",
         "MEDICINE": "Geneeskunde",
         "BACHELOR": "Bachelor",
         "MASTER": "Master",
         "DOCTORATE": "Doctoraat",
-        "IN_PERSON": "Op locatie",
+        "IN_PERSON": "Fysiek",
         "ONLINE": "Online",
         "HYBRID": "Hybride"
       },
@@ -495,13 +697,13 @@
       }
     },
     "EVENT": {
-      "TITLE": "Zoeken naar evenementen",
+      "TITLE": "Evenementen",
       "LABEL": {
         "KEYWORDS": "Trefwoorden",
         "LOCATION": "Locatie",
         "START_DATE": "Startdatum",
         "ENTITY_TYPE": "Type organisator",
-        "IS_PUBLIC": "Alleen openbare evenementen"
+        "IS_PUBLIC": "Alleen publieke evenementen"
       },
       "PLACEHOLDER": {
         "KEYWORDS": "Voer trefwoorden in (bijv. conferentie, workshop)",
@@ -522,9 +724,64 @@
   },
   "SEARCH_FORM": {
     "KEYWORDS": "Trefwoorden",
-    "KEYWORDS_PLACEHOLDER": "Bijv: Webdeveloper",
     "LOCATION": "Waar?",
-    "LOCATION_PLACEHOLDER": "Bijv: Mons",
     "SUBMIT": "Zoeken"
+  },
+  "ERROR": {
+    "BACKEND": {
+      "VALIDATIONS": {
+        "REFRESH_TOKEN_LOCK_TIMEOUT": "Time-out voor vergrendeling van vernieuwingstoken",
+        "REFRESH_TOKEN_ALREADY_USED": "Vernieuwingstoken al gebruikt",
+        "REFRESH_TOKEN_ALREADY_EXISTS": "Vernieuwingstoken bestaat al",
+        "NO_LEGAL_CONSENTS_PROVIDED": "Geen juridische toestemmingen verleend",
+        "LEGAL_DOCUMENT_NOT_FOUND": "Juridisch document niet gevonden",
+        "OTP_NOT_REQUIRED_FOR_THIS_TOKEN_TYPE": "OTP-code niet vereist voor dit tokentype",
+        "TOKEN_NOT_AVAILABLE": "Token niet beschikbaar",
+        "TOKEN_NOT_FOUND": "Token niet gevonden",
+        "MISSING_CONFIRMATION_TOKEN_OR_OTP": "Ontbrekende bevestigingstoken of OTP-code",
+        "OTP_INVALID": "Ongeldige OTP-code",
+        "TOO_SOON_FOR_NEW_TOKEN": "Te vroeg voor een nieuwe token",
+        "AUTH_USER_NULL": "Gebruiker niet gedefinieerd",
+        "AUTH.MISSING_EMAIL": "E-mailadres ontbreekt",
+        "AUTH_TOKEN_GENERATION_FAILED": "Genereren van token mislukt",
+        "TOKEN_INVALID": "Ongeldige token",
+        "AUTH_UNEXPECTED": "Onverwachte fout",
+        "TOKEN_ALREADY_USED": "Token al gebruikt",
+        "TOKEN_REVOKED": "Token ingetrokken",
+        "TOKEN_EXPIRED": "Token verlopen",
+        "TOKEN_TYPE_NOT_FOUND": "Tokentype niet gevonden",
+        "INVALID_ADMIN_ROLE": "Ongeldige beheerdersrol",
+        "REFRESH_TOKEN_INVALID_OR_EXPIRED": "Vernieuwingstoken ongeldig of verlopen",
+        "REFRESH_TOKEN_PROCESS_FAILED": "Verwerking van vernieuwingstoken mislukt",
+        "INSTITUTION_DTO_NULL": "Instellingsgegevens niet gedefinieerd",
+        "INSTITUTION_TYPE_ID_INVALID": "Ongeldige ID voor instellingstype",
+        "COMPANY_DTO_NULL": "Bedrijfsgegevens niet gedefinieerd",
+        "COMPANY_NUMBER_REQUIRED": "Bedrijfsnummer vereist",
+        "COMPANY_NUMBER_INVALID_FORMAT": "Ongeldig formaat van bedrijfsnummer",
+        "COMPANY_NUMBER_INVALID_DIGITS": "Ongeldige cijfers van bedrijfsnummer",
+        "COMPANY_NUMBER_INVALID": "Ongeldig bedrijfsnummer",
+        "INVALID_NAME": "Ongeldige naam",
+        "INVALID_EMAIL_FORMAT": "Ongeldig e-mailformaat",
+        "SESSION_EVENT_NOT_FOUND": "Sessiegebeurtenis niet gevonden",
+        "NO_SESSION_TO_REVOCK": "Geen sessie om in te trekken",
+        "PASSWORD_INVALID": "Ongeldig wachtwoord",
+        "PASSWORD_UPDATE_FAILED": "Wachtwoordupdate mislukt",
+        "EMAIL_UNCHANGED": "E-mail ongewijzigd",
+        "EMAIL_UPDATE_FAILED": "E-mailupdate mislukt",
+        "NAMES_UNCHANGED": "Namen ongewijzigd",
+        "NAME_UPDATE_FAILED": "Naamupdate mislukt",
+        "INVALID_NAME_FIELDS": "Ongeldige naamvelden",
+        "NEW_PASSWORD_INVALID": "Ongeldig nieuw wachtwoord",
+        "INVALID_NEW_EMAIL": "Ongeldige nieuwe e-mail",
+        "INVITATION_DETAILS_MISMATCH": "Mismatch in uitnodigingsdetails",
+        "USER_CREATION_FAILED": "Gebruikerscreatie mislukt",
+        "COLLEAGUE_REGISTRATION_FAILED": "Registratie van collega mislukt",
+        "USER_NOT_FOUND_AFTER_ENTITY_CREATION": "Gebruiker niet gevonden na entiteitscreatie",
+        "USER_REGISTRATION_FAILED": "Gebruikersregistratie mislukt",
+        "ROLE_NOT_FOUND": "Rol niet gevonden",
+        "PUBLIC_ENTITY_TYPE_NOT_FOUND": "Openbaar entiteitstype niet gevonden",
+        "UNSUPPORTED_PUBLIC_ROLE": "Niet-ondersteunde openbare rol"
+      }
+    }
   }
 }

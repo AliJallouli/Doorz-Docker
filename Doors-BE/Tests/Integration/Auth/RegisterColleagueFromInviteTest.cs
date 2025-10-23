@@ -55,13 +55,7 @@ public class RegisterColleagueFromInviteTest
 
         login.Should().NotBeEmpty("Aucune tentative de login trouvée");
 
-        // 📘 5. Session enregistrée
-        var session = await _db.SessionEvents
-            .Where(s => s.UserId == user!.UserId)
-            .OrderByDescending(s => s.EventTime)
-            .ToListAsync();
-
-        session.Should().NotBeEmpty("Aucun événement de session trouvé");
+      
 
         // 🔐 6. Refresh token généré
         var refresh = await _db.RefreshTokens

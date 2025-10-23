@@ -1,12 +1,18 @@
-<form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="search-form">
+
+<div class="global-search-header search-header ">
+  <app-search-icon [type]="searchTypeToIconType[searchType]"></app-search-icon>
+  <h3>{{ 'SEARCH.LABEL' | translate }} | {{ searchTitle | translate }}</h3>
+</div>
+<div class="container">
+<form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="doorz-horizental-form">
   <div class="form-group">
     <label for="keywords">{{ 'SEARCH_FORM.KEYWORDS' | translate }}</label>
     <input
       type="text"
       id="keywords"
       formControlName="keywords"
-      placeholder="{{ 'SEARCH_FORM.KEYWORDS_PLACEHOLDER' | translate }}"
-    />
+      [placeholder]="'SEARCH.' + searchTypeToKey[searchType] + '.PLACEHOLDER.KEYWORDS' | translate"
+  />
   </div>
   <div class="form-group">
     <label for="location">{{ 'SEARCH_FORM.LOCATION' | translate }}</label>
@@ -14,10 +20,11 @@
       type="text"
       id="location"
       formControlName="location"
-      placeholder="{{ 'SEARCH_FORM.LOCATION_PLACEHOLDER' | translate }}"
+      [placeholder]="'SEARCH.' + searchTypeToKey[searchType]  + '.PLACEHOLDER.LOCATION' | translate"
     />
   </div>
   <button type="submit" class="search-button">
     {{ 'SEARCH_FORM.SUBMIT' | translate }}
   </button>
 </form>
+</div>

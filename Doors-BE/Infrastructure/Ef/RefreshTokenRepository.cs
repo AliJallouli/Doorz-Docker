@@ -13,26 +13,23 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
-
-    public async Task DeleteAsync(int refreshTokenId)
-    {
-        var token = await _context.RefreshTokens
-            .FirstOrDefaultAsync(rt => rt.RefreshTokenId == refreshTokenId);
-        if (token != null)
-        {
-            _context.RefreshTokens.Remove(token);
-            await _context.SaveChangesAsync(); // Assurez-vous de sauvegarder les changements
-        }
-    }
+    
     public async Task<RefreshToken?> GetRefreshTokenAsync(string token)
     {
         return await _context.RefreshTokens
             .FromSqlRaw("SELECT * FROM refresh_token WHERE token = {0} FOR UPDATE", token)
             .AsNoTracking()
-            .OrderBy(t => t.RefreshTokenId) // Ajout pour éliminer l'avertissement EF Core
+            .OrderBy(t => t.RefreshTokenId) 
             .Take(1)
             .SingleOrDefaultAsync();
     }
+
+    public async Task AddRefreshTokenAsync(RefreshToken refreshToken)
+    {
+        _context.RefreshTokens.Add(refreshToken);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task<RefreshToken?> GetValidTokenBySessionAsync(int sessionEventId)
     {
         return await _context.RefreshTokens
@@ -66,4 +63,56 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     }
 
 
+    public async Task RemoveRefreshTokensBySessionAsync(int sessionEventId)
+    {
+        await _context.RefreshTokens
+            .Where(rt => rt.SessionEventId == sessionEventId)
+            .ExecuteDeleteAsync();
+    }
+    
+    public async Task DeleteRefreshTokensBySessionIdAsync(int sessionId)
+    {
+        var tokens = await _context.RefreshTokens
+            .Where(t => t.SessionEventId == sessionId)
+            .ToListAsync();
+
+        if (tokens.Any())
+        {
+            _context.RefreshTokens.RemoveRange(tokens);
+        }
+    }
+
+    public async Task DeleteRefreshTokensByUserIdAsync(int userId)
+    {
+        var tokens = await _context.RefreshTokens
+            .Join(_context.SessionEvents,
+                token => token.SessionEventId,
+                session => session.SessionEventId,
+                (token, session) => new { token, session })
+            .Where(joined => joined.session.UserId == userId)
+            .Select(joined => joined.token)
+            .ToListAsync();
+
+        if (tokens.Any())
+        {
+            _context.RefreshTokens.RemoveRange(tokens);
+        }
+    }
+
+    public async Task DeleteRefreshTokensByUserIdExceptAsync(int userId, int sessionIdToKeep)
+    {
+        var tokens = await _context.RefreshTokens
+            .Join(_context.SessionEvents,
+                token => token.SessionEventId,
+                session => session.SessionEventId,
+                (token, session) => new { token, session })
+            .Where(joined => joined.session.UserId == userId && joined.session.SessionEventId != sessionIdToKeep)
+            .Select(joined => joined.token)
+            .ToListAsync();
+
+        if (tokens.Any())
+        {
+            _context.RefreshTokens.RemoveRange(tokens);
+        }
+    }
 }

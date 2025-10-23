@@ -1,8 +1,10 @@
-﻿using Application.UseCases.References.EntityType.UseCase;
-using BackEnd_TI.Utils;
+﻿using Application.UseCases.References.EntityType.DTOs;
+using Application.UseCases.References.EntityType.UseCase;
+using WebApi.Utils;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Contracts.Responses;
 
-namespace API.Controllers;
+namespace WebApi.Controllers.v1.References;
 
 [Route("api/v1/entitytypes")]
 [ApiController]
@@ -16,10 +18,15 @@ public class EntityTypesController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAll()
     {
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
         var entityTypesDtos = await _getAllEntityTypesUseCase.ExecuteAsync(languageCode);
-        return Ok(entityTypesDtos);
+        return Ok(ApiResponse<IEnumerable<EntityTypeDto>>.Ok(
+            entityTypesDtos,
+            "ENTITY_TYPES.RETRIEVED"
+        ));
     }
 }

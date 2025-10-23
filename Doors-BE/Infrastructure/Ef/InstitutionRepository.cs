@@ -18,7 +18,7 @@ public class InstitutionRepository : IInstitutionRepository
     {
         _context.Institutions.Add(institution);
         await _context.SaveChangesAsync();
-        return institution; // Retourne l’entité avec l’ID généré
+        return institution; 
     }
 
     public async Task<Institution?> GetByIdAsync(int institutionId)

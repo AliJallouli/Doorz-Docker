@@ -1,0 +1,94 @@
+
+  <div class="container">
+
+    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="doorz-vertical-form">
+
+
+      <!-- Domaine d'études -->
+      <div class="form-group">
+        <label>
+          {{ 'SEARCH.INTERNSHIP.LABEL.STUDY_DOMAIN' | translate }}
+        </label>
+        <select
+          formControlName="studyDomain"
+          class="doorz-select"
+          [ngClass]="{
+            'is-invalid': searchForm.get('studyDomain')?.touched && fieldError['studyDomain']
+          }"
+        >
+          <option value="">{{ 'SEARCH.INTERNSHIP.OPTION.ALL' | translate }}</option>
+          <option *ngFor="let domain of studyDomains" [value]="domain.domain_id">
+            {{ domain.name }}
+          </option>
+        </select>
+        <div class="invalid-feedback" *ngIf="fieldError['studyDomain']">
+          {{ fieldError['studyDomain'] | translate }}
+        </div>
+      </div>
+
+
+
+      <!-- Durée minimum -->
+      <div class="form-group">
+        <label>
+          {{ 'SEARCH.INTERNSHIP.LABEL.MIN_DURATION' | translate }}
+        </label>
+        <input
+          type="number"
+          formControlName="minDuration"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid': searchForm.get('minDuration')?.touched && (searchForm.get('minDuration')?.invalid || fieldError['minDuration'])
+          }"
+        />
+        <div class="invalid-feedback" *ngIf="searchForm.get('minDuration')?.touched">
+          <ng-container *ngIf="searchForm.get('minDuration')?.hasError('min')">
+            {{ 'SHARED.ERROR.FRONTEND.MIN_DURATION_INVALID' | translate }}
+          </ng-container>
+          <ng-container *ngIf="fieldError['minDuration']">
+            {{ fieldError['minDuration'] | translate }}
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Crédits ECTS -->
+      <div class="form-group">
+        <label>
+          {{ 'SEARCH.INTERNSHIP.LABEL.ECTS_CREDITS' | translate }}
+        </label>
+        <input
+          type="number"
+          formControlName="ectsCredits"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid': searchForm.get('ectsCredits')?.touched && (searchForm.get('ectsCredits')?.invalid || fieldError['ectsCredits'])
+          }"
+        />
+        <div class="invalid-feedback" *ngIf="searchForm.get('ectsCredits')?.touched">
+          <ng-container *ngIf="searchForm.get('ectsCredits')?.hasError('min')">
+            {{ 'SHARED.ERROR.FRONTEND.ECTS_CREDITS_INVALID' | translate }}
+          </ng-container>
+          <ng-container *ngIf="fieldError['ectsCredits']">
+            {{ fieldError['ectsCredits'] | translate }}
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Travail à distance -->
+      <div class="form-check">
+        <label class="form-check-label"  for="remotePossible">
+          <input type="checkbox" id="remotePossible" formControlName="remotePossible" class="form-check-input"/>
+          {{ 'SEARCH.INTERNSHIP.LABEL.REMOTE_POSSIBLE' | translate }}
+        </label>
+      </div>
+
+
+      <!-- Erreur globale -->
+      <div *ngIf="globalError" class="text-danger text-center mt-2">
+        {{ globalError | translate }}
+      </div>
+
+
+    </form>
+  </div>
+

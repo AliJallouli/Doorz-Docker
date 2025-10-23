@@ -2871,3 +2871,202 @@ ADD CONSTRAINT fk_contact_message_type FOREIGN KEY (contact_message_type_id) REF
 ALTER TABLE contact_message_type ADD key_name VARCHAR(50) UNIQUE COMMENT 'Clé technique temporaire pour les inserts';
 
 ALTER TABLE contact_message ADD phone VARCHAR(20) COMMENT 'Numéro de téléphone de l expediteur';
+
+ALTER TABLE sessionEvents
+ADD RememberMe BOOLEAN NOT NULL DEFAULT FALSE;
+
+ALTER TABLE sessionEvents
+    DROP COLUMN eventType,
+    DROP COLUMN eventTime,
+
+    ADD COLUMN is_revoked BOOLEAN NOT NULL DEFAULT FALSE,
+    
+    ADD COLUMN opened_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ADD COLUMN opening_reason VARCHAR(255) NULL,
+    
+    ADD COLUMN closed_at DATETIME NULL,
+    ADD COLUMN closing_reason VARCHAR(255) NULL,
+
+    ADD COLUMN last_seen_at DATETIME NULL;
+	
+ALTER TABLE sessionEvents
+CHANGE COLUMN RememberMe remember_me  BOOLEAN NOT NULL DEFAULT FALSE;
+
+
+
+CREATE TABLE user_action_log (
+    user_action_log_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    actionType VARCHAR(50) NOT NULL COMMENT 'Type d’action (ex: NameUpdate, EmailUpdate, PasswordUpdate)',
+    actionTimestamp DATETIME NOT NULL COMMENT 'Date et heure de l’action',
+    user_agent_id INT NOT NULL COMMENT 'ID de l’agent utilisateur (lié à une table UserAgents)',
+    ipAddress VARCHAR(45) NOT NULL COMMENT 'Adresse IP (support IPv4/IPv6)',
+    oldValue TEXT COMMENT 'Valeur précédente (ex: ancien nom ou email)',
+    newValue TEXT COMMENT 'Nouvelle valeur (ex: nouveau nom ou email)',
+    INDEX idx_user_action (user_id, actionType, actionTimestamp) COMMENT 'Index pour les requêtes de limitation de taux',
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_agent_id) REFERENCES user_agents(user_agent_id) ON DELETE RESTRICT
+) ENGINE=InnoDB 
+DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci
+  COMMENT='Journal des actions utilisateur pour le suivi des mises à jour';
+  
+  
+
+
+CREATE TABLE public_organization_type (
+    public_organization_type_id INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique du type d’organisme',
+    name VARCHAR(100) NOT NULL UNIQUE COMMENT 'Nom du type (ex. : Gouvernemental)',
+    description TEXT COMMENT 'Description',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de création',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de mise à jour'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Types d’organismes publics';
+
+
+
+CREATE TABLE public_organization_type_translations (
+    public_organization_type_translation_id INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de la traduction',
+    public_organization_type_id INT NOT NULL COMMENT 'Référence au type d’organisme',
+    language_id INT NOT NULL COMMENT 'Référence à la langue',
+	translated_name VARCHAR(100) NOT NULL COMMENT 'Nom traduit',
+    translated_description TEXT COMMENT 'Description traduite',
+    UNIQUE KEY uk_public_organization_type_lang (public_organization_type_id, language_id) COMMENT 'Unicité par type et langue',
+    CONSTRAINT fk_public_organization_type_translations_type FOREIGN KEY (public_organization_type_id) REFERENCES public_organization_type(public_organization_type_id) ON DELETE CASCADE,
+    CONSTRAINT fk_public_organization_type_translations_language FOREIGN KEY (language_id) REFERENCES spoken_language(language_id) ON DELETE RESTRICT,
+    INDEX idx_public_organization_type_translations_language (language_id) COMMENT 'Index pour recherches par langue'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Traductions des types d’organismes publics';
+
+
+
+CREATE TABLE student_movement (
+    student_movement_id INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique du mouvement étudiant',
+    event_owner_id INT UNIQUE COMMENT 'Clé polymorphique vers event_owner',
+    housing_owner_id INT UNIQUE COMMENT 'Clé polymorphique vers housing_owner',
+    entity_id INT NOT NULL UNIQUE COMMENT 'Référence à entities',
+    name VARCHAR(100) NOT NULL COMMENT 'Nom officiel du mouvement (ex. : Conseil étudiant ULB)',
+    acronym VARCHAR(10) COMMENT 'Acronyme (ex. : CEULB)',
+    enterprise_number VARCHAR(12) UNIQUE COMMENT 'Numéro d’entreprise BCE (ex. : BE0XXX.XXX.XXX)',
+    description TEXT COMMENT 'Description des objectifs',
+    website VARCHAR(191) COMMENT 'URL du site web',
+    logo VARCHAR(191) COMMENT 'Chemin vers le logo',
+    founding_date DATE COMMENT 'Date de fondation',
+    member_count INT CHECK (member_count >= 0) COMMENT 'Nombre de membres étudiants',
+    is_active BOOLEAN DEFAULT TRUE COMMENT 'Indique si le mouvement est actif',
+    like_count INT DEFAULT 0 CHECK (like_count >= 0) COMMENT 'Nombre de "j’aime" reçus',
+    visit_count INT DEFAULT 0 CHECK (visit_count >= 0) COMMENT 'Nombre de visites sur le profil',
+    contact_id INT COMMENT 'Référence aux informations de contact',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de création',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de mise à jour',
+    created_by INT COMMENT 'Référence à l’utilisateur créateur',
+    updated_by INT COMMENT 'Référence à l’utilisateur ayant mis à jour',
+    CONSTRAINT fk_student_movement_event_owner FOREIGN KEY (event_owner_id) REFERENCES event_owner(event_owner_id) ON DELETE CASCADE,
+    CONSTRAINT fk_student_movement_housing_owner FOREIGN KEY (housing_owner_id) REFERENCES housing_owner(housing_owner_id) ON DELETE CASCADE,
+    CONSTRAINT fk_student_movement_entity FOREIGN KEY (entity_id) REFERENCES entities(entity_id) ON DELETE CASCADE,
+    CONSTRAINT fk_student_movement_contact FOREIGN KEY (contact_id) REFERENCES contact(contact_id) ON DELETE SET NULL,
+    CONSTRAINT fk_student_movement_created_by FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE SET NULL,
+    CONSTRAINT fk_student_movement_updated_by FOREIGN KEY (updated_by) REFERENCES users(user_id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Mouvements étudiants (syndicats, conseils étudiants)';
+
+CREATE TABLE public_organization (
+    public_organization_id INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de l’organisme public',
+    event_owner_id INT UNIQUE COMMENT 'Clé polymorphique vers event_owner',
+    housing_owner_id INT UNIQUE COMMENT 'Clé polymorphique vers housing_owner',
+    entity_id INT NOT NULL UNIQUE COMMENT 'Référence à entities',
+    name VARCHAR(100) NOT NULL COMMENT 'Nom officiel (ex. : Agence fédérale pour la jeunesse)',
+    acronym VARCHAR(10) COMMENT 'Acronyme (ex. : AFJ)',
+    enterprise_number VARCHAR(12) UNIQUE COMMENT 'Numéro d’entreprise BCE (si ASBL)',
+    description TEXT COMMENT 'Description des missions',
+    website VARCHAR(191) COMMENT 'URL du site web',
+    logo VARCHAR(191) COMMENT 'Chemin vers le logo',
+    public_organization_type_id INT COMMENT 'Type d’organisme (ex. : Gouvernemental, Financé par l’État)',
+    legal_status_id INT COMMENT 'Statut juridique (ex. : Public, ASBL)',
+    is_active BOOLEAN DEFAULT TRUE COMMENT 'Indique si l’organisme est actif',
+    like_count INT DEFAULT 0 CHECK (like_count >= 0) COMMENT 'Nombre de "j’aime" reçus',
+    visit_count INT DEFAULT 0 CHECK (visit_count >= 0) COMMENT 'Nombre de visites sur le profil',
+    contact_id INT COMMENT 'Référence aux informations de contact',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de création',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de mise à jour',
+    created_by INT COMMENT 'Référence à l’utilisateur créateur',
+    updated_by INT COMMENT 'Référence à l’utilisateur ayant mis à jour',
+    CONSTRAINT fk_public_organization_event_owner FOREIGN KEY (event_owner_id) REFERENCES event_owner(event_owner_id) ON DELETE CASCADE,
+    CONSTRAINT fk_public_organization_housing_owner FOREIGN KEY (housing_owner_id) REFERENCES housing_owner(housing_owner_id) ON DELETE CASCADE,
+    CONSTRAINT fk_public_organization_entity FOREIGN KEY (entity_id) REFERENCES entities(entity_id) ON DELETE CASCADE,
+    CONSTRAINT fk_public_organization_type FOREIGN KEY (public_organization_type_id) REFERENCES public_organization_type(public_organization_type_id) ON DELETE SET NULL,
+    CONSTRAINT fk_public_organization_legal_status FOREIGN KEY (legal_status_id) REFERENCES legal_status(legal_status_id) ON DELETE SET NULL,
+    CONSTRAINT fk_public_organization_contact FOREIGN KEY (contact_id) REFERENCES contact(contact_id) ON DELETE SET NULL,
+    CONSTRAINT fk_public_organization_created_by FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE SET NULL,
+    CONSTRAINT fk_public_organization_updated_by FOREIGN KEY (updated_by) REFERENCES users(user_id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Organismes publics (agences gouvernementales, entités financées par l’État)';
+
+CREATE TABLE association (
+    association_id INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de l’association',
+    event_owner_id INT UNIQUE COMMENT 'Clé polymorphique vers event_owner',
+    housing_owner_id INT UNIQUE COMMENT 'Clé polymorphique vers housing_owner',
+    entity_id INT NOT NULL UNIQUE COMMENT 'Référence à entities',
+    name VARCHAR(100) NOT NULL COMMENT 'Nom officiel (ex. : ASBL Culture Jeunesse)',
+    acronym VARCHAR(10) COMMENT 'Acronyme (ex. : ACJ)',
+    enterprise_number VARCHAR(12) UNIQUE COMMENT 'Numéro d’entreprise BCE (obligatoire pour ASBL)',
+    description TEXT COMMENT 'Description de l’objectif non lucratif',
+    website VARCHAR(191) COMMENT 'URL du site web',
+    logo VARCHAR(191) COMMENT 'Chemin vers le logo',
+    founding_date DATE COMMENT 'Date de fondation',
+    member_count INT CHECK (member_count >= 0) COMMENT 'Nombre de membres',
+    is_active BOOLEAN DEFAULT TRUE COMMENT 'Indique si l’association est active',
+    like_count INT DEFAULT 0 CHECK (like_count >= 0) COMMENT 'Nombre de "j’aime" reçus',
+    visit_count INT DEFAULT 0 CHECK (visit_count >= 0) COMMENT 'Nombre de visites sur le profil',
+    contact_id INT COMMENT 'Référence aux informations de contact',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de création',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de mise à jour',
+    created_by INT COMMENT 'Référence à l’utilisateur créateur',
+    updated_by INT COMMENT 'Référence à l’utilisateur ayant mis à jour',
+    CONSTRAINT fk_association_event_owner FOREIGN KEY (event_owner_id) REFERENCES event_owner(event_owner_id) ON DELETE CASCADE,
+    CONSTRAINT fk_association_housing_owner FOREIGN KEY (housing_owner_id) REFERENCES housing_owner(housing_owner_id) ON DELETE CASCADE,
+    CONSTRAINT fk_association_entity FOREIGN KEY (entity_id) REFERENCES entities(entity_id) ON DELETE CASCADE,
+    CONSTRAINT fk_association_contact FOREIGN KEY (contact_id) REFERENCES contact(contact_id) ON DELETE SET NULL,
+    CONSTRAINT fk_association_created_by FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE SET NULL,
+    CONSTRAINT fk_association_updated_by FOREIGN KEY (updated_by) REFERENCES users(user_id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Associations sans but lucratif (ASBL)';
+
+
+
+
+
+CREATE TABLE invitation_request (
+    invitation_request_id INT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identifiant unique de la demande d’invitation',
+    
+    entity_type_id INT NOT NULL COMMENT 'Type d’entité : référence à entity_types (ex : Institution, Company, etc.)',
+    name VARCHAR(100) NOT NULL COMMENT 'Nom officiel de l’entité ou organisation demandant une invitation',
+    
+    invitation_email VARCHAR(191) NOT NULL COMMENT 'Email de la personne à inviter (admin principal)',
+
+    -- Champs spécifiques selon le type (optionnels)
+    company_number VARCHAR(12) COMMENT 'Numéro BCE si concerné (format : XXXX.XXX.XXX)',
+    institution_type_id INT COMMENT 'Type de l’institution (si applicable)',
+
+    -- Suivi de traitement
+    status ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING' COMMENT 'Statut de la demande',
+    rejection_reason TEXT COMMENT 'Motif éventuel du refus',
+
+    -- Métadonnées techniques
+    submitted_ip VARCHAR(45) COMMENT 'Adresse IP de l’auteur de la demande',
+    user_agent TEXT COMMENT 'Navigateur utilisé (user agent)',
+
+    -- Horodatage
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Date de soumission',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Date de mise à jour',
+
+    -- Contraintes
+    CONSTRAINT fk_invitation_request_entity_type FOREIGN KEY (entity_type_id)
+        REFERENCES entity_types(entity_type_id) ON DELETE RESTRICT,
+
+    CONSTRAINT fk_invitation_request_institution_type FOREIGN KEY (institution_type_id)
+        REFERENCES institution_type(institution_type_id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Demandes d’invitation envoyées par des entités externes';
+
+ALTER TABLE invitation_request
+    ADD COLUMN language_id INT NOT NULL COMMENT 'Langue choisie lors de la demande (fr, en, etc.)'
+    AFTER invitation_email,
+    ADD CONSTRAINT fk_invitation_request_language
+        FOREIGN KEY (language_id)
+        REFERENCES spoken_language(language_id)
+        ON DELETE RESTRICT;

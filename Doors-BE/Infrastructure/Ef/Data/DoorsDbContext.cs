@@ -4,6 +4,7 @@ using Domain.Entities.Support;
 using Domain.Entities.Translations;
 using Microsoft.EntityFrameworkCore;
 using Domain.Entities.References;
+using Domain.Enums;
 
 namespace Infrastructure.Ef.Data;
 
@@ -58,10 +59,15 @@ public class DoorsDbContext : DbContext
     public DbSet<Institution> Institutions { get; set; }
     public DbSet<Campus> Campuses { get; set; }
     public DbSet<Company> Companies { get; set; }
+    public DbSet<StudentMovement> StudentMovements { get; set; }
+    public DbSet<InvitationRequest> InvitationRequests { get; set; }
+    public DbSet<PublicOrganization> PublicOrganizations { get; set; }
+    public DbSet<Association> Associations { get; set; }
+    public DbSet<PublicOrganizationType> PublicOrganizationTypes { get; set; }
+    public DbSet<PublicOrganizationTypeTranslation> PublicOrganizationTypeTranslations { get; set; }
     public DbSet<Landlord> Landlords { get; set; }
     public DbSet<InstitutionInvitation> InstitutionInvitations { get; set; }
     public DbSet<InstitutionCampusInvitation> InstitutionCampusInvitations { get; set; }
-    public DbSet<CompanyInvitation> CompanyInvitations { get; set; }
     public DbSet<CampusAllowedDomain> CampusAllowedDomains { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<Housing> Housings { get; set; }
@@ -128,6 +134,7 @@ public class DoorsDbContext : DbContext
     public DbSet<UserLegalConsent> UserLegalConsents { get; set; }
     public DbSet<ContactMessage> ContactMessages { get; set; }
     public DbSet<ContactMessageType> ContactMessageTypes { get; set; }
+    public DbSet<UserActionLog> UserActionLogs { get; set; }
 
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -155,6 +162,7 @@ public class DoorsDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Token Types
         modelBuilder.Entity<TokenType>(entity =>
         {
             entity.ToTable("token_type");
@@ -210,7 +218,7 @@ public class DoorsDbContext : DbContext
             entity.HasIndex(e => e.Name).IsUnique().HasDatabaseName("ux_token_type_name");
         });
 
-
+        
         modelBuilder.Entity<SecurityToken>(entity =>
         {
             entity.ToTable("security_token");
@@ -305,7 +313,7 @@ public class DoorsDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(e => e.TokenType)
-                .WithMany(t => t.SecurityTokens) // Référence explicite à la collection SecurityTokens
+                .WithMany(t => t.SecurityTokens) 
                 .HasForeignKey(e => e.TokenTypeId)
                 .HasConstraintName("fk_security_token_type")
                 .OnDelete(DeleteBehavior.Restrict);
@@ -453,12 +461,11 @@ public class DoorsDbContext : DbContext
             entity.Property(e => e.ContactMessageTypeId)
                 .HasColumnName("contact_message_type_id")
                 .HasComment("Type de message de contact");
-            
+
             entity.Property(e => e.Phone)
                 .HasColumnName("phone")
                 .HasMaxLength(20)
                 .HasComment("Numéro de téléphone de l’expéditeur (optionnel)");
-
 
 
             entity.HasOne(e => e.Users)
@@ -578,6 +585,76 @@ public class DoorsDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
+        modelBuilder.Entity<PublicOrganizationType>(entity =>
+        {
+            entity.ToTable("public_organization_type");
+
+            entity.HasKey(e => e.PublicOrganizationTypeId);
+            entity.Property(e => e.PublicOrganizationTypeId).HasColumnName("public_organization_type_id");
+
+            entity.Property(e => e.Name)
+                .HasColumnName("name")
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(e => e.Description)
+                .HasColumnName("description");
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnName("updated_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnUpdate();
+
+            entity.HasIndex(e => e.Name).HasDatabaseName("idx_public_organization_type_name").IsUnique();
+        });
+
+        modelBuilder.Entity<PublicOrganizationTypeTranslation>(entity =>
+        {
+            entity.ToTable("public_organization_type_translations");
+
+            entity.HasKey(e => e.PublicOrganizationTypeTranslationId);
+            entity.Property(e => e.PublicOrganizationTypeTranslationId)
+                .HasColumnName("public_organization_type_translation_id");
+
+            entity.Property(e => e.PublicOrganizationTypeId)
+                .HasColumnName("public_organization_type_id")
+                .IsRequired();
+
+            entity.Property(e => e.LanguageId)
+                .HasColumnName("language_id")
+                .IsRequired();
+
+            entity.Property(e => e.TranslatedName)
+                .HasColumnName("translated_name")
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(e => e.TranslatedDescription)
+                .HasColumnName("translated_description");
+
+            entity.HasIndex(e => new { e.PublicOrganizationTypeId, e.LanguageId })
+                .IsUnique()
+                .HasDatabaseName("uk_public_organization_type_lang");
+
+            entity.HasOne(e => e.PublicOrganizationType)
+                .WithMany(p => p.Translations)
+                .HasForeignKey(e => e.PublicOrganizationTypeId)
+                .HasConstraintName("fk_public_organization_type_translations_type")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Language)
+                .WithMany()
+                .HasForeignKey(e => e.LanguageId)
+                .HasConstraintName("fk_public_organization_type_translations_language")
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(e => e.LanguageId)
+                .HasDatabaseName("idx_public_organization_type_translations_language");
+        });
 
         modelBuilder.Entity<LegalDocumentType>(entity =>
         {
@@ -740,32 +817,76 @@ public class DoorsDbContext : DbContext
         modelBuilder.Entity<SessionEvent>(entity =>
         {
             entity.ToTable("sessionEvents");
-            entity.HasKey(se => se.SessionEventId).HasName("PK_sessionEvents");
-            entity.Property(se => se.SessionEventId).HasColumnName("sessionEvent_id").ValueGeneratedOnAdd();
-            entity.Property(se => se.UserId).HasColumnName("user_id").IsRequired();
-            entity.Property(se => se.EventType).HasColumnName("eventType").IsRequired().HasMaxLength(50)
-                .HasColumnType("varchar(50)");
-            entity.Property(se => se.IpAddress).HasColumnName("ipAddress").IsRequired().HasMaxLength(45)
+
+            entity.HasKey(se => se.SessionEventId)
+                .HasName("PK_sessionEvents");
+
+            entity.Property(se => se.SessionEventId)
+                .HasColumnName("sessionEvent_id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(se => se.UserId)
+                .HasColumnName("user_id")
+                .IsRequired();
+
+            entity.Property(se => se.IpAddress)
+                .HasColumnName("ipAddress")
+                .IsRequired()
+                .HasMaxLength(45)
                 .HasColumnType("varchar(45)");
-            entity.Property(se => se.EventTime).HasColumnName("eventTime").HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.Property(se => se.UserAgentId)
+                .HasColumnName("user_agent_id");
+
+            entity.Property(se => se.RememberMe)
+                .HasColumnName("remember_me")
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            entity.Property(se => se.IsRevoked)
+                .HasColumnName("is_revoked")
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            entity.Property(se => se.OpenedAt)
+                .HasColumnName("opened_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .IsRequired();
+
+            entity.Property(se => se.OpeningReason)
+                .HasColumnName("opening_reason")
+                .HasMaxLength(255)
+                .HasColumnType("varchar(255)");
+
+            entity.Property(se => se.ClosedAt)
+                .HasColumnName("closed_at");
+
+            entity.Property(se => se.ClosingReason)
+                .HasColumnName("closing_reason")
+                .HasMaxLength(255)
+                .HasColumnType("varchar(255)");
+
+            entity.Property(se => se.LastSeenAt)
+                .HasColumnName("last_seen_at");
+
             entity.HasOne(se => se.User)
                 .WithMany(u => u.SessionEvents)
                 .HasForeignKey(se => se.UserId)
                 .HasConstraintName("FK_sessionEvents_users")
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Configuration de la relation inverse avec RefreshTokens
+            entity.HasOne(se => se.UserAgent)
+                .WithMany()
+                .HasForeignKey(se => se.UserAgentId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             entity.HasMany(se => se.RefreshTokens)
                 .WithOne(rt => rt.SessionEvent)
                 .HasForeignKey(rt => rt.SessionEventId)
                 .HasConstraintName("FK_RefreshToken_SessionEvents")
                 .OnDelete(DeleteBehavior.Cascade);
-            entity.Property(e => e.UserAgentId).HasColumnName("user_agent_id");
-            entity.HasOne(e => e.UserAgent)
-                .WithMany()
-                .HasForeignKey(e => e.UserAgentId)
-                .OnDelete(DeleteBehavior.SetNull);
         });
+
 
         // Role
         modelBuilder.Entity<Role>(entity =>
@@ -879,7 +1000,98 @@ public class DoorsDbContext : DbContext
                 .HasDatabaseName("ux_invitation_type_name");
         });
 
+        modelBuilder.Entity<InvitationRequest>(entity =>
+        {
+            entity.ToTable("invitation_request");
 
+            entity.HasKey(e => e.InvitationRequestId);
+            entity.Property(e => e.InvitationRequestId).HasColumnName("invitation_request_id").ValueGeneratedOnAdd();
+
+            entity.Property(e => e.EntityTypeId).HasColumnName("entity_type_id").IsRequired();
+            entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.InvitationEmail).HasColumnName("invitation_email").HasMaxLength(191).IsRequired();
+
+            entity.Property(e => e.CompanyNumber).HasColumnName("company_number").HasMaxLength(12);
+            entity.Property(e => e.InstitutionTypeId).HasColumnName("institution_type_id");
+
+            entity.Property(e => e.Status)
+                .HasColumnName("status")
+                .HasConversion<string>()
+                .HasDefaultValue(InvitationRequestStatus.PENDING);
+
+            entity.Property(e => e.RejectionReason).HasColumnName("rejection_reason").HasColumnType("TEXT");
+
+            entity.Property(e => e.SubmittedIp).HasColumnName("submitted_ip").HasMaxLength(45);
+            entity.Property(e => e.UserAgent).HasColumnName("user_agent").HasColumnType("TEXT");
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnName("updated_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnUpdate();
+
+            entity.HasOne(e => e.EntityType)
+                .WithMany()
+                .HasForeignKey(e => e.EntityTypeId)
+                .HasConstraintName("fk_invitation_request_entity_type")
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.InstitutionType)
+                .WithMany()
+                .HasForeignKey(e => e.InstitutionTypeId)
+                .HasConstraintName("fk_invitation_request_institution_type")
+                .OnDelete(DeleteBehavior.SetNull);
+            
+            entity.Property(e => e.LanguageId)
+                .HasColumnName("language_id")
+                .IsRequired(false);
+
+            entity.HasOne(e => e.SpokenLanguage)
+                .WithMany()
+                .HasForeignKey(e => e.LanguageId)
+                .HasConstraintName("fk_invitation_request_spoken_language")
+                .OnDelete(DeleteBehavior.SetNull);
+
+        });
+
+        modelBuilder.Entity<UserActionLog>(entity =>
+        {
+            // Nom de la table
+            entity.ToTable("user_action_log");
+
+            // Clé primaire
+            entity.HasKey(e => e.UserActionLogId);
+
+            // Propriétés
+            entity.Property(e => e.UserActionLogId).HasColumnName("user_action_log_id").ValueGeneratedOnAdd();
+            entity.Property(e => e.UserId).HasColumnName("user_id").IsRequired();
+            entity.Property(e => e.ActionType).HasColumnName("actionType").IsRequired().HasMaxLength(50);
+            entity.Property(e => e.ActionTimestamp).HasColumnName("actionTimestamp").IsRequired();
+            entity.Property(e => e.UserAgentId).HasColumnName("user_agent_id").IsRequired();
+            entity.Property(e => e.IpAddress).HasColumnName("ipAddress").IsRequired().HasMaxLength(45);
+            entity.Property(e => e.OldValue).HasColumnName("oldValue").HasColumnType("TEXT");
+            entity.Property(e => e.NewValue).HasColumnName("newValue").HasColumnType("TEXT");
+
+            // Index
+            entity.HasIndex(e => new { e.UserId, e.ActionType, e.ActionTimestamp }, "idx_user_action")
+                .HasDatabaseName("idx_user_action");
+
+            // Relations
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .HasConstraintName("fk_user_action_log_user")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.UserAgent)
+                .WithMany()
+                .HasForeignKey(e => e.UserAgentId)
+                .HasConstraintName("fk_user_action_log_user_agent")
+                .OnDelete(DeleteBehavior.Restrict);
+        });
         // SuperadminInvitation
         modelBuilder.Entity<SuperadminInvitation>(entity =>
         {
@@ -1006,10 +1218,10 @@ public class DoorsDbContext : DbContext
                 .HasColumnName("name")
                 .IsRequired()
                 .HasMaxLength(50);
-            entity.Property(e => e.Description) // Added description property
+            entity.Property(e => e.Description)
                 .HasColumnName("description")
                 .HasMaxLength(191)
-                .IsRequired(false); // NULL allowed
+                .IsRequired(false); 
             entity.HasIndex(e => e.Name)
                 .IsUnique();
         });
@@ -1255,11 +1467,8 @@ public class DoorsDbContext : DbContext
                 .HasForeignKey(e => e.UpdatedBy)
                 .HasConstraintName("fk_spoken_language_updated_by")
                 .OnDelete(DeleteBehavior.SetNull);
-
-            
         });
 
-   
 
         // DurationUnit
         modelBuilder.Entity<DurationUnit>(entity =>
@@ -1443,12 +1652,12 @@ public class DoorsDbContext : DbContext
                 .WithMany(u => u.LoginAttempts)
                 .HasForeignKey(e => e.UserId)
                 .HasConstraintName("fk_login_attempt_user")
-                .OnDelete(DeleteBehavior.SetNull); // OnDelete behavior en cas de suppression de User
+                .OnDelete(DeleteBehavior.SetNull); 
 
             // Relation avec UserAgent
             entity.Property(e => e.UserAgentId).HasColumnName("user_agent_id");
             entity.HasOne(e => e.UserAgent)
-                .WithMany() // Ajoutez la navigation inverse dans UserAgent
+                .WithMany() 
                 .HasForeignKey(e => e.UserAgentId)
                 .OnDelete(DeleteBehavior.SetNull);
 
@@ -1522,7 +1731,7 @@ public class DoorsDbContext : DbContext
 
             // Association avec la table Entities
             entity.HasOne(e => e.Entity)
-                .WithMany() // ou .WithMany(e => e.Students) si vous avez une collection dans Entity
+                .WithMany() 
                 .HasForeignKey(e => e.EntityId)
                 .HasConstraintName("fk_student_entity")
                 .OnDelete(DeleteBehavior.Cascade);
@@ -1864,7 +2073,6 @@ public class DoorsDbContext : DbContext
             entity.HasOne(e => e.Updater).WithMany().HasForeignKey(e => e.UpdatedBy)
                 .HasConstraintName("fk_company_updated_by").OnDelete(DeleteBehavior.SetNull);
             entity.HasMany(e => e.Offers).WithOne(o => o.Company).HasForeignKey(o => o.CompanyId);
-            entity.HasMany(e => e.CompanyInvitations).WithOne(ci => ci.Company).HasForeignKey(ci => ci.CompanyId);
             entity.HasMany(e => e.DegreePartnerships).WithOne(dp => dp.Company).HasForeignKey(dp => dp.CompanyId);
             entity.HasIndex(e => e.EventOwnerId).IsUnique().HasFilter("[event_owner_id] IS NOT NULL");
             entity.HasIndex(e => e.HousingOwnerId).IsUnique().HasFilter("[housing_owner_id] IS NOT NULL");
@@ -1878,6 +2086,422 @@ public class DoorsDbContext : DbContext
                 t.HasCheckConstraint("CK_Company_Rating", "rating BETWEEN 0 AND 5 OR rating IS NULL");
                 t.HasCheckConstraint("CK_Company_VisitCount", "visit_count >= 0");
             });
+        });
+
+        modelBuilder.Entity<Association>(entity =>
+        {
+            entity.ToTable("association");
+
+            entity.HasKey(e => e.AssociationId);
+
+            entity.Property(e => e.AssociationId)
+                .HasColumnName("association_id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.EntityId)
+                .HasColumnName("entity_id")
+                .IsRequired();
+
+            entity.Property(e => e.EventOwnerId)
+                .HasColumnName("event_owner_id");
+
+            entity.Property(e => e.HousingOwnerId)
+                .HasColumnName("housing_owner_id");
+
+            entity.Property(e => e.Name)
+                .HasColumnName("name")
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(e => e.Acronym)
+                .HasColumnName("acronym")
+                .HasMaxLength(10);
+
+            entity.Property(e => e.EnterpriseNumber)
+                .HasColumnName("enterprise_number")
+                .HasMaxLength(12);
+
+            entity.Property(e => e.Description)
+                .HasColumnName("description")
+                .HasColumnType("TEXT");
+
+            entity.Property(e => e.Website)
+                .HasColumnName("website")
+                .HasMaxLength(191);
+
+            entity.Property(e => e.Logo)
+                .HasColumnName("logo")
+                .HasMaxLength(191);
+
+            entity.Property(e => e.FoundingDate)
+                .HasColumnName("founding_date");
+
+            entity.Property(e => e.MemberCount)
+                .HasColumnName("member_count");
+
+            entity.Property(e => e.IsActive)
+                .HasColumnName("is_active")
+                .HasDefaultValue(true);
+
+            entity.Property(e => e.LikeCount)
+                .HasColumnName("like_count")
+                .HasDefaultValue(0);
+
+            entity.Property(e => e.VisitCount)
+                .HasColumnName("visit_count")
+                .HasDefaultValue(0);
+
+            entity.Property(e => e.ContactId)
+                .HasColumnName("contact_id");
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnName("updated_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnUpdate();
+
+            entity.Property(e => e.CreatedBy)
+                .HasColumnName("created_by");
+
+            entity.Property(e => e.UpdatedBy)
+                .HasColumnName("updated_by");
+
+            // Foreign keys
+            entity.HasOne(e => e.Entity)
+                .WithMany()
+                .HasForeignKey(e => e.EntityId)
+                .HasConstraintName("fk_association_entity")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.EventOwner)
+                .WithOne()
+                .HasForeignKey<Association>(e => e.EventOwnerId)
+                .HasConstraintName("fk_association_event_owner")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.HousingOwner)
+                .WithOne()
+                .HasForeignKey<Association>(e => e.HousingOwnerId)
+                .HasConstraintName("fk_association_housing_owner")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Contact)
+                .WithMany(c => c.Associations)
+                .HasForeignKey(e => e.ContactId)
+                .HasConstraintName("fk_association_contact")
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Creator)
+                .WithMany()
+                .HasForeignKey(e => e.CreatedBy)
+                .HasConstraintName("fk_association_created_by")
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Updater)
+                .WithMany()
+                .HasForeignKey(e => e.UpdatedBy)
+                .HasConstraintName("fk_association_updated_by")
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Relations 1:N avec offres (si tu les relies)
+
+
+            // Indexes
+            entity.HasIndex(e => e.EventOwnerId)
+                .IsUnique()
+                .HasFilter("[event_owner_id] IS NOT NULL");
+
+            entity.HasIndex(e => e.HousingOwnerId)
+                .IsUnique()
+                .HasFilter("[housing_owner_id] IS NOT NULL");
+
+            entity.HasIndex(e => e.EnterpriseNumber)
+                .IsUnique()
+                .HasFilter("[enterprise_number] IS NOT NULL");
+        });
+
+        modelBuilder.Entity<PublicOrganization>(entity =>
+        {
+            entity.ToTable("public_organization");
+
+            entity.HasKey(e => e.PublicOrganizationId);
+
+            entity.Property(e => e.PublicOrganizationId)
+                .HasColumnName("public_organization_id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.EntityId)
+                .HasColumnName("entity_id")
+                .IsRequired();
+
+            entity.Property(e => e.EventOwnerId)
+                .HasColumnName("event_owner_id");
+
+            entity.Property(e => e.HousingOwnerId)
+                .HasColumnName("housing_owner_id");
+
+            entity.Property(e => e.Name)
+                .HasColumnName("name")
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(e => e.Acronym)
+                .HasColumnName("acronym")
+                .HasMaxLength(10);
+
+            entity.Property(e => e.EnterpriseNumber)
+                .HasColumnName("enterprise_number")
+                .HasMaxLength(12);
+
+            entity.Property(e => e.Description)
+                .HasColumnName("description")
+                .HasColumnType("TEXT");
+
+            entity.Property(e => e.Website)
+                .HasColumnName("website")
+                .HasMaxLength(191);
+
+            entity.Property(e => e.Logo)
+                .HasColumnName("logo")
+                .HasMaxLength(191);
+
+            entity.Property(e => e.PublicOrganizationTypeId)
+                .HasColumnName("public_organization_type_id");
+
+            entity.Property(e => e.LegalStatusId)
+                .HasColumnName("legal_status_id");
+
+            entity.Property(e => e.IsActive)
+                .HasColumnName("is_active")
+                .HasDefaultValue(true);
+
+            entity.Property(e => e.LikeCount)
+                .HasColumnName("like_count")
+                .HasDefaultValue(0);
+
+            entity.Property(e => e.VisitCount)
+                .HasColumnName("visit_count")
+                .HasDefaultValue(0);
+
+            entity.Property(e => e.ContactId)
+                .HasColumnName("contact_id");
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnName("updated_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnUpdate();
+
+            entity.Property(e => e.CreatedBy)
+                .HasColumnName("created_by");
+
+            entity.Property(e => e.UpdatedBy)
+                .HasColumnName("updated_by");
+
+            // Foreign keys
+            entity.HasOne(e => e.Entity)
+                .WithMany()
+                .HasForeignKey(e => e.EntityId)
+                .HasConstraintName("fk_public_organization_entity")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.EventOwner)
+                .WithOne()
+                .HasForeignKey<PublicOrganization>(e => e.EventOwnerId)
+                .HasConstraintName("fk_public_organization_event_owner")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.HousingOwner)
+                .WithOne()
+                .HasForeignKey<PublicOrganization>(e => e.HousingOwnerId)
+                .HasConstraintName("fk_public_organization_housing_owner")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Contact)
+                .WithMany(c => c.PublicOrganizations)
+                .HasForeignKey(e => e.ContactId)
+                .HasConstraintName("fk_public_organization_contact")
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Creator)
+                .WithMany()
+                .HasForeignKey(e => e.CreatedBy)
+                .HasConstraintName("fk_public_organization_created_by")
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Updater)
+                .WithMany()
+                .HasForeignKey(e => e.UpdatedBy)
+                .HasConstraintName("fk_public_organization_updated_by")
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne<LegalStatus>()
+                .WithMany()
+                .HasForeignKey(e => e.LegalStatusId)
+                .HasConstraintName("fk_public_organization_legal_status")
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne<PublicOrganizationType>()
+                .WithMany()
+                .HasForeignKey(e => e.PublicOrganizationTypeId)
+                .HasConstraintName("fk_public_organization_type")
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Relations 1:N avec offres (si tu les relies)
+
+
+            // Indexes
+            entity.HasIndex(e => e.EventOwnerId)
+                .IsUnique()
+                .HasFilter("[event_owner_id] IS NOT NULL");
+
+            entity.HasIndex(e => e.HousingOwnerId)
+                .IsUnique()
+                .HasFilter("[housing_owner_id] IS NOT NULL");
+
+            entity.HasIndex(e => e.EnterpriseNumber)
+                .IsUnique()
+                .HasFilter("[enterprise_number] IS NOT NULL");
+        });
+
+        modelBuilder.Entity<StudentMovement>(entity =>
+        {
+            entity.ToTable("student_movement");
+
+            entity.HasKey(e => e.StudentMovementId);
+
+            entity.Property(e => e.StudentMovementId)
+                .HasColumnName("student_movement_id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.EntityId)
+                .HasColumnName("entity_id")
+                .IsRequired();
+
+            entity.Property(e => e.EventOwnerId)
+                .HasColumnName("event_owner_id");
+
+            entity.Property(e => e.HousingOwnerId)
+                .HasColumnName("housing_owner_id");
+
+            entity.Property(e => e.Name)
+                .HasColumnName("name")
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(e => e.Acronym)
+                .HasColumnName("acronym")
+                .HasMaxLength(10);
+
+            entity.Property(e => e.EnterpriseNumber)
+                .HasColumnName("enterprise_number")
+                .HasMaxLength(12);
+
+            entity.Property(e => e.Description)
+                .HasColumnName("description")
+                .HasColumnType("TEXT");
+
+            entity.Property(e => e.Website)
+                .HasColumnName("website")
+                .HasMaxLength(191);
+
+            entity.Property(e => e.Logo)
+                .HasColumnName("logo")
+                .HasMaxLength(191);
+
+            entity.Property(e => e.FoundingDate)
+                .HasColumnName("founding_date");
+
+            entity.Property(e => e.MemberCount)
+                .HasColumnName("member_count");
+
+            entity.Property(e => e.IsActive)
+                .HasColumnName("is_active")
+                .HasDefaultValue(true);
+
+            entity.Property(e => e.LikeCount)
+                .HasColumnName("like_count")
+                .HasDefaultValue(0);
+
+            entity.Property(e => e.VisitCount)
+                .HasColumnName("visit_count")
+                .HasDefaultValue(0);
+
+            entity.Property(e => e.ContactId)
+                .HasColumnName("contact_id");
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnName("updated_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .ValueGeneratedOnUpdate();
+
+            entity.Property(e => e.CreatedBy)
+                .HasColumnName("created_by");
+
+            entity.Property(e => e.UpdatedBy)
+                .HasColumnName("updated_by");
+
+            // Foreign keys
+            entity.HasOne(e => e.Entity)
+                .WithMany()
+                .HasForeignKey(e => e.EntityId)
+                .HasConstraintName("fk_student_movement_entity")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.EventOwner)
+                .WithOne()
+                .HasForeignKey<StudentMovement>(e => e.EventOwnerId)
+                .HasConstraintName("fk_student_movement_event_owner")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.HousingOwner)
+                .WithOne()
+                .HasForeignKey<StudentMovement>(e => e.HousingOwnerId)
+                .HasConstraintName("fk_student_movement_housing_owner")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Contact)
+                .WithMany(c => c.StudentMovements)
+                .HasForeignKey(e => e.ContactId)
+                .HasConstraintName("fk_student_movement_contact")
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Creator)
+                .WithMany()
+                .HasForeignKey(e => e.CreatedBy)
+                .HasConstraintName("fk_student_movement_created_by")
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Updater)
+                .WithMany()
+                .HasForeignKey(e => e.UpdatedBy)
+                .HasConstraintName("fk_student_movement_updated_by")
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // Relations 1:N avec offre
+
+            // Indexes
+            entity.HasIndex(e => e.EventOwnerId)
+                .IsUnique()
+                .HasFilter("[event_owner_id] IS NOT NULL");
+
+            entity.HasIndex(e => e.HousingOwnerId)
+                .IsUnique()
+                .HasFilter("[housing_owner_id] IS NOT NULL");
+
+            entity.HasIndex(e => e.EnterpriseNumber)
+                .IsUnique()
+                .HasFilter("[enterprise_number] IS NOT NULL");
         });
 
         // Landlord
@@ -1941,7 +2565,7 @@ public class DoorsDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(e => e.Contact)
-                .WithMany(c => c.Landlords) // Assurez-vous que la classe Contact possède une collection Landlords
+                .WithMany(c => c.Landlords) 
                 .HasForeignKey(e => e.ContactId)
                 .HasConstraintName("fk_landlord_contact")
                 .OnDelete(DeleteBehavior.SetNull);
@@ -1983,18 +2607,6 @@ public class DoorsDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // CompanyInvitation
-        modelBuilder.Entity<CompanyInvitation>(entity =>
-        {
-            entity.ToTable("company_invitation");
-            entity.HasKey(e => e.CompanyInvitationId);
-            entity.Property(e => e.CompanyInvitationId).HasColumnName("company_invitation_id").ValueGeneratedOnAdd();
-            entity.Property(e => e.CompanyId).HasColumnName("company_id").IsRequired();
-            entity.Property(e => e.Email).HasColumnName("email").IsRequired().HasMaxLength(191);
-            entity.Property(e => e.InviteCode).HasColumnName("invite_code").IsRequired().HasMaxLength(50);
-            entity.HasOne(e => e.Company).WithMany(e => e.CompanyInvitations).HasForeignKey(e => e.CompanyId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
 
         // CampusAllowedDomain
         modelBuilder.Entity<CampusAllowedDomain>(entity =>
@@ -2021,7 +2633,6 @@ public class DoorsDbContext : DbContext
             entity.Property(e => e.Token).HasColumnName("token").IsRequired().HasMaxLength(200);
             entity.Property(e => e.ExpiresAt).HasColumnName("expires_at").IsRequired();
             entity.Property(e => e.CreatedAt).HasColumnName("created_at").HasDefaultValueSql("CURRENT_TIMESTAMP");
-            // Ajout de la propriété SessionEventId
             entity.Property(e => e.SessionEventId)
                 .HasColumnName("sessionEvent_id")
                 .IsRequired();

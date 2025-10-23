@@ -1,0 +1,106 @@
+
+  <div class="container">
+
+
+    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="doorz-vertical-form">
+
+
+      <!-- Domaine d'études -->
+      <div class="form-group">
+        <label>
+          {{ 'SEARCH.STUDY.LABEL.STUDY_DOMAIN' | translate }}
+        </label>
+        <select
+          formControlName="studyDomain"
+          class="doorz-select"
+          [ngClass]="{
+            'is-invalid': searchForm.get('studyDomain')?.touched && fieldError['studyDomain']
+          }"
+        >
+          <option value="">{{ 'SEARCH.STUDY.OPTION.ALL' | translate }}</option>
+          <option *ngFor="let domain of studyDomains" [value]="domain.domain_id">
+            {{ domain.name }}
+          </option>
+        </select>
+        <div class="invalid-feedback" *ngIf="fieldError['studyDomain']">
+          {{ fieldError['studyDomain'] | translate }}
+        </div>
+      </div>
+
+
+
+      <!-- Type de diplôme -->
+      <div class="form-group">
+        <label>
+          {{ 'SEARCH.STUDY.LABEL.DEGREE_TYPE' | translate }}
+        </label>
+        <select
+          formControlName="degreeType"
+          class="doorz-select"
+          [ngClass]="{
+            'is-invalid': searchForm.get('degreeType')?.touched && fieldError['degreeType']
+          }"
+        >
+          <option value="">{{ 'SEARCH.STUDY.OPTION.ALL' | translate }}</option>
+          <option *ngFor="let type of degreeTypes" [value]="type.degree_type_id">
+            {{ type.name }}
+          </option>
+        </select>
+        <div class="invalid-feedback" *ngIf="fieldError['degreeType']">
+          {{ fieldError['degreeType'] | translate }}
+        </div>
+      </div>
+
+      <!-- Mode de délivrance -->
+      <div class="form-group">
+        <label>
+          {{ 'SEARCH.STUDY.LABEL.DELIVERY_MODE' | translate }}
+        </label>
+        <select
+          formControlName="deliveryMode"
+          class="doorz-select"
+          [ngClass]="{
+            'is-invalid': searchForm.get('deliveryMode')?.touched && fieldError['deliveryMode']
+          }"
+        >
+          <option value="">{{ 'SEARCH.STUDY.OPTION.ALL' | translate }}</option>
+          <option *ngFor="let mode of deliveryModes" [value]="mode.delivery_mode_id">
+            {{ mode.name }}
+          </option>
+        </select>
+        <div class="invalid-feedback" *ngIf="fieldError['deliveryMode']">
+          {{ fieldError['deliveryMode'] | translate }}
+        </div>
+      </div>
+
+      <!-- Frais maximum -->
+      <div class="form-group">
+        <label>
+          {{ 'SEARCH.STUDY.LABEL.MAX_COST' | translate }}
+        </label>
+        <input
+          type="number"
+          formControlName="maxCost"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid': searchForm.get('maxCost')?.touched && (searchForm.get('maxCost')?.invalid || fieldError['maxCost'])
+          }"
+        />
+        <div class="invalid-feedback" *ngIf="searchForm.get('maxCost')?.touched">
+          <ng-container *ngIf="searchForm.get('maxCost')?.hasError('min')">
+            {{ 'SHARED.ERROR.FRONTEND.MAX_COST_INVALID' | translate }}
+          </ng-container>
+          <ng-container *ngIf="fieldError['maxCost']">
+            {{ fieldError['maxCost'] | translate }}
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Erreur globale -->
+      <div *ngIf="globalError" class="text-danger text-center mt-2">
+        {{ globalError | translate }}
+      </div>
+
+    </form>
+  </div>
+

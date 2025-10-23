@@ -1,0 +1,50 @@
+:host {
+  display: inline-flex;
+  margin: 0 !important;
+  padding: 0 !important;
+  align-items: center;
+}
+
+.icon-wrapper {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: clamp(2.5rem, 6vw, 3.25rem);
+  height: clamp(2.5rem, 6vw, 3.25rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.icon-svg {
+  width: 22px;
+  height: 22px;
+
+  fill: white;
+}
+
+/* Couleurs par type */
+.icon-wrapper.job {
+  background-color: #F4A261;
+}
+.icon-wrapper.internship {
+  background-color: #2A9D8F;
+}
+.icon-wrapper.study {
+  background-color: #264653;
+}
+.icon-wrapper.event {
+  background-color: #318db5;
+}
+.icon-wrapper.aid {
+  background-color: #c64d4d;
+}
+
+.icon-wrapper.kot {
+  background-color: #09aaed;
+}
+
+.svg-icon{
+  fill: var(--secondary-color);
+
+}

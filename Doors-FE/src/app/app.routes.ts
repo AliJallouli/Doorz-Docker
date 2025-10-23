@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './features/login/login.component';
-import { SuperadminHomeComponent } from './features/superadmin-home/superadmin-home.component';
+import { LoginComponent } from './features/authentication/login/login.component';
+import { SuperadminHomeComponent } from './features/super-admin/superadmin-home/superadmin-home.component';
 import { LandingpageComponent } from './features/landingpage/landingpage.component';
 import { LandlordHomeComponent } from './features/landlord-home/landlord-home.component';
 import { CompanyHomeComponent } from './features/company-home/company-home.component';
@@ -8,8 +8,8 @@ import { InstitutionHomeComponent } from './features/institution-home/institutio
 import { InvitationDashboardComponent } from './features/shared/invitation-dashboard/invitation-dashboard.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { NoAuthGuard } from './core/guards/no-auth.guard';
-import { RequestResetPasswordComponent } from './features/register/reset-password/request-reset-password/request-reset-password.component';
-import { ResetPasswordFormComponent } from './features/register/reset-password/reset-password-form/reset-password-form.component';
+import { RequestResetPasswordComponent } from './features/authentication/register/reset-password/request-reset-password/request-reset-password.component';
+import { ResetPasswordFormComponent } from './features/authentication/register/reset-password/reset-password-form/reset-password-form.component';
 import { StudentHomeComponent } from './features/student-home/student-home.component';
 
 export const routes: Routes = [
@@ -20,6 +20,14 @@ export const routes: Routes = [
     canActivate: [NoAuthGuard]
   },
   {
+    path: ':role/settings',
+    loadComponent: () =>
+      import('./features/authentication/settings/settings.component')
+        .then(m => m.SettingsComponent),
+    canActivate: [AuthGuard]
+  }
+  ,
+  {
     path: 'student',
     loadComponent: () => import('./features/landingpage/landingpage.component')
       .then(m => m.LandingpageComponent),
@@ -27,8 +35,8 @@ export const routes: Routes = [
   },
   {
     path: 'student/:section',
-    loadComponent: () => import('./features/landingpage/landingpage.component')
-      .then(m => m.LandingpageComponent),
+    loadComponent: () => import('./features/search/search.component')
+      .then(m => m.SearchComponent),
     canActivate: [NoAuthGuard]
   },
   {
@@ -45,8 +53,9 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./features/login/login.component')
-      .then(m => m.LoginComponent)
+    loadComponent: () => import('./features/authentication/login/login.component')
+      .then(m => m.LoginComponent),
+    canActivate: [NoAuthGuard]
   },
   {
     path: 'student-home',
@@ -57,8 +66,8 @@ export const routes: Routes = [
   },
   {
     path: 'student-home/:section',
-    loadComponent: () => import('./features/student-home/student-home.component')
-      .then(m => m.StudentHomeComponent),
+    loadComponent: () => import('./features/search/search.component')
+      .then(m => m.SearchComponent),
     canActivate: [AuthGuard],
     data: { roles: ['student'] }
   },
@@ -85,15 +94,15 @@ export const routes: Routes = [
   },
   {
     path: 'superadmin-home',
-    loadComponent: () => import('./features/superadmin-home/superadmin-home.component')
+    loadComponent: () => import('./features/super-admin/superadmin-home/superadmin-home.component')
       .then(m => m.SuperadminHomeComponent),
     canActivate: [AuthGuard],
     data: { roles: ['superadmin'] }
   },
   {
     path: 'superadmin/invitations',
-    loadComponent: () => import('./features/shared/invitation-dashboard/invitation-dashboard.component')
-      .then(m => m.InvitationDashboardComponent),
+    loadComponent: () => import('./features/super-admin/super-admin-invitation-management/super-admin-invitation-management.component')
+      .then(m => m.SuperAdminInvitationManagementComponent),
     canActivate: [AuthGuard],
     data: { roles: ['superadmin'] }
   },
@@ -113,42 +122,50 @@ export const routes: Routes = [
   },
   {
     path: 'register/company/invite',
-    loadComponent: () => import('./features/register/register-from-invite/register-from-invite.component')
+    loadComponent: () => import('./features/authentication/register/register-from-invite/register-from-invite.component')
       .then(m => m.RegisterFromInviteComponent)
   },
   {
     path: 'register/institution/invite',
-    loadComponent: () => import('./features/register/register-from-invite/register-from-invite.component')
+    loadComponent: () => import('./features/authentication/register/register-from-invite/register-from-invite.component')
       .then(m => m.RegisterFromInviteComponent)
   },
   {
     path: 'register/company/colleague/invite',
-    loadComponent: () => import('./features/register/register-from-invite/register-from-invite.component')
+    loadComponent: () => import('./features/authentication/register/register-from-invite/register-from-invite.component')
       .then(m => m.RegisterFromInviteComponent)
   },
   {
     path: 'register/institution/colleague/invite',
-    loadComponent: () => import('./features/register/register-from-invite/register-from-invite.component')
+    loadComponent: () => import('./features/authentication/register/register-from-invite/register-from-invite.component')
       .then(m => m.RegisterFromInviteComponent)
   },
   {
     path: 'register/public/:roleName',
-    loadComponent: () => import('./features/register/register-form-public/register-form-public.component')
+    loadComponent: () => import('./features/authentication/register/register-form-public/register-form-public.component')
       .then(m => m.RegisterFormPublicComponent)
   },
   {
     path: 'confirm-email',
-    loadComponent: () => import('./features/register/confirm-email/confirm-email.component')
-      .then(m => m.ConfirmEmailComponent)
+    loadComponent: () => import('./features/authentication/register/confirm-email/confirm-email.component')
+      .then(m => m.ConfirmEmailComponent),
+    canActivate: [NoAuthGuard]
   },
   {
     path: 'request-reset-password',
-    loadComponent: () => import('./features/register/reset-password/request-reset-password/request-reset-password.component')
+    loadComponent: () => import('./features/authentication/register/reset-password/request-reset-password/request-reset-password.component')
       .then(m => m.RequestResetPasswordComponent)
   },
   {
+
+    path: 'invitation-requests',
+    loadComponent: () => import('./features/authentication/register/invitation-request/invitation-request.component')
+      .then(m => m.InvitationRequestComponent),
+    canActivate: [NoAuthGuard]
+  },
+  {
     path: 'reset-password',
-    loadComponent: () => import('./features/register/reset-password/reset-password-form/reset-password-form.component')
+    loadComponent: () => import('./features/authentication/register/reset-password/reset-password-form/reset-password-form.component')
       .then(m => m.ResetPasswordFormComponent)
   },
   {
@@ -156,6 +173,8 @@ export const routes: Routes = [
     loadComponent: () => import('./features/contact/contact-form/contact-form.component')
       .then(m => m.ContactFormComponent)
   },
+
+
   {
     path: '**',
     redirectTo: '',

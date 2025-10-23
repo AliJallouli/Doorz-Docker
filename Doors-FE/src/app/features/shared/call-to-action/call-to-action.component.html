@@ -1,0 +1,121 @@
+<div class="cards-wrapper">
+  <!-- Student Card (affichée si type === 'login') -->
+  <div class="container" *ngIf="type === 'login'">
+    <div class="header search-header">
+      <div class="icon-container">
+        <i class="fas fa-user-graduate icon-student"></i>
+      </div>
+      <h3>{{ 'CALL_TO_ACTION.REGISTER.STUDENT_TITLE' | translate }}</h3>
+    </div>
+    <div class="card-content">
+      <div class="text-content">
+        <p [innerHTML]="'CALL_TO_ACTION.REGISTER.STUDENT_DESCRIPTION' | translate"></p>
+      </div>
+    </div>
+    <div class="arrow-container">
+      <a class="arrow-link" [routerLink]="['/register/public', 'student']" aria-label="Sign up as a student">
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Private Landlord Card (affichée si type === 'login') -->
+  <div class="container" *ngIf="type === 'login'">
+    <div class="header search-header">
+      <div class="icon-container">
+        <i class="fas fa-home icon-landlord"></i>
+      </div>
+      <h3>{{ 'CALL_TO_ACTION.REGISTER.LANDLORD_TITLE' | translate }}</h3>
+    </div>
+    <div class="card-content">
+      <div class="text-content">
+        <p [innerHTML]="'CALL_TO_ACTION.REGISTER.LANDLORD_DESCRIPTION' | translate"></p>
+      </div>
+    </div>
+    <div class="arrow-container">
+      <a class="arrow-link" [routerLink]="['/register/public', 'privateLandlord']" aria-label="Sign up as a private landlord">
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Professional Card (affichée si type === 'login') -->
+  <div class="container" *ngIf="type === 'login'">
+    <div class="header search-header">
+      <div class="icon-container">
+        <i class="fas fa-briefcase icon-professional"></i>
+      </div>
+      <h3>{{ 'CALL_TO_ACTION.REGISTER.PROFESSIONAL_TITLE' | translate }}</h3>
+    </div>
+    <div class="card-content">
+      <div class="text-content">
+        <p [innerHTML]="'CALL_TO_ACTION.REGISTER.PROFESSIONAL_DESCRIPTION' | translate"></p>
+      </div>
+    </div>
+    <div class="arrow-container">
+      <a class="arrow-link" routerLink="/invitation-requests" aria-label="Contact for professionals">
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Problème avec l'inscription (affichée si type === 'register') -->
+  <div class="container" *ngIf="type === 'register'">
+    <div class="header search-header">
+      <div class="icon-container">
+        <i class="fas fa-question-circle icon-help"></i>
+      </div>
+      <h3>{{ 'CALL_TO_ACTION.ISSUES.REGISTER_ISSUE_TITLE' | translate }}</h3>
+    </div>
+    <div class="card-content">
+      <div class="text-content">
+        <p [innerHTML]="'CALL_TO_ACTION.ISSUES.REGISTER_ISSUE_DESCRIPTION' | translate"></p>
+      </div>
+    </div>
+    <div class="arrow-container">
+      <a class="arrow-link" routerLink="/contact" aria-label="Contact for register issue">
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Problème avec la connexion (affichée si type === 'login') -->
+  <div class="container" *ngIf="type === 'login'">
+    <div class="header search-header">
+      <div class="icon-container">
+        <i class="fas fa-sign-in-alt icon-login"></i>
+      </div>
+      <h3>{{ 'CALL_TO_ACTION.ISSUES.LOGIN_ISSUE_TITLE' | translate }}</h3>
+    </div>
+    <div class="card-content">
+      <div class="text-content">
+        <p [innerHTML]="'CALL_TO_ACTION.ISSUES.LOGIN_ISSUE_DESCRIPTION' | translate"></p>
+      </div>
+    </div>
+    <div class="arrow-container">
+      <a class="arrow-link" routerLink="/contact" aria-label="Contact for login issue">
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Problème avec la demande d'invitation (affichée si type === 'invitation') -->
+  <div class="container" *ngIf="type === 'invitation'">
+    <div class="header search-header">
+      <div class="icon-container">
+        <i class="fas fa-envelope icon-invitation"></i>
+      </div>
+      <h3>{{ 'CALL_TO_ACTION.ISSUES.INVITATION_ISSUE_TITLE' | translate }}</h3>
+    </div>
+    <div class="card-content">
+      <div class="text-content">
+        <p [innerHTML]="'CALL_TO_ACTION.ISSUES.INVITATION_ISSUE_DESCRIPTION' | translate"></p>
+      </div>
+    </div>
+    <div class="arrow-container">
+      <a class="arrow-link" routerLink="/contact" aria-label="Contact for invitation issue">
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</div>

@@ -1,27 +1,151 @@
 ﻿{
-  "EMAIL_INPUT": {
-    "LABEL": {
-      "EMAIL": "Email Address"
+
+  "CALL_TO_ACTION": {
+    "REGISTER": {
+      "STUDENT_TITLE": "Student Space",
+      "STUDENT_DESCRIPTION": "Find your <strong>student job</strong>, <strong>internship</strong>, <strong>housing</strong>, <strong>training</strong>, or <strong>event</strong> in one click! Join the <strong>student vibe</strong>!",
+      "LANDLORD_TITLE": "Private Landlord Registration",
+      "LANDLORD_DESCRIPTION": "List your <strong>housing</strong> and connect with <strong>students</strong> in no time.",
+      "PROFESSIONAL_TITLE": "Professional Space",
+      "PROFESSIONAL_DESCRIPTION": "Boost your <strong>student job</strong>, <strong>internship</strong>, <strong>training</strong>, <strong>housing rental</strong>, or <strong>event</strong> offers to <strong>students</strong>."
     },
-    "PLACEHOLDER": {
-      "EMAIL": "Enter your email address"
+    "ISSUES": {
+      "REGISTER_ISSUE_TITLE": "Registration Issue",
+      "REGISTER_ISSUE_DESCRIPTION": "If you encounter any problems during registration, please contact our support team.",
+      "LOGIN_ISSUE_TITLE": "Login Issue",
+      "LOGIN_ISSUE_DESCRIPTION": "If you have trouble logging in, our support team is here to help.",
+      "INVITATION_ISSUE_TITLE": "Issue with Invitation Request",
+      "INVITATION_ISSUE_DESCRIPTION": "If you are experiencing difficulties with your invitation, contact our support team for assistance."
+    }
+  },
+  "ACCOUNT": {
+    "DELETE_ACCOUNT": "Delete my account",
+    "RESET_PASSWORD": "Forgot your password? Click here to reset it",
+    "NAME_UPDATE_SUCCESS": "First and last name updated successfully",
+    "NO_CHANGES": "No changes made",
+    "EMAIL_UPDATE_SUCCESS": "Your email address has been updated. Please confirm your new email address via the message we sent you.",
+    "HEADER_TITLE": "Account Settings",
+    "NAME_SECTION": {
+      "TITLE": "First and Last Name"
+    },
+    "EMAIL_SECTION": {
+      "TITLE": "Email Address"
+    },
+    "PASSWORD_SECTION": {
+      "TITLE": "Password"
     },
     "ERROR": {
-      "EMAIL_REQUIRED": "Email address is required.",
-      "EMAIL_INVALID": "Email address must be valid."
+      "BACKEND": {
+        "RATE_LIMIT_EXCEEDED_WITH_TIME": "Too many attempts. Try again in {{days}} days and {{hours}} hours.",
+        "RATE_LIMIT_EXCEEDED_WITH_HOURS": "Too many attempts. Try again in {{hours}} hours and {{minutes}} minutes.",
+        "RATE_LIMIT_EXCEEDED_WITH_MINUTES": "Too many attempts. Try again in {{minutes}} minutes."
+      }
+    }
+  },
+  "ACTIONS": {
+    "CANCEL": "Cancel",
+    "SUBMIT": "Save",
+    "EDIT": "Edit"
+  },
+  "OPTION_INPUT": {
+    "REQUIRED": "You must select an option."
+  },
+  "EMAIL_INPUT": {
+    "LABEL": {
+      "EMAIL": "Email address",
+      "NEW_EMAIL": "New email address",
+      "CONFIRM_EMAIL": "Confirm email",
+      "NEW_CONFIRM_EMAIL": "Confirm new email address"
+    },
+    "PLACEHOLDER": {
+      "EMAIL": "Enter your email address",
+      "NEW_EMAIL": "Enter your new email address",
+      "CONFIRM_EMAIL": "Confirm your email address",
+      "NEW_CONFIRM_EMAIL": "Confirm your new email address"
+    },
+    "ERROR": {
+      "EMAIL_REQUIRED": "The email is required",
+      "NEW_EMAIL_REQUIRED": "The new email is required",
+      "EMAIL_INVALID": "The email is invalid",
+      "CONFIRM_EMAIL_REQUIRED": "Email confirmation is required",
+      "NEW_CONFIRM_EMAIL_REQUIRED": "New email confirmation is required",
+      "EMAIL_MISMATCH": "The email addresses do not match"
+    }
+  },
+  "NAME_INPUT": {
+    "LABEL": {
+      "FULLNAME": "Full name",
+      "NEW_FULLNAME": "New full name",
+      "FIRSTNAME": "First name",
+      "NEW_FIRSTNAME": "New first name",
+      "LASTNAME": "Last name",
+      "NEW_LASTNAME": "New last name"
+    },
+    "PLACEHOLDER": {
+      "FULLNAME": "Enter your full name",
+      "NEW_FULLNAME": "Enter your new full name",
+      "FIRSTNAME": "Enter your first name",
+      "NEW_FIRSTNAME": "Enter your new first name",
+      "LASTNAME": "Enter your last name",
+      "NEW_LASTNAME": "Enter your new last name"
+    },
+    "ERROR": {
+      "FRONTEND": {
+        "FULLNAME_REQUIRED": "The full name is required",
+        "NEW_FULLNAME_REQUIRED": "The new full name is required",
+        "FIRSTNAME_REQUIRED": "The first name is required",
+        "NEW_FIRSTNAME_REQUIRED": "The new first name is required",
+        "FIRSTNAME_MINLENGTH": "The first name must be at least 2 characters long",
+        "NEW_FIRSTNAME_MINLENGTH": "The new first name must be at least 2 characters long",
+        "LASTNAME_REQUIRED": "The last name is required",
+        "NEW_LASTNAME_REQUIRED": "The new last name is required",
+        "LASTNAME_MINLENGTH": "The last name must be at least 2 characters long",
+        "NEW_LASTNAME_MINLENGTH": "The new last name must be at least 2 characters long"
+      }
+    }
+  },
+
+
+  "OTP_INPUT": {
+    "LABEL": {
+      "OTP": "Verification code"
+    },
+    "PLACEHOLDER": {
+      "OTP": "Enter the OTP code"
+    },
+    "ERROR": {
+      "OTP_REQUIRED": "The OTP code is required.",
+      "OTP_LENGTH": "The OTP code must be exactly 6 digits."
     }
   },
   "PASSWORD_INPUT": {
     "LABEL": {
       "PASSWORD": "Password",
-      "CONFIRM_PASSWORD": "Confirm password"
+      "CURRENT_PASSWORD": "Current Password",
+      "NEW_PASSWORD": "New Password",
+      "CONFIRM_PASSWORD": "Confirm Password",
+      "NEW_CONFIRM_PASSWORD": "Confirm New Password"
+    },
+    "PLACEHOLDER": {
+      "PASSWORD": "Enter your password",
+      "CURRENT_PASSWORD": "Enter your current password",
+      "NEW_PASSWORD": "Enter your new password",
+      "CONFIRM_PASSWORD": "Confirm your password",
+      "NEW_CONFIRM_PASSWORD": "Confirm your new password"
     },
     "ERROR": {
-      "PASSWORD_REQUIRED": "The password is required.",
-      "CONFIRM_PASSWORD_REQUIRED": "The password confirmation is required.",
-      "PASSWORD_MINLENGTH": "The password must be at least 6 characters long.",
-      "PASSWORD_PATTERN": "The password must contain at least one letter and one number.",
-      "PASSWORD_MISMATCH": "The passwords do not match."
+      "PASSWORD_REQUIRED": "The password is required",
+      "CURRENT_PASSWORD_REQUIRED": "The current password is required",
+      "NEW_PASSWORD_REQUIRED": "The new password is required",
+      "PASSWORD_MINLENGTH": "The password must be at least 8 characters long",
+      "CURRENT_PASSWORD_MINLENGTH": "The current password must be at least 8 characters long",
+      "NEW_PASSWORD_MINLENGTH": "The new password must be at least 8 characters long",
+      "PASSWORD_PATTERN": "The password must meet the required format",
+      "CURRENT_PASSWORD_PATTERN": "The current password must meet the required format",
+      "NEW_PASSWORD_PATTERN": "The new password must meet the required format",
+      "CONFIRM_PASSWORD_REQUIRED": "Password confirmation is required",
+      "NEW_CONFIRM_PASSWORD_REQUIRED": "New password confirmation is required",
+      "PASSWORD_MISMATCH": "The passwords do not match"
     }
   },
   "PHONE_INPUT": {
@@ -58,16 +182,7 @@
         "LOGIN_ATTEMPT_SAVE_FAILED": "An error occurred while saving the login attempt.",
         "LOGIN_FINALIZATION_FAILED": "An error occurred while finalizing the login."
       }
-    },
-    "STUDENT_TITLE": "Student Hub",
-    "STUDENT_DESCRIPTION": "Find your <strong>student job</strong>, <strong>internship</strong>, <strong>kot</strong>, <strong>training</strong>, or <strong>event</strong> in one click! Join the <strong>student vibe</strong>!",
-    "STUDENT_REGISTER": "Let's go!",
-    "LANDLORD_TITLE": "Private Landlord Sign-Up",
-    "LANDLORD_DESCRIPTION": "Offer your <strong>kots</strong> and connect with <strong>students</strong> in no time.",
-    "LANDLORD_REGISTER": "Become a landlord",
-    "PROFESSIONAL_TITLE": "Professional Hub",
-    "PROFESSIONAL_DESCRIPTION": "Boost your <strong>student job</strong>, <strong>internship</strong>, <strong>training</strong>, <strong>kot rental</strong>, or <strong>event</strong> offers to <strong>students</strong>.",
-    "PROFESSIONAL_CONTACT": "Contact us"
+    }
   },
   "FOOTER": {
     "NAVIGATION": "Navigation",
@@ -83,49 +198,56 @@
   },
   "NAV": {
     "BRAND": "DOORZ",
-    "ABOUT": "About",
-    "STUDENTJOB": "Student job",
+    "STUDENTJOB": "Student Job",
     "INTERSHIP": "Internship",
-    "AIDES": "Student aid",
+    "AIDES": "Aid",
     "EVENTS": "Events",
+    "STUDIES": "Studies and Training",
+    "KOTS": "Student housing",
     "PROFESSIONEL": "Professional",
     "STUDENTITEM": "Students",
     "RECRUITER": "Companies",
     "INSTITUTIONS": "Institutions",
-    "ORGANISATIONS": "Public organizations",
+    "ORGANISATIONS": "Public Organizations",
     "ASSOCIATIONS": "Associations",
-    "MOUVEMENT": "Student movement",
+    "MOUVEMENT": "Student Movement",
+    "ABOUT": "About",
     "FEATURES": "Features",
     "CONTACT": "Contact",
     "LOGIN": "Login",
-    "PROFILE": "Profile",
+    "PUBLISH": "Publish",
+    "PARAMETERS": "Settings",
     "LOGOUT": "Logout",
     "INVITE_COLLEAGUES": "Colleagues",
     "STUDENT": {
+      "CV": "Manage My CV",
+      "SEARCHES": "My Searches",
+      "APPLICATIONS": "My Applications",
+      "JOBS": "Student Job",
+      "INTERSHIPS": "Internship",
+      "AIDES": "Aid",
+      "EVENTS": "Events",
       "DASHBOARD": "Dashboard",
-      "STUDIES": "Studies",
-      "INTERNSHIPS": "Internships",
-      "JOBS": "Jobs",
-      "EVENTS": "Events"
+      "STUDIES": "Studies and Training"
     },
     "SUPERADMIN": {
       "DASHBOARD": "Dashboard",
       "INVITE": "Invite"
     },
     "COMPANY": {
-      "HOME": "Company",
+      "HOME": "My Company",
       "ADMIN": "Company Admin",
       "RECRUITER": "Company Recruiter",
       "VIEWER": "Company Viewer"
     },
     "INSTITUTION": {
-      "HOME": "Institution",
+      "HOME": "My Institution",
       "ADMIN": "Institution Admin",
       "EDITOR": "Institution Editor",
       "VIEWER": "Institution Viewer"
     },
     "LANDLORD": {
-      "DASHBOARD": "Landlord Dashboard"
+      "ANNOUNCES": "My Announcements"
     }
   },
   "INVITE": {
@@ -208,7 +330,9 @@
         "INTERNAL_SERVER_ERROR": "An internal error occurred. Please try again later.",
         "TOKEN_INVALID": "Invalid token!",
         "OTP_INVALID": "Invalid code. Please try again.",
-        "TOO_MANY_OTP_RESENDS": "You have requested too many OTP codes. Please wait before trying again."
+        "TOO_MANY_OTP_RESENDS": "You have requested too many OTP codes. Please wait before trying again.",
+        "ACTUAL_PASSWORD_INVALID": "The current password provided is incorrect.",
+        "ENTITY_NAME_ALREADY_USED": "This name is already used by another entity."
       }
     }
   },
@@ -314,22 +438,21 @@
     "SUCCESS": "Your password has been successfully updated. You can now log in.",
     "FEEDBACK": "If an account exists for this email, a reset link has been sent.",
     "LABEL": {
-      "EMAIL": "Email Address"
+      "EMAIL": "Email address"
     },
     "BUTTON": {
       "SUBMIT": "Reset",
+      "VALIDATE_OTP": "Validate",
       "TO_LOGIN": "Login"
     },
     "ERROR": {
       "FRONTEND": {
-        "EMAIL_REQUIRED": "Email address is required.",
-        "EMAIL_INVALID": "Please enter a valid email address.",
-        "INVALID_LINK": "This link is invalid or has expired."
+        "INVALID_LINK": "This link is invalid or expired."
       },
       "BACKEND": {
         "TOO_MANY_TOKEN_REQUESTS": "Too many attempts. Please try again in a few minutes.",
         "PASSWORD_RESET_SAME_AS_OLD": "Your new password cannot be the same as the old one.",
-        "PASSWORD_RESET_ALREADY_REQUESTED": "A reset request has already been sent recently. Please wait before making a new one.",
+        "PASSWORD_RESET_ALREADY_REQUESTED": "A reset request was already made recently. Please wait before trying again.",
         "PASSWORD_RESET_TOKEN_INVALID": "The link is invalid or has already been used.",
         "PASSWORD_RESET_TOKEN_EXPIRED": "The reset link has expired.",
         "PASSWORD_RESET_TOKEN_USED": "This reset link has already been used.",
@@ -399,12 +522,67 @@
   "LANDING": {
     "RESULTS": {
       "TITLE": "Search Results",
-      "NO_RESULTS": "No results found yet. Use the search forms to find opportunities."
-    }
+      "NO_RESULTS": "No results for now. Use the search forms to find opportunities."
+    },
+    "JOBS_NEAR_YOU": "STUDENT JOB NEAR YOU",
+    "INTERNSHIPS_INTERESTING": "INTERESTING INTERNSHIPS",
+    "STUDIES_TOP": "TOP STUDIES",
+    "AIDES_MUST_KNOW": "AIDS YOU CAN'T MISS",
+    "EVENTS_AROUND": "EVENTS AROUND"
+
+  },
+  "INVITATION_REQUEST": {
+    "LABEL": {
+      "COMPANY_NUMBER": "Company number",
+      "INSTITUTION_TYPE": "Institution type"
+    },
+    "PLACEHOLDER": {
+      "INSTITUTION_TYPE": "Choose an institution type",
+      "COMPANY_NUMBER": "e.g. 0123.456.789"
+    },
+    "COMPANY_NUMBER_PATTERN": "The company number must be in the format XXXX.XXX.XXX",
+    "COMPANY_NUMBER_REQUIRED": "The company number is required",
+    "INSTITUTION_TYPE_REQUIRED": "Institution type is required.",
+    "TITLE": "Invitation Request",
+    "ENTITY_TYPE_LABEL": "Entity Type",
+    "ENTITY_NAME_LABEL": "Entity name",
+    "ENTITY_NAME_PLACEHOLDER": "e.g. University of Liège",
+    "ENTITY_NAME_REQUIRED": "Entity name is required"
   },
   "SEARCH": {
+
+    "FILTER": "Filter",
+    "LABEL": "Search",
+    "KOT": {
+      "TITLE": "Available Kots",
+      "LABEL": {
+        "KEYWORDS": "Keywords",
+        "LOCATION": "Location",
+        "KOT_TYPE": "Kot type",
+        "LANDLORD_TYPE": "Landlord type",
+        "IS_FURNISHED": "Furnished kots only"
+      },
+      "PLACEHOLDER": {
+        "KEYWORDS": "Enter keywords (e.g., studio, shared)",
+        "LOCATION": "Enter a city or region",
+        "KOT_TYPE": "Select a kot type",
+        "LANDLORD_TYPE": "Select a landlord type"
+      },
+      "OPTION": {
+        "ALL": "All",
+        "STUDIO": "Studio",
+        "SHARED_ROOM": "Shared room",
+        "APARTMENT": "Apartment",
+        "PRIVATE": "Private",
+        "AGENCY": "Agency",
+        "UNIVERSITY": "University"
+      },
+      "BUTTON": {
+        "SUBMIT": "Search"
+      }
+    },
     "STUDENT_JOB": {
-      "TITLE": "Student Job Search",
+      "TITLE": "Student Job",
       "LABEL": {
         "KEYWORDS": "Keywords",
         "LOCATION": "Location",
@@ -414,7 +592,7 @@
         "REMOTE_POSSIBLE": "Remote Work Possible"
       },
       "PLACEHOLDER": {
-        "KEYWORDS": "Enter keywords (e.g., waiter, sales)",
+        "KEYWORDS": "Enter keywords (e.g., server, sales)",
         "LOCATION": "Enter a city or region",
         "CONTRACT_TYPE": "Select a contract type",
         "SCHEDULE_TYPE": "Select a schedule type",
@@ -425,16 +603,44 @@
         "CDD": "Fixed-term Contract",
         "CDI": "Permanent Contract",
         "INTERIM": "Temporary Work",
-        "FULL_TIME": "Full Time",
-        "PART_TIME": "Part Time",
+        "FULL_TIME": "Full-time",
+        "PART_TIME": "Part-time",
         "FLEXIBLE": "Flexible Hours"
       },
       "BUTTON": {
         "SUBMIT": "Search"
       }
     },
+    "AID": {
+      "TITLE": "Available Aid",
+      "LABEL": {
+        "KEYWORDS": "Keywords",
+        "LOCATION": "Location",
+        "AID_TYPE": "Aid Type",
+        "PROVIDER_TYPE": "Provider",
+        "IS_PUBLIC": "Public Aid Only"
+      },
+      "PLACEHOLDER": {
+        "KEYWORDS": "Enter keywords (e.g., housing, scholarship)",
+        "LOCATION": "Enter a city or region",
+        "AID_TYPE": "Select an aid type",
+        "PROVIDER_TYPE": "Select a provider"
+      },
+      "OPTION": {
+        "ALL": "All",
+        "SCHOLARSHIP": "Scholarship",
+        "HOUSING": "Housing",
+        "FOOD": "Food",
+        "STATE": "State",
+        "NGO": "NGO",
+        "UNIVERSITY": "University"
+      },
+      "BUTTON": {
+        "SUBMIT": "Search"
+      }
+    },
     "INTERNSHIP": {
-      "TITLE": "Internship Search",
+      "TITLE": "Internships",
       "LABEL": {
         "KEYWORDS": "Keywords",
         "STUDY_DOMAIN": "Field of Study",
@@ -452,7 +658,7 @@
       },
       "OPTION": {
         "ALL": "All",
-        "IT": "Computer Science",
+        "IT": "IT",
         "MARKETING": "Marketing",
         "ENGINEERING": "Engineering"
       },
@@ -461,7 +667,7 @@
       }
     },
     "STUDY": {
-      "TITLE": "Study and Training Search",
+      "TITLE": "Studies and Training",
       "LABEL": {
         "KEYWORDS": "Keywords",
         "STUDY_DOMAIN": "Field of Study",
@@ -471,7 +677,7 @@
         "MAX_COST": "Maximum Cost (€/year)"
       },
       "PLACEHOLDER": {
-        "KEYWORDS": "Enter keywords (e.g., computer science, law)",
+        "KEYWORDS": "Enter keywords (e.g., IT, law)",
         "STUDY_DOMAIN": "Select a field",
         "LOCATION": "Enter a city or region",
         "DEGREE_TYPE": "Select a degree type",
@@ -480,13 +686,13 @@
       },
       "OPTION": {
         "ALL": "All",
-        "IT": "Computer Science",
+        "IT": "IT",
         "LAW": "Law",
         "MEDICINE": "Medicine",
         "BACHELOR": "Bachelor",
         "MASTER": "Master",
         "DOCTORATE": "Doctorate",
-        "IN_PERSON": "In-Person",
+        "IN_PERSON": "In-person",
         "ONLINE": "Online",
         "HYBRID": "Hybrid"
       },
@@ -495,7 +701,7 @@
       }
     },
     "EVENT": {
-      "TITLE": "Event Search",
+      "TITLE": "Events",
       "LABEL": {
         "KEYWORDS": "Keywords",
         "LOCATION": "Location",
@@ -522,9 +728,64 @@
   },
   "SEARCH_FORM": {
     "KEYWORDS": "Keywords",
-    "KEYWORDS_PLACEHOLDER": "Ex: Web Developer",
     "LOCATION": "Where?",
-    "LOCATION_PLACEHOLDER": "Ex: Mons",
     "SUBMIT": "Search"
+  },
+  "ERROR": {
+    "BACKEND": {
+      "VALIDATIONS": {
+        "REFRESH_TOKEN_LOCK_TIMEOUT": "Refresh token lock timeout",
+        "REFRESH_TOKEN_ALREADY_USED": "Refresh token already used",
+        "REFRESH_TOKEN_ALREADY_EXISTS": "Refresh token already exists",
+        "NO_LEGAL_CONSENTS_PROVIDED": "No legal consents provided",
+        "LEGAL_DOCUMENT_NOT_FOUND": "Legal document not found",
+        "OTP_NOT_REQUIRED_FOR_THIS_TOKEN_TYPE": "OTP code not required for this token type",
+        "TOKEN_NOT_AVAILABLE": "Token not available",
+        "TOKEN_NOT_FOUND": "Token not found",
+        "MISSING_CONFIRMATION_TOKEN_OR_OTP": "Missing confirmation token or OTP code",
+        "OTP_INVALID": "Invalid OTP code",
+        "TOO_SOON_FOR_NEW_TOKEN": "Too soon for a new token",
+        "AUTH_USER_NULL": "User not defined",
+        "AUTH.MISSING_EMAIL": "Missing email address",
+        "AUTH_TOKEN_GENERATION_FAILED": "Token generation failed",
+        "TOKEN_INVALID": "Invalid token",
+        "AUTH_UNEXPECTED": "Unexpected error",
+        "TOKEN_ALREADY_USED": "Token already used",
+        "TOKEN_REVOKED": "Token revoked",
+        "TOKEN_EXPIRED": "Token expired",
+        "TOKEN_TYPE_NOT_FOUND": "Token type not found",
+        "INVALID_ADMIN_ROLE": "Invalid admin role",
+        "REFRESH_TOKEN_INVALID_OR_EXPIRED": "Refresh token invalid or expired",
+        "REFRESH_TOKEN_PROCESS_FAILED": "Refresh token processing failed",
+        "INSTITUTION_DTO_NULL": "Institution data not defined",
+        "INSTITUTION_TYPE_ID_INVALID": "Invalid institution type ID",
+        "COMPANY_DTO_NULL": "Company data not defined",
+        "COMPANY_NUMBER_REQUIRED": "Company number required",
+        "COMPANY_NUMBER_INVALID_FORMAT": "Invalid company number format",
+        "COMPANY_NUMBER_INVALID_DIGITS": "Invalid company number digits",
+        "COMPANY_NUMBER_INVALID": "Invalid company number",
+        "INVALID_NAME": "Invalid name",
+        "INVALID_EMAIL_FORMAT": "Invalid email format",
+        "SESSION_EVENT_NOT_FOUND": "Session event not found",
+        "NO_SESSION_TO_REVOCK": "No session to revoke",
+        "PASSWORD_INVALID": "Invalid password",
+        "PASSWORD_UPDATE_FAILED": "Password update failed",
+        "EMAIL_UNCHANGED": "Email unchanged",
+        "EMAIL_UPDATE_FAILED": "Email update failed",
+        "NAMES_UNCHANGED": "Names unchanged",
+        "NAME_UPDATE_FAILED": "Name update failed",
+        "INVALID_NAME_FIELDS": "Invalid name fields",
+        "NEW_PASSWORD_INVALID": "Invalid new password",
+        "INVALID_NEW_EMAIL": "Invalid new email",
+        "INVITATION_DETAILS_MISMATCH": "Mismatch in invitation details",
+        "USER_CREATION_FAILED": "User creation failed",
+        "COLLEAGUE_REGISTRATION_FAILED": "Colleague registration failed",
+        "USER_NOT_FOUND_AFTER_ENTITY_CREATION": "User not found after entity creation",
+        "USER_REGISTRATION_FAILED": "User registration failed",
+        "ROLE_NOT_FOUND": "Role not found",
+        "PUBLIC_ENTITY_TYPE_NOT_FOUND": "Public entity type not found",
+        "UNSUPPORTED_PUBLIC_ROLE": "Unsupported public role"
+      }
+    }
   }
 }

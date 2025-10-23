@@ -29,14 +29,14 @@ public class InvitationService : IInvitationService
         ITokenHasher tokenHasher,
         ILogger<InvitationService> logger)
     {
-        _invitationRepository = invitationRepository ?? throw new ArgumentNullException(nameof(invitationRepository));
-        _entityRepository = entityRepository ?? throw new ArgumentNullException(nameof(entityRepository));
-        _entityTypeRepository = entityTypeRepository ?? throw new ArgumentNullException(nameof(entityTypeRepository));
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
-        _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
-        _tokenHasher = tokenHasher ?? throw new ArgumentNullException(nameof(tokenHasher));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _invitationRepository = invitationRepository ?? throw new ArgumentNullException(nameof(invitationRepository), "Le référentiel d'invitations de superadmin ne peut pas être null.");
+        _entityRepository = entityRepository ?? throw new ArgumentNullException(nameof(entityRepository), "Le référentiel d'entités de superadmin ne peut pas être null.");
+        _entityTypeRepository = entityTypeRepository ?? throw new ArgumentNullException(nameof(entityTypeRepository), "Le référentiel de types d'entité ne peut pas être null.");
+        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository), "Le référentiel utilisateur ne peut pas être null.");
+        _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository), "Le référentiel de rôles ne peut pas être null.");
+        _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService), "Le service de jetons ne peut pas être null.");
+        _tokenHasher = tokenHasher ?? throw new ArgumentNullException(nameof(tokenHasher), "Le service de hachage de jetons ne peut pas être null.");
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger), "Le logger ne peut pas être null.");
     }
 
     public async Task<(SuperadminInvitation invitation, EntityType entityType, string rawToken)> CreateInvitationAsync(
@@ -108,7 +108,7 @@ public class InvitationService : IInvitationService
         _logger.LogDebug("Validating email: {Email}", email);
         try
         {
-            CommonValidator.ValidateEmail(email);
+            CommonFormatValidator.ValidateEmail(email);
         }
         catch (ArgumentException)
         {

@@ -1,13 +1,18 @@
 using System.Security.Claims;
 using System.Text;
+using Application.Configurations;
 using Application.Logger;
+using Application.SharedService;
 using Application.UseCases.Auth.Service;
+using Application.UseCases.Auth.UseCases;
 using Application.UseCases.Auth.UseCases.Authentication;
-using Application.UseCases.Auth.UseCases.EmailConfirmation;
+using Application.UseCases.Auth.UseCases.EmailUser;
 using Application.UseCases.Auth.UseCases.Password;
 using Application.UseCases.Auth.UseCases.Register;
-using Application.UseCases.Invitation.EntityAdmin.ColleagueInvitation.UseCase;
+using Application.UseCases.Invitation.Colleague.UseCase;
+using Application.UseCases.Invitation.Request.UseCases;
 using Application.UseCases.Invitation.Service;
+using Application.UseCases.Invitation.SuperAdmin.DTOs;
 using Application.UseCases.Invitation.SuperAdmin.UseCases;
 using Application.UseCases.Legals.UseCases;
 using Application.UseCases.References.EntityType.UseCase;
@@ -71,9 +76,18 @@ builder.Services.AddScoped<IInstitutionTypeRepository, InstitutionTypeRepository
 builder.Services.AddScoped<LoginUseCase>();
 builder.Services.AddScoped<LogoutUseCase>();
 builder.Services.AddScoped<RegisterPublicUseCase>();
-builder.Services.AddScoped<ConfirmEmaiUseCase>();
+
 builder.Services.AddScoped<RefreshTokenUseCase>();
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+// >Email user
+builder.Services.AddScoped<ConfirmEmaiUseCase>();
+builder.Services.AddScoped<ResendEmailConfirmationUseCase>();
+builder.Services.AddScoped<ValidateTokenForEmailConfirmationUseCase>();
+builder.Services.AddScoped<EmailConfirmedUseCase>();
+builder.Services.AddScoped<ResendOtpCodeUseCase>();
+builder.Services.AddScoped<ResendOtpCodeFromEmailUseCase>();
+builder.Services.AddScoped<UpdateEmailUseCase>();
+builder.Services.AddScoped<GetInvitationRequestsByStatusUseCase>();
 
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<IInstitutionRepository, InstitutionRepository>();
@@ -83,6 +97,9 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<AddCompanyUseCase>();
 builder.Services.AddScoped<AddInstitutionUseCase>();
+builder.Services.AddScoped<AddAssociationUseCase>();
+builder.Services.AddScoped<AddStudentMovementUseCase>();
+builder.Services.AddScoped<AddPublicOrganizationUseCase>();
 builder.Services.AddScoped<RegisterAdminFromInviteUseCase>();
 builder.Services.AddScoped<InviteColleagueUseCase>();
 builder.Services.AddScoped<RegisterColleagueFromInviteUseCase>();
@@ -92,20 +109,31 @@ builder.Services.AddScoped<GetRolesByEntityTypeNameUseCase>();
 builder.Services.AddScoped<GetUserByIdUseCase>();
 builder.Services.AddScoped<ValidateInvitationTokenUseCase>();
 builder.Services.AddScoped<GetRoleIdByRoleNameANdENtityNameUseCase>();
-builder.Services.AddScoped<ResendEmailConfirmationUseCase>();
+
 builder.Services.AddScoped<SendPasswordResetLinkUseCase>();
 builder.Services.AddScoped<ValidatePasswordResetTokenUseCase>();
 builder.Services.AddScoped<ResetPasswordUseCase>();
 builder.Services.AddScoped<ValidatePasswordResetOtpUseCase>();
-builder.Services.AddScoped<ValidateTokenForEmailConfirmationUseCase>();
-builder.Services.AddScoped<EmailConfirmedUseCase>();
-builder.Services.AddScoped<ResendOtpCodeUseCase>();
-builder.Services.AddScoped<ResendOtpCodeFromEmailUseCase>();
+
 builder.Services.AddScoped<GetActiveLegalDocumentUseCase>();
 builder.Services.AddScoped<GetAllLegalDocumentTypesUseCase>();
 builder.Services.AddScoped<CreateContactMessageUseCase>();
 builder.Services.AddScoped<GetAllSpokenLanguagesUseCase>();
 builder.Services.AddScoped<GetAllContactMessageTypesByLangUseCase>();
+builder.Services.AddScoped<UpdatePasswordUseCase>();
+
+builder.Services.AddScoped<UpdateUserNameUseCase>();
+builder.Services.AddScoped<RequestInvitationRequestUseCase>();
+
+
+builder.Services.AddScoped<IAddEntityStrategyResolver, EntityInvitationStrategyFactory>();
+
+builder.Services.AddScoped<IAddEntityUseCase<CreateCompanyDto, CompanyDto>, AddCompanyUseCase>();
+builder.Services.AddScoped<IAddEntityUseCase<CreateAssociationDto, AssociationDto>, AddAssociationUseCase>();
+builder.Services.AddScoped<IAddEntityUseCase<CreateInstitutionDto, InstitutionDto>, AddInstitutionUseCase>();
+builder.Services.AddScoped<IAddEntityUseCase<CreatePublicOrganizationDto, PublicOrganizationDto>, AddPublicOrganizationUseCase>();
+builder.Services.AddScoped<IAddEntityUseCase<CreateStudentMovementDto, StudentMovementDto>, AddStudentMovementUseCase>();
+
 
 builder.Services.AddScoped<ISuperadminInvitationRepository, SuperadminInvitationRepository>();
 builder.Services.AddScoped<ISuperadminInvitationEntityRepository, SuperadminInvitationEntityRepository>();
@@ -113,11 +141,19 @@ builder.Services.AddScoped<IEntityTypeRepository, EntityTypeRepository>();
 builder.Services.AddScoped<IEntityUserRepository, EntityUserRepository>();
 builder.Services.AddScoped<ILandLordRepository, LandLordRepository>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<IAssociationRepository, AssociationRepository>();
+builder.Services.AddScoped<IStudentMovementRepository, StudentMovementRepository>();
+builder.Services.AddScoped<IInvitationRequestRepository, InvitationRequestRepository>();
+builder.Services.AddScoped<ISharedUniquenessValidationService, SharedUniquenessValidationService>();
+
+builder.Services.AddScoped<IPublicOrganizationRepository, PublicOrganizationRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEntityRepository, EntityRepository>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IInvitationTypeRepository, InvitationTypeRepository>();
 builder.Services.AddScoped<IEmailAuthService, EmailAuthService>();
+builder.Services.AddScoped<ISessionService, SessionService>();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<ITokenTypeRepository, TokenTypeRepository>();
 builder.Services.AddScoped<ISecurityTokenRepository, SecurityTokenRepository>();
 builder.Services.AddScoped<ISecurityTokenService, SecurityTokenService>();
@@ -136,10 +172,18 @@ builder.Services.AddScoped<ILegalDocumentTypeTranslationRepository, LegalDocumen
 builder.Services.AddScoped<IContactMessageRepository, ContactMessageRepository>();
 builder.Services.AddScoped<IContactMessageTypeRepository, ContactMessageTypeRepository>();
 builder.Services.AddScoped<IContactEmailService, ContactEmailService>();
+builder.Services.AddScoped<ISessionEventRepository, SessionEventRepository>();
+builder.Services.AddScoped<IUserActionLogRepository, UserActionLogRepository>();
+builder.Services.AddScoped<IUserActionLogService, UserActionLogService>();
 builder.Services.AddScoped<RefreshToken>();
+
+builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("AuthSettings"));
+builder.Services.Configure<RateLimitSettings>(builder.Configuration.GetSection("RateLimitsForUserUpdates"));
 builder.Services.Configure<FrontendSettings>(builder.Configuration.GetSection("Frontend"));
 builder.Services.Configure<EmailSenderOptions>(builder.Configuration.GetSection("Emails"));
 builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
 builder.Services.AddHostedService<RabbitMqMailQueueConsumer>();
 builder.Services.AddSingleton<IMailQueuePublisher<SendTemplatedEmailMessage>, RabbitMqMailQueuePublisher<SendTemplatedEmailMessage>>();
 

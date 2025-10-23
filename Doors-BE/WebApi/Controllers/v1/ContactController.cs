@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Application.UseCases.Support.DTOs;
 using Application.UseCases.Support.UseCases;
-using BackEnd_TI.Utils;
+using WebApi.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Constants;
@@ -29,21 +29,15 @@ public class ContactController:ControllerBase
         if (!ModelState.IsValid)
         {
             return BadRequest(ApiResponse<object>.Fail(
-                ResponseKeys.INVALID_MODEL_STATE,
+                ResponseKeys.InvalidModelState,
                 null
             ));
         }
+      
+        var ipAddress = HttpContextUtils.ExtractClientIpAddress(Request);
+        var userAgent = HttpContextUtils.ExtractUserAgent(Request);
 
-        // 🛡 IP sécurisée (via reverse proxy éventuel ou fallback)
-        var ipAddress = Request.Headers["X-Forwarded-For"].FirstOrDefault()
-                        ?? HttpContext.Connection.RemoteIpAddress?.ToString()
-                        ?? "0.0.0.0";
-
-        // 🌐 User-Agent
-        var userAgent = Request.Headers["User-Agent"].FirstOrDefault()
-                        ?? "Unknown";
-
-        // 👤 Utilisateur connecté ?
+        //  Utilisateur connecté ?
         if (User.Identity?.IsAuthenticated == true)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -68,7 +62,7 @@ public class ContactController:ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> GetMessageTypes()
     {
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
 
         var types = await _getAllContactMessageTypesByLangUseCase.ExecuteAsync(languageCode);
 

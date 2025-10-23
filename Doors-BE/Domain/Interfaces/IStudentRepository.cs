@@ -7,5 +7,5 @@ public interface IStudentRepository
     Task<Student> AddAsync(Student student);
     Task<Student?> GetByIdAsync(int id);
 
-    Task<bool> ExistsAsync(int studentId); // Bien présente dans l’interface
+    Task<bool> ExistsAsync(int studentId);
 }

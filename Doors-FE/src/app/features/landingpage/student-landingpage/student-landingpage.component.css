@@ -1,0 +1,148 @@
+.student-landingpage-container {
+  padding: 0;
+  margin: 20px 0;
+}
+
+.cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.landingpage-card {
+  background-color: transparent;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  transition: transform 0.2s;
+}
+
+.landingpage-card:hover {
+  transform: translateY(-5px);
+}
+
+.landingpage-card-title {
+  margin-bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.landingpage-card-title h2 {
+  font-size: clamp(1rem, 2.5vw, 1.5em); /* Taille de police responsive */
+  margin: 0 !important;
+  padding: 0 !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Gap proportionnel */
+  height: clamp(24px, 5vw, 36px); /* Hauteur responsive */
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+span {
+  margin-top: clamp(-4px, -1vw, -8px); /* Ajustement responsive */
+}
+
+/* Couleurs des titres en fonction du type */
+.landingpage-card.job .landingpage-card-title h2 {
+  color: #F4A261;
+}
+
+.landingpage-card.internship .landingpage-card-title h2 {
+  color: #2A9D8F;
+}
+
+.landingpage-card.study .landingpage-card-title h2 {
+  color: #264653;
+}
+
+.landingpage-card.aid .landingpage-card-title h2 {
+  color: #c64d4d;
+}
+
+.landingpage-card.event .landingpage-card-title h2 {
+  color: #318db5;
+}
+
+/* Effets au survol des titres */
+.landingpage-card.job .landingpage-card-title h2:hover {
+  color: #e68a3f;
+  background-color: rgba(244, 162, 97, 0.1);
+}
+
+.landingpage-card.internship .landingpage-card-title h2:hover {
+  color: #1f7a6d;
+  background-color: rgba(42, 157, 143, 0.1);
+}
+
+.landingpage-card.study .landingpage-card-title h2:hover {
+  color: #1a323d;
+  background-color: rgba(38, 70, 83, 0.1);
+}
+
+.landingpage-card.aid .landingpage-card-title h2:hover {
+  color: #a43e3e;
+  background-color: rgba(198, 77, 77, 0.1);
+}
+
+.landingpage-card.event .landingpage-card-title h2:hover {
+  color: #266f91;
+  background-color: rgba(49, 141, 181, 0.1);
+}
+
+/* Style du chevron */
+.chevron-icon {
+  width: clamp(16px, 2.5vw, 24px); /* Taille responsive */
+  height: clamp(16px, 2.5vw, 24px);
+  stroke: currentColor;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+/* Déplacement du chevron au survol */
+.landingpage-card .landingpage-card-title h2:hover .chevron-icon {
+  transform: translateX(5px);
+}
+
+.landingpage-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Media query pour petits écrans */
+@media (max-width: 768px) {
+  .landingpage-card-title h2 {
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    height: clamp(20px, 4vw, 28px);
+    gap: 0.4rem;
+  }
+
+  span {
+    margin-top: clamp(-3px, -0.8vw, -6px);
+  }
+
+  .chevron-icon {
+    width: clamp(14px, 2vw, 18px);
+    height: clamp(14px, 2vw, 18px);
+  }
+}
+
+@media (max-width: 480px) {
+  .landingpage-card-title h2 {
+    font-size: clamp(0.8rem, 1.8vw, 1rem);
+    height: clamp(18px, 3.5vw, 24px);
+    gap: 0.3rem;
+  }
+
+  span {
+    margin-top: clamp(-2px, -0.6vw, -4px);
+  }
+
+  .chevron-icon {
+    width: clamp(12px, 1.8vw, 16px);
+    height: clamp(12px, 1.8vw, 16px);
+  }
+}

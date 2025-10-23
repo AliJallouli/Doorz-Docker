@@ -1,0 +1,18 @@
+<div class="results-container">
+  <div class="results-header search-header">
+
+    <h3>{{ 'LANDING.RESULTS.TITLE' | translate }}</h3>
+  </div>
+  <ng-container [ngSwitch]="searchType">
+    <app-student-job-results *ngSwitchCase="'jobs'" [results]="searchResults"></app-student-job-results>
+    <app-internship-results *ngSwitchCase="'internships'" [results]="searchResults"></app-internship-results>
+    <app-study-results *ngSwitchCase="'studies'" [results]="searchResults"></app-study-results>
+    <app-event-results *ngSwitchCase="'events'" [results]="searchResults"></app-event-results>
+    <app-aid-results *ngSwitchCase="'aid'" [results]="searchResults"></app-aid-results>
+    <app-kot-results *ngSwitchCase="'kot'" [results]="searchResults"></app-kot-results>
+  </ng-container>
+
+  <ng-template #noResults>
+    <p class="no-results">{{ 'LANDING.RESULTS.NO_RESULTS' | translate }}</p>
+  </ng-template>
+</div>

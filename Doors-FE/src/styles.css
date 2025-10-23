@@ -1,7 +1,512 @@
+/* Styles globaux */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+:root {
+  --primary-color: #F4A261;
+  --secondary-color: #b6daec;
+  --secondary-secondary-color: #587e8e;
+  --accent-color: #2A9D8F;
+  --background-light: #fbfbfb;
+  --text-color: #27424c;
+  --text-light: #e0e0e0;
+  --navbar-bg: #343a40;
+  --hover-bg: #495057;
+  --active-color: #4CAF50;
+}
+
+/**********************************************************/
+/*                 Conteneurs                             */
+/**********************************************************/
 .full-wrapper,
 .container,
 .form-group {
-  position: static !important; /* Évite les conflits de position */
-  overflow: visible !important; /* Assure que la fenêtre n'est pas coupée */
-  z-index: auto !important; /* Pas de z-index élevé */
-}/* You can add global styles to this file, and also import other style files */
+  position: static !important;
+  overflow: visible !important;
+  z-index: auto !important;
+}
+
+
+/********************* Conteneur générique pour deux sections égales les sections *********************/
+.two-section-container {
+  display: flex;
+  justify-content: space-between; /* Sépare les deux sections */
+  align-items: flex-start; /* Alignement en haut */
+  gap: 1rem; /* Espace entre les deux conteneurs */
+  max-width: 1200px; /* Largeur max pour la page */
+  margin: 0 auto;
+}
+.two-section-container .right-container {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .two-section-container {
+    flex-direction: column;
+  }
+  .right-container,
+  .left-container {
+    flex: none;
+    max-width: 100%;
+    width: 100%; /* Force la pleine largeur */
+    margin: 0; /* Supprime tout margin */
+    box-sizing: border-box; /* Inclut padding/margin dans la largeur */
+    overflow-x: hidden; /* Empêche tout débordement horizontal */
+  }
+
+  .left-container {
+    width: 100%; /* Assure que le formulaire prend toute la largeur */
+    box-sizing: border-box; /* Inclut padding/margin dans la largeur */
+    overflow-x: hidden; /* Empêche tout débordement horizontal */
+    padding: 0;
+    margin: 0;
+  }
+}
+/**********************************************************************************************************/
+
+.full-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 0;
+
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: transparent;
+  box-sizing: border-box;
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.container {
+  background-color: var(--background-light);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  margin: auto;
+  padding: 1rem;
+}
+
+.container-in {
+  padding: 1rem;
+  border: 1px solid #d1d5db;
+  background-color: #f9fafb;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/**********************************************************/
+/*                 Formulaires                            */
+/**********************************************************/
+.doorz-vertical-form {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.2rem, 2vw, 0.75rem);
+  max-width: 100%;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+label {
+  color: var(--secondary-secondary-color);
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+/* Error messages */
+.invalid-feedback {
+  color: #e74c3c;
+  font-size: clamp(0.75rem, 3vw, 0.8125rem);
+  margin-top: 0.25rem;
+}
+
+.required {
+  color: #e74c3c;
+}
+
+.is-invalid {
+  border-color: #e74c3c !important;
+}
+
+input::placeholder,
+textarea::placeholder,
+.doorz-select::placeholder {
+  color: #6c757d;
+  font-size: clamp(0.875rem, 3vw, 1rem);
+  opacity: 1;
+  font-weight: 400;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="email"],
+input[type="password"],
+textarea,
+.doorz-select {
+  padding: clamp(0.5rem, 1.5vw, 0.625rem);
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: clamp(1rem, 3.5vw, 1.0625rem);
+  line-height: 1.5; /* Conservé pour input et textarea */
+  height: clamp(2.5rem, 8vw, 2.75rem);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #f8f6f6;
+  appearance: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+}
+
+/* Styles spécifiques pour textarea */
+textarea {
+  height: auto;
+  min-height: clamp(7rem, 20vw, 8rem);
+  padding: clamp(0.75rem, 2vw, 0.875rem);
+}
+
+/* Style pour les champs readonly */
+input[type="text"][readonly],
+input[type="number"][readonly],
+input[type="date"][readonly],
+input[type="email"][readonly],
+input[type="password"][readonly],
+textarea[readonly] {
+  border-color: #d3d3d3;
+  background-color: #e8ecef;
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+/* Focus pour tous les champs */
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+.doorz-select:focus,
+textarea.form-control:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+  outline: none;
+}
+.doorz-select {
+  height: 2.75rem ;
+  display: flex ;
+  align-items: center ;
+  padding: 0 2rem 0 0.625rem !important;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%23333" d="M7 10l5 5 5-5z"/></svg>') !important;
+  background-repeat: no-repeat ;
+  background-position: right 0.5rem center ;
+  background-size: 12px ;
+  cursor: pointer ;
+  font-size: 1rem ;
+}
+
+/* Ajustement spécifique pour mobile */
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  input[type="email"],
+  input[type="password"],
+  textarea,
+  .doorz-select {
+    padding: clamp(0.5rem, 2.5vw, 0.75rem);
+    font-size: clamp(0.9375rem, 4vw, 1rem);
+    height: clamp(2.25rem, 10vw, 2.5rem);
+  }
+
+  textarea {
+    min-height: clamp(6rem, 25vw, 7rem);
+    padding: clamp(0.625rem, 2.5vw, 0.75rem);
+  }
+
+
+}
+
+
+/* Mode sombre */
+@media (prefers-color-scheme: dark) {
+  .container, .container-in {
+    background-color: #232323;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  body {
+    background-color: #0e0e0e;
+  }
+  label {
+    color: white;
+  }
+  h3, h5 {
+    color: white;
+  }
+  p {
+    color: white;
+  }
+  .form-check-label {
+    color: white;
+  }
+  .container-in {
+    background-color: #0e0e0e;
+  }
+  input::placeholder,
+  textarea::placeholder,
+  .doorz-select::placeholder {
+    color: #a0a0a0;
+  }
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  input[type="email"],
+  input[type="password"],
+  textarea,
+  .doorz-select {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: var(--text-light);
+  }
+  input[type="text"][readonly],
+  input[type="number"][readonly],
+  input[type="date"][readonly],
+  input[type="email"][readonly],
+  input[type="password"][readonly],
+  textarea[readonly] {
+    background-color: #333;
+    border-color: #555;
+  }
+  .doorz-select {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%23e0e0e0" d="M7 10l5 5 5-5z"/></svg>');
+  }
+  h3{
+    background-color: #0e0e0e;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .search-header h3 {
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+  }
+}
+
+/* Autres styles inchangés */
+.btn-submit {
+  padding: clamp(0.75rem, 2vw, 0.875rem) clamp(1rem, 3vw, 1.5rem);
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  background-color: #2a9d8f;
+  color: white;
+  border: none;
+  margin: 0.5rem auto;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: #21867a;
+  transform: translateY(-1px);
+}
+
+.btn-submit:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.375rem, 1.5vw, 0.5rem);
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
+}
+
+.form-check-input {
+  margin-right: clamp(0.375rem, 1.5vw, 0.5rem);
+  width: clamp(1rem, 3vw, 1.25rem);
+  height: clamp(1rem, 3vw, 1.25rem);
+  cursor: pointer;
+  margin-top: 0;
+  vertical-align: middle;
+}
+
+.form-check-input.is-invalid {
+  outline: 2px solid #e74c3c;
+  outline-offset: 1px;
+}
+
+.form-check-label {
+  font-size: clamp(0.875rem, 3vw, 0.9375rem);
+  color: var(--secondary-secondary-color);
+  cursor: pointer;
+  padding: 0.25rem 0;
+  vertical-align: middle;
+}
+
+.form-check-label:hover {
+  color: #2F94C6FF;
+}
+
+.forgot-password {
+  color: #e76f51;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: inherit;
+  line-height: 1.5;
+  padding: 0;
+  transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+  color: #f4a261;
+  text-decoration: underline;
+}
+
+
+/* Options du formulaire */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+  line-height: 1.5;
+  margin: 0.5rem 0;
+}
+
+/* Conteneur form-check */
+.form-options .form-check {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Label de la case à cocher */
+.form-options .form-check-label {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-size: inherit;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+/* Case à cocher */
+.form-options .form-check-input {
+  margin: 0 0.25rem 0 0;
+  width: 1rem;
+  height: 1rem;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+
+.error-message {
+  color: #e74c3c;
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+  font-weight: 600;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.success-message {
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
+  color: #2a9d8f;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/**********************************************************/
+/*                 Typographie générale                   */
+/**********************************************************/
+p {
+  color: var(--secondary-secondary-color);
+  font-size: clamp(0.875rem, 3vw, 1rem);
+  font-weight: 400;
+}
+
+/* Style général pour tous les <h3> */
+h3 {
+  text-align: center;
+  margin: clamp(0.75rem, 1.5vw, 1rem) auto;
+  font-weight: 700;
+  font-size: clamp(1.125rem, 3vw, 1.625rem);
+  line-height: 1.3;
+  color: var(--secondary-secondary-color);
+  max-width: 100%;
+  overflow-wrap: break-word;
+  width: fit-content;
+  display: block;
+  padding: 0.4rem 1rem;
+
+}
+
+/* Style pour <h3> dans .search-header */
+.search-header h3 {
+  text-align: left;
+  margin: 0;
+  font-weight: 700;
+  font-size: clamp(0.875rem, 2.5vw, 1.25rem);
+  line-height: 1.2;
+  color: var(--secondary-secondary-color);
+  max-width: 100%;
+  overflow-wrap: break-word;
+  border:none;
+  background-color: transparent;
+}
+
+/* Style pour <h3> dans .results-header */
+.results-header h3 {
+  text-align: left;
+  margin: 0;
+  font-weight: 700;
+  font-size: clamp(0.875rem, 2.5vw, 1.25rem);
+  line-height: 1.2;
+  color: var(--secondary-secondary-color);
+  max-width: 100%;
+  overflow-wrap: break-word;
+  border:none;
+}
+
+h5 {
+  margin-bottom:0;
+  margin-top: clamp(0.75rem, 1.5vw, 1rem);
+  font-weight: 500;
+  font-size: clamp(1rem, 2.5vw, 1.375rem);
+  line-height: 1.3;
+  color: var(--secondary-secondary-color);
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.search-header {
+  background: var(--secondary-color);
+  display: flex;
+  align-items: center;
+  height: clamp(2.5rem, 6vw, 3.25rem);
+  padding: 0 clamp(0.75rem, 1.5vw, 1rem);
+  box-sizing: border-box;
+  gap: clamp(0.5rem, 1vw, 1rem);
+}

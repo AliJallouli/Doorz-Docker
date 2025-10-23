@@ -5,16 +5,16 @@ import {
   ConfirmEmailRequestDTO,
   ConfirmEmailResponseDTO,
   ResendConfirmationRequestDTO
-} from '../../../models/invite.models';
+} from '../../models/invite.models';
 import {Observable} from 'rxjs';
-import {ApiResponse} from '../../../models/auth.models';
+import {ApiResponse} from '../../models/auth.models';
 import {HttpClient} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmailConfirmationService {
-  private readonly apiUrl = `${environment.apiUrl}/emailconfirmation`;
+  private readonly apiUrl = `${environment.apiUrl}/emailuser`;
 
   constructor(private http: HttpClient) { }
   confirmEmail(request: ConfirmEmailRequestDTO): Observable<ApiResponse<ConfirmEmailResponseDTO>> {
@@ -33,6 +33,5 @@ export class EmailConfirmationService {
   resendOtpCodeWithEmail(email: string): Observable<ApiResponse<void>> {
     return this.http.post<ApiResponse<void>>(`${this.apiUrl}/resend-otp-from-email`, { email });
   }
-
 
 }

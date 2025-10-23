@@ -1,0 +1,40 @@
+<div class="page-wrapper">
+  <!-- Section supérieure -->
+  <div class="section-container top-section">
+    <div class="section-content">
+      <app-global-search
+        [searchTitle]="searchTitle"
+        [searchType]="searchType"
+        (searchResults)="onGlobalSearchResults($event)">
+      </app-global-search>
+
+    </div>
+  </div>
+
+  <!-- Section du milieu -->
+  <div class="section-container middle-section">
+    <ng-container>
+      <!-- Colonne de gauche (30%) : Accordéon personnalisé -->
+      <div class="sidebar">
+      <app-selector-form-search
+        [activePanel]="activePanel"
+        [searchTitle]="searchTitle"
+        [searchType]="searchType"
+        [isPanelVisible]="isPanelOpen"
+        (panelChange)="onPanelChange($event)"
+        (searchResultsChange)="onSearchResults($event)">
+      </app-selector-form-search>
+      </div>
+
+
+      <!-- Colonne de droite (70%) : Résultats -->
+      <div class="main-content">
+        <app-selector-result-search
+          [searchTitle]="searchTitle"
+          [searchType]="searchType"
+          [searchResults]="searchResults">
+        </app-selector-result-search>
+      </div>
+    </ng-container>
+  </div>
+</div>

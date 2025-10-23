@@ -17,7 +17,7 @@ public class StudentRepository : IStudentRepository
     {
         _context.Students.Add(student);
         await _context.SaveChangesAsync();
-        return student; // Retourne l’entité avec l’ID généré
+        return student; 
     }
 
 

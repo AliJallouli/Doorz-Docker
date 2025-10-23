@@ -1,0 +1,191 @@
+/* Conteneur du champ téléphone */
+.phone-input-container .input-group {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Sélecteur de code pays */
+.phone-input-container .input-group .form-select {
+  flex: 0 0 auto;
+  width: clamp(90px, 20vw, 100px);
+  height: clamp(2.5rem, 8vw, 2.75rem);
+  padding: 0 2.25rem 0 0.625rem;
+  border: 1px solid #ccc;
+  border-right: none; /* Pas de bordure à droite */
+  border-radius: 6px 0 0 6px;
+  font-size: clamp(1rem, 3.5vw, 1.0625rem);
+  display: flex;
+  align-items: center;
+  background-color: #f8f6f6;
+  box-sizing: border-box;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%232a9d8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3E%3Cpolyline points="6 9 12 15 18 9"%3E%3C/polyline%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Champ numéro de téléphone */
+.phone-input-container .input-group .form-control {
+  flex: 1;
+  height: clamp(2.5rem, 8vw, 2.75rem);
+  padding: 0 0.625rem;
+  border: 1px solid #ccc;
+  border-left: none; /* Pas de bordure à gauche */
+  border-radius: 0 6px 6px 0;
+  font-size: clamp(1rem, 3.5vw, 1.0625rem);
+  display: flex;
+  align-items: center;
+  background-color: #f8f6f6;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Focus et état invalide */
+.phone-input-container .input-group .form-select:focus,
+.phone-input-container .input-group .form-control:focus {
+  border-color: #2a9d8f;
+  box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+  outline: none;
+}
+
+.phone-input-container .input-group .form-select.is-invalid,
+.phone-input-container .input-group .form-control.is-invalid {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+}
+
+/* Message d'erreur */
+.phone-input-container .invalid-feedback {
+  display: block;
+  color: #e74c3c;
+  font-size: clamp(0.75rem, 3vw, 0.8125rem);
+  margin-top: 0.25rem;
+}
+
+/* Ajustements responsifs pour écrans ≤ 768px */
+@media screen and (max-width: 768px) {
+  .phone-input-container .input-group .form-select {
+    width: clamp(90px, 25vw, 100px);
+    height: clamp(2.25rem, 10vw, 2.5rem);
+    padding: 0 2.5rem 0 0.75rem;
+    font-size: clamp(0.875rem, 4vw, 0.9375rem);
+    background-size: 0.625rem;
+    background-position: right 1.25rem center;
+    border-right: none; /* Pas de bordure à droite */
+  }
+
+  .phone-input-container .input-group .form-control {
+    height: clamp(2.25rem, 10vw, 2.5rem);
+    padding: 0 0.75rem;
+    font-size: clamp(0.875rem, 4vw, 0.9375rem);
+    border-left: none; /* Pas de bordure à gauche */
+  }
+}
+
+/* Ajustements spécifiques pour écrans ≤ 480px */
+@media screen and (max-width: 480px) {
+  .phone-input-container .input-group .form-select {
+    width: clamp(95px, 30vw, 105px); /* Légèrement élargi */
+    height: clamp(2rem, 12vw, 2.25rem); /* Hauteur réduite */
+    padding: 0 2rem 0 0.5rem; /* Padding réduit à gauche, maintenu à droite */
+    font-size: clamp(0.75rem, 3.5vw, 0.875rem); /* Police encore plus petite */
+    background-size: 0.5rem; /* Flèche très petite */
+    background-position: right 0.75rem center; /* Flèche rapprochée du bord */
+    border-right: none; /* Pas de bordure à droite */
+  }
+
+  .phone-input-container .input-group .form-control {
+    height: clamp(2rem, 12vw, 2.25rem);
+    padding: 0 0.5rem;
+    font-size: clamp(0.75rem, 3.5vw, 0.875rem);
+    border-left: none; /* Pas de bordure à gauche */
+  }
+}
+
+/* Mode sombre */
+@media (prefers-color-scheme: dark) {
+  .phone-input-container .input-group .form-select,
+  .phone-input-container .input-group .form-control {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: var(--text-light);
+  }
+
+  .phone-input-container .input-group .form-select {
+    border-right: none; /* Pas de bordure à droite */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%23e0e0e0" d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+  }
+
+  .phone-input-container .input-group .form-control {
+    border-left: none; /* Pas de bordure à gauche */
+  }
+
+  /* Ajustements responsifs pour mode sombre */
+  @media screen and (max-width: 768px) {
+    .phone-input-container .input-group .form-select {
+      background-size: 0.625rem;
+      background-position: right 1.25rem center;
+      border-right: none;
+    }
+
+    .phone-input-container .input-group .form-control {
+      border-left: none;
+    }
+  }
+
+  /* Ajustements spécifiques pour écrans ≤ 480px en mode sombre */
+  @media screen and (max-width: 480px) {
+    .phone-input-container .input-group .form-select {
+      width: clamp(95px, 30vw, 105px);
+      padding: 0 2rem 0 0.5rem;
+      font-size: clamp(0.75rem, 3.5vw, 0.875rem);
+      background-size: 0.5rem;
+      background-position: right 0.75rem center;
+      border-right: none;
+    }
+
+    .phone-input-container .input-group .form-control {
+      font-size: clamp(0.75rem, 3.5vw, 0.875rem);
+      border-left: none;
+    }
+  }
+}
+
+/* Correctifs pour Safari */
+@supports (-webkit-overflow-scrolling: touch) {
+  .phone-input-container .input-group .form-select {
+    padding-right: 2.5rem;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media screen and (max-width: 480px) {
+    .phone-input-container .input-group .form-select {
+      padding-right: 2.25rem;
+    }
+  }
+}
+
+/* Correctifs pour Firefox */
+@-moz-document url-prefix() {
+  .phone-input-container .input-group .form-select {
+    padding-right: 2.5rem;
+  }
+
+  @media screen and (max-width: 480px) {
+    .phone-input-container .input-group .form-select {
+      padding-right: 2.25rem;
+    }
+  }
+}

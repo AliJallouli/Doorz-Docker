@@ -1667,6 +1667,44 @@ INSERT INTO entity_type_translations (entity_type_id, language_id, translated_na
      (SELECT language_id FROM spoken_language WHERE code = 'de'), 'Öffentlich', 'Öffentliche Einrichtungen oder für alle zugänglich'),
     ((SELECT entity_type_id FROM entity_types WHERE name = 'Public'), 
      (SELECT language_id FROM spoken_language WHERE code = 'en'), 'Public', 'Public entities or accessible to all');
+	 
+INSERT INTO entity_types (name, description, created_at, updated_at) VALUES 
+    ('Association', 'Associations à but non lucratif (ASBL)', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('StudentMovement', 'Mouvements étudiants ou syndicats', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('PublicOrganization', 'Organismes publics ou para-publics', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	
+-- Association
+INSERT INTO entity_type_translations (entity_type_id, language_id, translated_name, translated_description) VALUES
+((SELECT entity_type_id FROM entity_types WHERE name = 'Association'),
+ (SELECT language_id FROM spoken_language WHERE code = 'fr'), 'Association', 'Associations à but non lucratif (ASBL)'),
+((SELECT entity_type_id FROM entity_types WHERE name = 'Association'),
+ (SELECT language_id FROM spoken_language WHERE code = 'nl'), 'Vereniging', 'Verenigingen zonder winstoogmerk (vzw)'),
+((SELECT entity_type_id FROM entity_types WHERE name = 'Association'),
+ (SELECT language_id FROM spoken_language WHERE code = 'de'), 'Verein', 'Gemeinnützige Organisationen (ASBL)'),
+((SELECT entity_type_id FROM entity_types WHERE name = 'Association'),
+ (SELECT language_id FROM spoken_language WHERE code = 'en'), 'Association', 'Non-profit associations (ASBL)'),
+
+-- StudentMovement
+((SELECT entity_type_id FROM entity_types WHERE name = 'StudentMovement'),
+ (SELECT language_id FROM spoken_language WHERE code = 'fr'), 'Mouvement étudiant', 'Mouvements étudiants ou syndicats'),
+((SELECT entity_type_id FROM entity_types WHERE name = 'StudentMovement'),
+ (SELECT language_id FROM spoken_language WHERE code = 'nl'), 'Studentenbeweging', 'Studentenverenigingen of vakbonden'),
+((SELECT entity_type_id FROM entity_types WHERE name = 'StudentMovement'),
+ (SELECT language_id FROM spoken_language WHERE code = 'de'), 'Studentenbewegung', 'Studentenbewegungen oder Gewerkschaften'),
+((SELECT entity_type_id FROM entity_types WHERE name = 'StudentMovement'),
+ (SELECT language_id FROM spoken_language WHERE code = 'en'), 'Student Movement', 'Student movements or unions'),
+
+-- PublicOrganization
+((SELECT entity_type_id FROM entity_types WHERE name = 'PublicOrganization'),
+ (SELECT language_id FROM spoken_language WHERE code = 'fr'), 'Organisme public', 'Organismes publics ou para-publics'),
+((SELECT entity_type_id FROM entity_types WHERE name = 'PublicOrganization'),
+ (SELECT language_id FROM spoken_language WHERE code = 'nl'), 'Overheidsinstelling', 'Overheids- of semioverheidsinstellingen'),
+((SELECT entity_type_id FROM entity_types WHERE name = 'PublicOrganization'),
+ (SELECT language_id FROM spoken_language WHERE code = 'de'), 'Öffentliche Organisation', 'Öffentliche oder halböffentliche Organisationen'),
+((SELECT entity_type_id FROM entity_types WHERE name = 'PublicOrganization'),
+ (SELECT language_id FROM spoken_language WHERE code = 'en'), 'Public Organization', 'Public or semi-public organizations');
+
+
 
 /* Insertion dans role */
 INSERT INTO role (name, entity_type_id, description, created_at, updated_at) VALUES
@@ -1678,6 +1716,24 @@ INSERT INTO role (name, entity_type_id, description, created_at, updated_at) VAL
     ('Viewer', (SELECT entity_type_id FROM entity_types WHERE name = 'Institution'), 'Utilisateur en lecture seule', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     ('Student', (SELECT entity_type_id FROM entity_types WHERE name = 'Public'), 'Étudiant avec accès public', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     ('PrivateLandlord', (SELECT entity_type_id FROM entity_types WHERE name = 'Public'), 'Bailleur individuel public', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- Association
+INSERT INTO role (name, entity_type_id, description, created_at, updated_at) VALUES
+('Admin', (SELECT entity_type_id FROM entity_types WHERE name = 'Association'), 'Administrateur d’une association', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Viewer', (SELECT entity_type_id FROM entity_types WHERE name = 'Association'), 'Utilisateur en lecture seule dans une association', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Editor', (SELECT entity_type_id FROM entity_types WHERE name = 'Association'), 'Éditeur de contenus associatifs', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- StudentMovement
+INSERT INTO role (name, entity_type_id, description, created_at, updated_at) VALUES
+('Admin', (SELECT entity_type_id FROM entity_types WHERE name = 'StudentMovement'), 'Administrateur d’un mouvement étudiant', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Viewer', (SELECT entity_type_id FROM entity_types WHERE name = 'StudentMovement'), 'Utilisateur en lecture seule dans un mouvement étudiant', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Editor', (SELECT entity_type_id FROM entity_types WHERE name = 'StudentMovement'), 'Éditeur de contenus étudiants', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- PublicOrganization
+INSERT INTO role (name, entity_type_id, description, created_at, updated_at) VALUES
+('Admin', (SELECT entity_type_id FROM entity_types WHERE name = 'PublicOrganization'), 'Administrateur d’un organisme public', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Viewer', (SELECT entity_type_id FROM entity_types WHERE name = 'PublicOrganization'), 'Utilisateur en lecture seule dans un organisme public', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Editor', (SELECT entity_type_id FROM entity_types WHERE name = 'PublicOrganization'), 'Éditeur de contenus institutionnels', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
 /* Insertion dans invitation_type */
@@ -2777,3 +2833,179 @@ SELECT
     (SELECT contact_message_type_id FROM contact_message_type WHERE key_name = 'other'),
     language_id, 'Overig', 'Elk ander type verzoek of opmerking.'
 FROM spoken_language WHERE code = 'nl';
+
+
+INSERT INTO public_organization_type (name, description)
+VALUES 
+('CPAS / Aide sociale', 'Fournit des aides financières, alimentaires ou sociales'),
+('Emploi / Stage / Job étudiant', 'Acteurs de l’emploi : Actiris, VDAB, Forem, etc.'),
+('Logement étudiant', 'Aide au logement : services sociaux, SLSP, agences logement étudiant'),
+('Mobilité / Transport', 'Réductions étudiantes : STIB, TEC, SNCB, etc.'),
+('Santé & Bien-être', 'Centres PMS, mutualités, santé mentale, prévention, dépistage'),
+('Enseignement / Orientation', 'Aide à l’orientation, inscription, équivalences'),
+('Financement des études', 'Bourses, prêts, aides à l’inscription ou matériel scolaire'),
+('Culture / Jeunesse', 'Accès à la culture, réductions jeunes, centres jeunesse'),
+('Administratif / État civil', 'Commune, documents d’identité, titres de séjour');
+
+
+-- CPAS / Aide sociale (id = 1)
+INSERT INTO public_organization_type_translations (public_organization_type_id, language_id, translated_name, translated_description)
+SELECT 1, language_id, 
+       CASE code
+           WHEN 'fr' THEN 'CPAS / Aide sociale'
+           WHEN 'nl' THEN 'OCMW / Sociale hulp'
+           WHEN 'en' THEN 'Social assistance'
+           WHEN 'de' THEN 'Sozialhilfe / CPAS'
+       END,
+       CASE code
+           WHEN 'fr' THEN 'Fournit des aides financières, alimentaires ou sociales.'
+           WHEN 'nl' THEN 'Biedt financiële of sociale hulp aan.'
+           WHEN 'en' THEN 'Provides financial, food or social aid.'
+           WHEN 'de' THEN 'Bietet finanzielle oder soziale Unterstützung.'
+       END
+FROM spoken_language
+WHERE code IN ('fr', 'nl', 'en', 'de');
+
+-- Emploi / Stage / Job étudiant (id = 2)
+INSERT INTO public_organization_type_translations (public_organization_type_id, language_id, translated_name, translated_description)
+SELECT 2, language_id,
+       CASE code
+           WHEN 'fr' THEN 'Emploi / Stage / Job étudiant'
+           WHEN 'nl' THEN 'Werk / Stage / Studentenjob'
+           WHEN 'en' THEN 'Work / Internship / Student Job'
+           WHEN 'de' THEN 'Arbeit / Praktikum / Studentenjob'
+       END,
+       CASE code
+           WHEN 'fr' THEN 'Acteurs de l’emploi : Actiris, VDAB, Forem, etc.'
+           WHEN 'nl' THEN 'Tewerkstelling: Actiris, VDAB, Forem, enz.'
+           WHEN 'en' THEN 'Employment actors: Actiris, VDAB, Forem, etc.'
+           WHEN 'de' THEN 'Arbeitsvermittlungen: Actiris, VDAB, Forem usw.'
+       END
+FROM spoken_language
+WHERE code IN ('fr', 'nl', 'en', 'de');
+
+-- Logement étudiant (id = 3)
+INSERT INTO public_organization_type_translations (public_organization_type_id, language_id, translated_name, translated_description)
+SELECT 3, language_id,
+       CASE code
+           WHEN 'fr' THEN 'Logement étudiant'
+           WHEN 'nl' THEN 'Studentenhuisvesting'
+           WHEN 'en' THEN 'Student housing'
+           WHEN 'de' THEN 'Studentenunterkunft'
+       END,
+       CASE code
+           WHEN 'fr' THEN 'Aide au logement : services sociaux, SLSP, agences logement étudiant.'
+           WHEN 'nl' THEN 'Hulp bij huisvesting: sociale diensten, SLSP, studentenhuisvestingsbureaus.'
+           WHEN 'en' THEN 'Housing aid: social services, SLSP, student housing agencies.'
+           WHEN 'de' THEN 'Wohnhilfe: soziale Dienste, SLSP, Wohnagenturen für Studierende.'
+       END
+FROM spoken_language
+WHERE code IN ('fr', 'nl', 'en', 'de');
+
+-- Mobilité / Transport (id = 4)
+INSERT INTO public_organization_type_translations (public_organization_type_id, language_id, translated_name, translated_description)
+SELECT 4, language_id,
+       CASE code
+           WHEN 'fr' THEN 'Mobilité / Transport'
+           WHEN 'nl' THEN 'Mobiliteit / Vervoer'
+           WHEN 'en' THEN 'Mobility / Transport'
+           WHEN 'de' THEN 'Mobilität / Verkehr'
+       END,
+       CASE code
+           WHEN 'fr' THEN 'Réductions étudiantes : STIB, TEC, SNCB, etc.'
+           WHEN 'nl' THEN 'Studentenkortingen: MIVB, TEC, NMBS, enz.'
+           WHEN 'en' THEN 'Student discounts: STIB, TEC, SNCB, etc.'
+           WHEN 'de' THEN 'Studentenrabatte: STIB, TEC, SNCB usw.'
+       END
+FROM spoken_language
+WHERE code IN ('fr', 'nl', 'en', 'de');
+
+-- Santé & Bien-être (id = 5)
+INSERT INTO public_organization_type_translations (public_organization_type_id, language_id, translated_name, translated_description)
+SELECT 5, language_id,
+       CASE code
+           WHEN 'fr' THEN 'Santé & Bien-être'
+           WHEN 'nl' THEN 'Gezondheid & Welzijn'
+           WHEN 'en' THEN 'Health & Wellbeing'
+           WHEN 'de' THEN 'Gesundheit & Wohlbefinden'
+       END,
+       CASE code
+           WHEN 'fr' THEN 'Centres PMS, mutualités, santé mentale, prévention, dépistage.'
+           WHEN 'nl' THEN 'CLB-centra, mutualiteiten, mentale gezondheid, preventie, screening.'
+           WHEN 'en' THEN 'PMS centers, health insurance, mental health, prevention, screening.'
+           WHEN 'de' THEN 'PMS-Zentren, Krankenkassen, psychische Gesundheit, Prävention, Tests.'
+       END
+FROM spoken_language
+WHERE code IN ('fr', 'nl', 'en', 'de');
+
+-- Enseignement / Orientation (id = 6)
+INSERT INTO public_organization_type_translations (public_organization_type_id, language_id, translated_name, translated_description)
+SELECT 6, language_id,
+       CASE code
+           WHEN 'fr' THEN 'Enseignement / Orientation'
+           WHEN 'nl' THEN 'Onderwijs / Oriëntatie'
+           WHEN 'en' THEN 'Education / Guidance'
+           WHEN 'de' THEN 'Bildung / Orientierung'
+       END,
+       CASE code
+           WHEN 'fr' THEN 'Aide à l’orientation, inscription, équivalences.'
+           WHEN 'nl' THEN 'Hulp bij oriëntatie, inschrijving, gelijkwaardigheden.'
+           WHEN 'en' THEN 'Help with orientation, enrollment, equivalences.'
+           WHEN 'de' THEN 'Hilfe bei Orientierung, Einschreibung, Gleichwertigkeiten.'
+       END
+FROM spoken_language
+WHERE code IN ('fr', 'nl', 'en', 'de');
+
+-- Financement des études (id = 7)
+INSERT INTO public_organization_type_translations (public_organization_type_id, language_id, translated_name, translated_description)
+SELECT 7, language_id,
+       CASE code
+           WHEN 'fr' THEN 'Financement des études'
+           WHEN 'nl' THEN 'Studiefinanciering'
+           WHEN 'en' THEN 'Study financing'
+           WHEN 'de' THEN 'Studienfinanzierung'
+       END,
+       CASE code
+           WHEN 'fr' THEN 'Bourses, prêts, aides à l’inscription ou matériel scolaire.'
+           WHEN 'nl' THEN 'Beurzen, leningen, hulp bij inschrijving of schoolmateriaal.'
+           WHEN 'en' THEN 'Scholarships, loans, registration or school material aid.'
+           WHEN 'de' THEN 'Stipendien, Darlehen, Hilfe bei Einschreibung oder Schulmaterial.'
+       END
+FROM spoken_language
+WHERE code IN ('fr', 'nl', 'en', 'de');
+
+-- Culture / Jeunesse (id = 8)
+INSERT INTO public_organization_type_translations (public_organization_type_id, language_id, translated_name, translated_description)
+SELECT 8, language_id,
+       CASE code
+           WHEN 'fr' THEN 'Culture / Jeunesse'
+           WHEN 'nl' THEN 'Cultuur / Jeugd'
+           WHEN 'en' THEN 'Culture / Youth'
+           WHEN 'de' THEN 'Kultur / Jugend'
+       END,
+       CASE code
+           WHEN 'fr' THEN 'Accès à la culture, réductions jeunes, centres jeunesse.'
+           WHEN 'nl' THEN 'Toegang tot cultuur, jongerenkortingen, jeugdcentra.'
+           WHEN 'en' THEN 'Access to culture, youth discounts, youth centers.'
+           WHEN 'de' THEN 'Zugang zur Kultur, Jugendrabatte, Jugendzentren.'
+       END
+FROM spoken_language
+WHERE code IN ('fr', 'nl', 'en', 'de');
+
+-- Administratif / État civil (id = 9)
+INSERT INTO public_organization_type_translations (public_organization_type_id, language_id, translated_name, translated_description)
+SELECT 9, language_id,
+       CASE code
+           WHEN 'fr' THEN 'Administratif / État civil'
+           WHEN 'nl' THEN 'Administratie / Burgerlijke stand'
+           WHEN 'en' THEN 'Administrative / Civil status'
+           WHEN 'de' THEN 'Verwaltung / Zivilstand'
+       END,
+       CASE code
+           WHEN 'fr' THEN 'Commune, documents d’identité, titres de séjour.'
+           WHEN 'nl' THEN 'Gemeente, identiteitsdocumenten, verblijfsvergunningen.'
+           WHEN 'en' THEN 'Municipality, identity documents, residence permits.'
+           WHEN 'de' THEN 'Gemeinde, Ausweisdokumente, Aufenthaltstitel.'
+       END
+FROM spoken_language
+WHERE code IN ('fr', 'nl', 'en', 'de');

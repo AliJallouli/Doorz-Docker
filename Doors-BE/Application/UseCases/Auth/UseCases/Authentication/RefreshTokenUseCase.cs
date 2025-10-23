@@ -1,15 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 using Application.UseCases.Auth.DTOs;
 using Application.Utils;
-using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Interfaces.Services;
 using Infrastructure.Ef.Interfaces;
-using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Threading.Tasks;
+using Application.Configurations;
+using Application.UseCases.Auth.Service;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Application.UseCases.Auth.UseCases.Authentication;
 
@@ -20,23 +19,43 @@ public class RefreshTokenUseCase
     private readonly ITokenService _tokenService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<RefreshTokenUseCase> _logger;
+    private readonly AuthSettings _authSettings;
+    private readonly IRefreshTokenService _refreshTokenService;
+    private readonly ISessionService _sessionService;
+
 
     public RefreshTokenUseCase(
         IUserRepository userRepository,
         IRefreshTokenRepository refreshTokenRepository,
         ITokenService tokenService,
         IUnitOfWork unitOfWork,
-        ILogger<RefreshTokenUseCase> logger)
+        ILogger<RefreshTokenUseCase> logger,
+        IOptions<AuthSettings> authSettings,
+        IRefreshTokenService refreshTokenService,
+        ISessionService sessionService)
     {
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        _refreshTokenRepository = refreshTokenRepository ?? throw new ArgumentNullException(nameof(refreshTokenRepository));
-        _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
-        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository),
+            "Le référentiel utilisateur ne peut pas être null.");
+        _refreshTokenRepository = refreshTokenRepository ?? throw new ArgumentNullException(
+            nameof(refreshTokenRepository), "Le référentiel de jetons de rafraîchissement ne peut pas être null.");
+        _tokenService = tokenService ??
+                        throw new ArgumentNullException(nameof(tokenService),
+                            "Le service de jetons ne peut pas être null.");
+        _unitOfWork = unitOfWork ??
+                      throw new ArgumentNullException(nameof(unitOfWork), "L'unité de travail ne peut pas être null.");
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger), "Le logger ne peut pas être null.");
+        _authSettings = authSettings.Value ?? throw new ArgumentNullException(nameof(authSettings),
+            "Les paramètres d'authentification ne peuvent pas être null.");
+        _refreshTokenService = refreshTokenService ?? throw new ArgumentNullException(nameof(refreshTokenService),
+            "Le service de jetons de rafraîchissement ne peut pas être null.");
+        _sessionService = sessionService ??
+                          throw new ArgumentNullException(nameof(sessionService),
+                              "Le service de session ne peut pas être null.");
     }
 
-    public async Task<AuthResponseDto> ExecuteAsync(RefreshRequestDto refreshTokenDto)
+    public async Task<RefreshTokenResponseDto> ExecuteAsync(RefreshRequestDto refreshTokenDto)
     {
+        // 1. Validation du format du refreshToken
         if (string.IsNullOrWhiteSpace(refreshTokenDto.RefreshToken))
         {
             _logger.LogError("Refresh token manquant ou vide pour le rafraîchissement");
@@ -50,29 +69,31 @@ public class RefreshTokenUseCase
         await using var transaction = await _unitOfWork.BeginTransactionAsync();
         try
         {
-            // 1. Récupérer le refresh token avec verrouillage pessimiste (timeout de 5 secondes)
+            // 2. Récupérer le refresh token avec verrouillage pessimiste (timeout de 5 secondes) si session révoquée le refreshtoken n'existe plus
             var token = await _refreshTokenRepository.GetRefreshTokenAsync(refreshTokenDto.RefreshToken)
-                .TimeoutAfter(TimeSpan.FromSeconds(5));
+                .TimeoutAfter(TimeSpan.FromSeconds(_authSettings.RefreshTokenLockTimeoutSeconds));
             if (token == null)
             {
-                _logger.LogWarning("Refresh token non trouvé : {RefreshToken}", 
+                _logger.LogWarning("Refresh token non trouvé : {RefreshToken}",
                     TokenUtils.TruncateToken(refreshTokenDto.RefreshToken));
                 throw new BusinessException(ErrorCodes.RefreshTokenInvalidOrExpired, "refreshToken");
             }
+
             if (token.ExpiresAt < DateTime.UtcNow)
             {
-                _logger.LogWarning("Refresh token expiré : {RefreshToken}, ExpiresAt: {ExpiresAt}", 
+                _logger.LogWarning("Refresh token expiré : {RefreshToken}, ExpiresAt: {ExpiresAt}",
                     TokenUtils.TruncateToken(refreshTokenDto.RefreshToken), token.ExpiresAt);
                 throw new BusinessException(ErrorCodes.RefreshTokenInvalidOrExpired, "refreshToken");
             }
+
             if (token.Used)
             {
-                _logger.LogWarning("Refresh token déjà utilisé : {RefreshToken}, UsedAt: {UsedAt}", 
+                _logger.LogWarning("Refresh token déjà utilisé : {RefreshToken}, UsedAt: {UsedAt}",
                     TokenUtils.TruncateToken(refreshTokenDto.RefreshToken), token.UsedAt);
                 throw new BusinessException(ErrorCodes.RefreshTokenAlreadyUsed, "refreshToken");
             }
 
-            // 2. Récupérer l'utilisateur
+            // 3. Récupérer l'utilisateur
             var user = await _userRepository.GetByIdAsync(token.UserId);
             if (user == null)
             {
@@ -80,30 +101,52 @@ public class RefreshTokenUseCase
                 throw new BusinessException(ErrorCodes.UserNotFound, "userId");
             }
 
-            // 3. Marquer le token comme utilisé
+            // 4. Rechercher un refresh token existant **valide ET créé il y a moins de X minutes**
+            var existingToken = await _refreshTokenRepository.GetValidTokenBySessionAsync(token.SessionEventId);
+
+            if (existingToken != null && (DateTime.UtcNow - existingToken.CreatedAt).TotalMinutes <
+                _authSettings.RefreshTokenReuseThresholdMinutes)
+            {
+                bool rememberMe = await _sessionService.IsRememberMe(existingToken.Token);
+                _logger.LogInformation("Token réutilisé (moins de 14 min) pour session {SessionEventId}",
+                    token.SessionEventId);
+                return new RefreshTokenResponseDto
+                {
+                    AccessToken = _tokenService.GenerateAccessToken(user, token.SessionEventId),
+                    RefreshToken = existingToken.Token,
+                    RememberMe = rememberMe,
+                    Message = "Refresh success (recent reuse)"
+                };
+            }
+
+            // 5. Marquer le token reçu comme utilisé
             token.Used = true;
             token.UsedAt = DateTime.UtcNow;
             try
             {
                 await _refreshTokenRepository.UpdateAsync(token);
-                _logger.LogDebug("Refresh token marqué comme utilisé : RefreshTokenId {RefreshTokenId}", token.RefreshTokenId);
+                _logger.LogDebug("Refresh token marqué comme utilisé : RefreshTokenId {RefreshTokenId}",
+                    token.RefreshTokenId);
             }
             catch (DbUpdateConcurrencyException)
             {
-                _logger.LogWarning("Le refresh token {RefreshTokenId} a déjà été marqué comme utilisé par une autre requête", 
+                _logger.LogWarning(
+                    "Le refresh token {RefreshTokenId} a déjà été marqué comme utilisé par une autre requête",
                     token.RefreshTokenId);
                 throw new BusinessException(ErrorCodes.RefreshTokenAlreadyUsed, "refreshToken");
             }
 
-            // 4. Créer un nouveau refresh token
-            var result = await CreateNewTokenAsync(user, token.SessionEventId, transaction);
+            // 6. Créer un nouveau refresh token pour la session
+            var refreshTokenResponseDto =
+                await _refreshTokenService.CreateNewRefreshTokenTokenAsync(user, token.SessionEventId, transaction);
             await transaction.CommitAsync();
-            return result;
+            _logger.LogDebug("Fin avec succès du refreshToken pour le token:  {RefreshTokenId}", token.RefreshTokenId);
+            return refreshTokenResponseDto;
         }
         catch (TimeoutException)
         {
             await transaction.RollbackAsync();
-            _logger.LogWarning("Timeout lors de l'attente du verrou pour le refresh token {RefreshToken}", 
+            _logger.LogWarning("Timeout lors de l'attente du verrou pour le refresh token {RefreshToken}",
                 TokenUtils.TruncateToken(refreshTokenDto.RefreshToken));
             throw new BusinessException(ErrorCodes.RefreshTokenLockTimeout, "refreshToken");
         }
@@ -117,54 +160,6 @@ public class RefreshTokenUseCase
             await transaction.RollbackAsync();
             _logger.LogError(ex, "Erreur inattendue lors du rafraîchissement du token");
             throw new BusinessException(ErrorCodes.RefreshTokenProcessFailed);
-        }
-    }
-
-    private async Task<AuthResponseDto> CreateNewTokenAsync(Users user, int sessionEventId, IDbContextTransaction transaction)
-    {
-        try
-        {
-            // Vérifier si un refresh token non utilisé existe déjà
-            var existingToken = await _refreshTokenRepository.GetValidTokenBySessionAsync(sessionEventId);
-            if (existingToken != null)
-            {
-                _logger.LogInformation("Refresh token non utilisé trouvé pour la session {SessionEventId}, RefreshTokenId {RefreshTokenId}",
-                    sessionEventId, existingToken.RefreshTokenId);
-                return new AuthResponseDto
-                {
-                    AccessToken = _tokenService.GenerateAccessToken(user),
-                    RefreshToken = existingToken.Token,
-                    Message = "Refresh success (reuse)"
-                };
-            }
-
-            var newAccessToken = _tokenService.GenerateAccessToken(user);
-            var newRefreshToken = _tokenService.GenerateRefreshToken();
-            var newTokenEntity = new RefreshToken
-            {
-                UserId = user.UserId,
-                SessionEventId = sessionEventId,
-                Token = newRefreshToken,
-                ExpiresAt = DateTime.UtcNow.AddDays(30),
-                CreatedAt = DateTime.UtcNow,
-                Used = false
-            };
-            await _refreshTokenRepository.AddAsync(newTokenEntity);
-            _logger.LogInformation(
-                "Nouveau refresh token créé pour la session {SessionEventId}, RefreshTokenId {RefreshTokenId}",
-                newTokenEntity.SessionEventId, newTokenEntity.RefreshTokenId);
-
-            return new AuthResponseDto
-            {
-                AccessToken = newAccessToken,
-                RefreshToken = newRefreshToken,
-                Message = "Refresh success (reuse)"
-            };
-        }
-        catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("duplicate key") ?? false)
-        {
-            _logger.LogWarning("Un refresh token non utilisé existe déjà pour la session {SessionEventId}", sessionEventId);
-            throw new BusinessException(ErrorCodes.RefreshTokenAlreadyExists, "session");
         }
     }
 }
@@ -181,6 +176,7 @@ public static class TaskExtensions
         {
             throw new TimeoutException("L'opération a dépassé le temps imparti.");
         }
+
         cts.Cancel();
         return await task;
     }

@@ -1,5 +1,7 @@
 ﻿using System.Transactions;
+using Application.SharedService;
 using Application.UseCases.Invitation.Service;
+using Application.Validation;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Exceptions;
@@ -21,6 +23,7 @@ public abstract class AddEntityUseCaseBase<TCreateDto, TEntity, TDto> : IAddEnti
     protected readonly ILogger<AddEntityUseCaseBase<TCreateDto, TEntity, TDto>> Logger;
     protected readonly IMapper Mapper;
     protected readonly IRoleRepository RoleRepository;
+    protected readonly ISharedUniquenessValidationService UniquenessValidator;
 
     protected AddEntityUseCaseBase(
         IInvitationService invitationService,
@@ -30,17 +33,18 @@ public abstract class AddEntityUseCaseBase<TCreateDto, TEntity, TDto> : IAddEnti
         IEntityRepository entityRepository,
         IMapper mapper,
         ILogger<AddEntityUseCaseBase<TCreateDto, TEntity, TDto>> logger,
-        IInvitationTypeRepository invitationTypeRepository)
+        IInvitationTypeRepository invitationTypeRepository,
+        ISharedUniquenessValidationService uniquenessValidator)
     {
-        InvitationService = invitationService ?? throw new ArgumentNullException(nameof(invitationService));
-        InvitationEmailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
-        RoleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
-        EntityTypeRepository = entityTypeRepository ?? throw new ArgumentNullException(nameof(entityTypeRepository));
-        EntityRepository = entityRepository ?? throw new ArgumentNullException(nameof(entityRepository));
-        Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        InvitationTypeRepository = invitationTypeRepository ??
-                                    throw new ArgumentNullException(nameof(invitationTypeRepository));
+        InvitationService = invitationService ?? throw new ArgumentNullException(nameof(invitationService), "Le service d'invitation ne peut pas être null.");
+        InvitationEmailService = emailService ?? throw new ArgumentNullException(nameof(emailService), "Le service d'email d'invitation ne peut pas être null.");
+        RoleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository), "Le référentiel de rôles ne peut pas être null.");
+        EntityTypeRepository = entityTypeRepository ?? throw new ArgumentNullException(nameof(entityTypeRepository), "Le référentiel de types d'entité ne peut pas être null.");
+        EntityRepository = entityRepository ?? throw new ArgumentNullException(nameof(entityRepository), "Le référentiel d'entité ne peut pas être null.");
+        Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper), "Le mapper ne peut pas être null.");
+        Logger = logger ?? throw new ArgumentNullException(nameof(logger), "Le logger ne peut pas être null.");
+        InvitationTypeRepository = invitationTypeRepository ?? throw new ArgumentNullException(nameof(invitationTypeRepository), "Le référentiel de types d'invitation ne peut pas être null.");
+        UniquenessValidator = uniquenessValidator ?? throw new ArgumentNullException(nameof(uniquenessValidator), "Le validateur d'unicité ne peut pas être null.");
     }
 
     public virtual async Task<TDto> ExecuteAsync(TCreateDto dto, int createdBy,string languageCode)
@@ -87,8 +91,62 @@ public abstract class AddEntityUseCaseBase<TCreateDto, TEntity, TDto> : IAddEnti
         }
     }
 
-    protected abstract Task ValidateInputAsync(TCreateDto dto);
-    protected abstract Task ValidateUniqueNameAsync(TCreateDto dto);
+    protected virtual async Task ValidateInputAsync(TCreateDto dto)
+    {
+        Logger.LogDebug("Validation des données d'entrée pour l'entité de type {EntityType}", typeof(TEntity).Name);
+
+        // Vérifier que le DTO n'est pas null
+        if (!CommonFormatValidator.ValidateNotNull(dto))
+        {
+            Logger.LogWarning("Le DTO de création est null.");
+            throw new BusinessException(ErrorCodes.InvalidInput, "dto");
+        }
+
+        // Validation du nom
+        var name = GetEntityName(dto);
+        if (!CommonFormatValidator.ValidateEntityName(name))
+        {
+            Logger.LogWarning("Le nom de l'entité '{EntityName}' est invalide.", name);
+            throw new BusinessException(ErrorCodes.InvalidEntityNameFormat, "name");
+        }
+        
+        // Validation de l'unicité du nom dans la db
+        await UniquenessValidator.ValidateUniqueEntityNameInEntitiesAsync(name);
+
+        // Validation de l'email
+        var email = GetInvitationEmail(dto);
+        if (!CommonFormatValidator.ValidateEmail(email))
+        {
+            Logger.LogWarning("L'email '{Email}' est invalide.", email);
+            throw new BusinessException(ErrorCodes.InvalidEmailFormat, "invitationEmail");
+        }
+    
+        // Validation de l'unicité de l'email dans superadmininvitation et users
+        await UniquenessValidator.ValidateUniqueEmailInSuperAdminInvitationAsync(email,"SuperadminInvitationEmail");
+        await UniquenessValidator.ValidateUniqueEmailInUsersAsync(name,"SuperadminInvitationEmail");
+
+        Logger.LogDebug("Validation des données d'entrée terminée pour {EntityName}", name);
+    }
+
+    protected virtual Task ValidateUniqueNameAsync(TCreateDto dto)
+    {
+        var name = GetEntityName(dto);
+        return ValidateGlobalEntityNameUniquenessAsync(name);
+    }
+    
+    protected virtual async Task ValidateGlobalEntityNameUniquenessAsync(string name)
+    {
+        var alreadyExists = await EntityRepository.ExistNameAsync(name);
+        if (alreadyExists)
+        {
+            Logger.LogWarning("Le nom d'entité '{EntityName}' est déjà utilisé.", name);
+            throw new BusinessException(ErrorCodes.EntityNameAlreadyUsed, "name");
+        }
+
+        Logger.LogDebug("Nom d'entité '{EntityName}' confirmé comme unique.", name);
+    }
+
+
     protected abstract Task ValidateDataAsync(TCreateDto dto);
     protected abstract Task<TEntity> CreateSpecificEntityAsync(TCreateDto dto, Entity entity, int createdBy);
     protected abstract string GetEntityTypeName();
@@ -103,13 +161,16 @@ public abstract class AddEntityUseCaseBase<TCreateDto, TEntity, TDto> : IAddEnti
         var entity = new Entity
         {
             EntityTypeId = (await EntityTypeRepository.GetByNameAsync(entityTypeName)).EntityTypeId,
-            Name = GetEntityName(dto)
+            Name = GetEntityName(dto),
+            CreatedBy = createdBy,
+           CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
         };
 
         await EntityRepository.AddAsync(entity);
         var specificEntity = await CreateSpecificEntityAsync(dto, entity, createdBy);
         entity.SpecificEntityId = GetEntityId(specificEntity);
-        entity.CreatedBy = createdBy;
+        
         entity.ParentEntityId = entity.EntityId;
         await EntityRepository.UpdateAsync(entity);
 

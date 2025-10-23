@@ -1,4 +1,5 @@
-﻿using Application.UseCases.Auth.DTOs.Password;
+﻿using Application.UseCases.Auth.DTOs;
+using Application.UseCases.Auth.DTOs.Password;
 using Application.UseCases.Auth.Service;
 using Domain.Exceptions;
 using Domain.Interfaces;
@@ -26,7 +27,7 @@ public class SendPasswordResetLinkUseCase
         _logger = logger;
     }
 
-    public async Task<RequestPasswordResetResponseDto> ExecuteAsync(RequestPasswordResetRequestDto request,
+    public async Task<ResponseWithSimplKeyDto> ExecuteAsync(RequestPasswordResetRequestDto request,
         string ipAddress, string userAgent, string languageCode)
     {
         _logger.LogInformation("Demande de réinitialisation de mot de passe pour {Email}", request.Email);
@@ -41,16 +42,18 @@ public class SendPasswordResetLinkUseCase
             ipAddress,
             userAgent
         );
-        
+        _logger.LogWarning("✅ RawToken: {RawToken}, RawOtp: {RawOtp}", generatedTokenResult.RawToken, generatedTokenResult.CodeOtp);
+
         if (generatedTokenResult.RawToken is null || generatedTokenResult.CodeOtp is null)
             throw new BusinessException(ErrorCodes.TokenGenerationFailed, "token");
         
         // Envoi email avec lien contenant le token
+        _logger.LogInformation("Appel de SendPasswordReseLinkEmailAsync");
         await _emailAuthService.SendPasswordReseLinkEmailAsync(user, generatedTokenResult.RawToken, generatedTokenResult.CodeOtp,ipAddress, userAgent,languageCode);
 
         _logger.LogInformation("Lien de réinitialisation envoyé à {Email}", user.Email);
 
-        return new RequestPasswordResetResponseDto
+        return new ResponseWithSimplKeyDto
         {
             Key = "RESETPASSWORD.EMAIL_SENT"
         };

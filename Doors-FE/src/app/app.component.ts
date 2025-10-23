@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NavigationEnd, Router, RouterOutlet} from '@angular/router';
-import { NavbarComponent } from './features/shared/navbar/navbar.component';
-import {FooterComponent} from './features/shared/footer/footer.component';
+import { NavbarComponent } from './layout/navbar/navbar.component';
+import {FooterComponent} from './layout/footer/footer.component';
 import {AuthService} from './core/services/auth/auth.service';
 import {Title} from '@angular/platform-browser';
 import {environment} from '../environments/environment';
@@ -10,12 +10,8 @@ import {environment} from '../environments/environment';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, NavbarComponent, FooterComponent],
-  template: `
-    <app-navbar></app-navbar>
-    <router-outlet></router-outlet>
-    <app-footer></app-footer>
-  `,
-  styleUrls: ['./app.component.css']
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css'
 })
 
 export class AppComponent{

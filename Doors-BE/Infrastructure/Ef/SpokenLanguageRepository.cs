@@ -33,7 +33,6 @@ public class SpokenLanguageRepository:ISpokenLanguageRepository
 
         if (language == null)
         {
-            // Fallback : langue par défaut (ex : "fr")
             language = await _context.SpokenLanguages
                            .FirstOrDefaultAsync(l => l.Code == "en") 
                        ?? throw new Exception("Langue par défaut introuvable.");

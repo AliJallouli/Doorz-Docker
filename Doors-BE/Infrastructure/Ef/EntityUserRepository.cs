@@ -33,7 +33,7 @@ public class EntityUserRepository : IEntityUserRepository
                                        eu.EntityId == entityId);
     }
 
-    public async Task<EntityUser> GetByUserIdAsync(int userId)
+    public async Task<EntityUser?> GetByUserIdAsync(int userId)
     {
         return await _context.EntityUsers
             .FirstOrDefaultAsync(eu => eu.UserId == userId);

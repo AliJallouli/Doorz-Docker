@@ -1,0 +1,27 @@
+/* Couleurs par type */
+.job {
+  fill: #F4A261;
+}
+.internship {
+  fill: #2A9D8F;
+}
+.study {
+  fill: #264653;
+}
+.event {
+  fill: #318db5;
+}
+.aid {
+  fill: #c64d4d;
+}
+.kot {
+  fill: #09aaed;
+}
+.icon-wrapper {
+  width: clamp(2.5rem, 6vw, 3.25rem);
+  height: clamp(2.5rem, 6vw, 3.25rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}

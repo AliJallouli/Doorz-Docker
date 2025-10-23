@@ -1,0 +1,24 @@
+.name-split-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  gap: clamp(1.2rem, 2vw, 0.75rem);
+}
+
+.name-split-wrapper .form-group {
+  flex: 1 1 45%;
+  margin: 0; /* Évite les marges parasites */
+}
+
+
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+
+
+  .name-split-wrapper .form-group {
+    flex: 1 1 100%;
+    margin: 0;
+  }
+}

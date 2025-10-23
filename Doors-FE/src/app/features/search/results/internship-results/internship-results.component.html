@@ -1,0 +1,15 @@
+<div class="results-grid">
+  <div *ngFor="let internship of results" class="result-card">
+    <h4>{{ internship.title }}</h4>
+    <p class="company-location">{{ internship.company }} – {{ internship.location }}</p>
+    <p class="details">
+      <span *ngIf="internship.salary">{{ internship.salary | currency:internship.currency }}/mois</span>
+      <span *ngIf="internship.duration">{{ internship.duration }} {{ internship.durationUnit }}</span>
+      <span *ngIf="internship.remotePossible" class="remote">Télétravail possible</span>
+    </p>
+    <p class="description" *ngIf="internship.description">{{ internship.description | slice:0:100 }}...</p>
+    <p class="deadline" *ngIf="internship.deadline">
+      Candidature avant le {{ internship.deadline | date:'mediumDate' }}
+    </p>
+  </div>
+</div>

@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { LegalDocumentDTO } from '../../../models/legal-document.models';
+import { LegalDocumentDTO } from '../../models/legal-document.models';
 import {LegalDocumentService} from '../auth/legal-document.service';
 
 @Injectable({

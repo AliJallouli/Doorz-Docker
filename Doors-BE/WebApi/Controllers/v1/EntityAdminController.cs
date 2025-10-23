@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
-using Application.UseCases.Invitation.EntityAdmin.ColleagueInvitation.DTOs;
-using Application.UseCases.Invitation.EntityAdmin.ColleagueInvitation.UseCase;
-using BackEnd_TI.Utils;
+using Application.UseCases.Invitation.Colleague.DTOs;
+using Application.UseCases.Invitation.Colleague.UseCase;
+using WebApi.Utils;
 using WebApi.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +27,6 @@ public class EntityAdminController : ControllerBase
     ///     Réservé aux utilisateurs ayant le rôle "Admin" via la politique "AdminOnly".
     /// </summary>
     /// <param name="request">Les données de l'invitation pour le collègue.</param>
-    /// <param name="invitingUserId">L'ID de l'utilisateur qui envoie l'invitation.</param>
     /// <returns>Un objet contenant les détails de l'invitation et un message de succès.</returns>
     /// <response code="200">Invitation envoyée avec succès.</response>
     /// <response code="400">Requête invalide ou erreur lors de l'envoi de l'invitation.</response>
@@ -44,18 +43,18 @@ public class EntityAdminController : ControllerBase
 
         if (string.IsNullOrEmpty(currentUserIdClaim))
             return Unauthorized(ApiResponse<object>.Fail(
-                ResponseKeys.USER_NOT_AUTHENTICATED,
+                ResponseKeys.UserNotAuthenticated,
                 null
             ));
 
         var currentUserId = int.Parse(currentUserIdClaim);
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
+        var languageCode = HttpContextUtils.ExtractLanguageCode(Request);
 
         await _inviteColleagueUseCase.ExecuteAsync(request, currentUserId, languageCode);
 
         return Ok(ApiResponse<object>.Ok(
             null,
-            ResponseKeys.COLLEAGUE_INVITED
+            ResponseKeys.ColleagueInvited
         ));
     }
 }

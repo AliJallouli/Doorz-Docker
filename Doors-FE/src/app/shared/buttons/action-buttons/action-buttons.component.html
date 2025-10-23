@@ -1,0 +1,11 @@
+<div class="button-group">
+  <button
+    *ngFor="let action of actions"
+    [ngClass]="action.styleClass"
+    (click)="onActionClick(action.action)"
+    type="button"
+  >
+    <i [ngClass]="action.iconClass" class="icon"></i>
+    {{ action.labelKey | translate }}
+  </button>
+</div>

@@ -1,6 +1,7 @@
 ﻿using Application.UseCases.Auth.DTOs;
 using Application.UseCases.Auth.Service;
 using Application.Validation;
+using Domain.Constants;
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
@@ -79,11 +80,28 @@ public abstract class RegisterFromInviteUseCaseBase
         string userAgent,string languageCode)
     {
         _logger.LogInformation("Début de l'inscription via invitation pour l'email {Email}", request.Email);
-        CommonValidator.ValidateEmail(request.Email);
-        CommonValidator.ValidatePassword(request.Password);
+       
+        // Vérification des formats
+        if (!CommonFormatValidator.ValidateEmail(request.Email))
+        {
+            _logger.LogWarning("format de l'email invalide  pour enregistrer  l'utilisateur");
+            throw new BusinessException(ErrorCodes.InvalidEmailFormat, "password");
+        }
+
+        if (!CommonFormatValidator.ValidatePassword(request.Password))
+        {
+            _logger.LogWarning("format du mot de passe invalide  pour enregistrer  l'utilisateur");
+            throw new BusinessException(ErrorCodes.PasswordInvalid, "password");
+        }
+
+        if (!CommonFormatValidator.ValidateFirstName(request.FirstName) ||
+            !CommonFormatValidator.ValidateLastName(request.LastName))
+        {
+            _logger.LogWarning("format du Prénom ou du Nom invalide  pour enregistrer  l'utilisateur");
+            throw new BusinessException(ErrorCodes.InvalidNameFields, "firstNameLastName ");
+        }
 
         // Récupère l'invitation à partir du token fourni
-
         var hashedToken = _tokenHasher.HashToken(request.InvitationToken);
         var invitation = await _invitationRepository.GetByTokenAsync(hashedToken);
         if (invitation == null || invitation.Used || invitation.ExpiresAt < DateTime.UtcNow ||
@@ -146,13 +164,13 @@ public abstract class RegisterFromInviteUseCaseBase
         var user = new Users
         {
             Email = request.Email,
-            PasswordHash = _passwordHasher.Hash(request.Password), // Hache le mot de passe
+            PasswordHash = _passwordHasher.Hash(request.Password), 
             FirstName = request.FirstName,
             LastName = request.LastName,
-            SuperRoleId = await _superRoleRepository.GetSuperRoleIdAsync("Others"), // Rôle global par défaut
+            SuperRoleId = await _superRoleRepository.GetSuperRoleIdAsync("Others"), 
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            IsVerified = false // Considéré comme vérifié via l'invitation
+            IsVerified = false 
         };
 
         // Crée une association entre l'utilisateur et l'entité
@@ -163,24 +181,26 @@ public abstract class RegisterFromInviteUseCaseBase
             CreatedAt = DateTime.UtcNow
         };
 
+        // Enregistrement de l'utilisateur
         AuthResponseDto authResponse;
-        await using var transaction = await _unitOfWork.BeginTransactionAsync(); // Démarre une transaction
+        await using var transaction = await _unitOfWork.BeginTransactionAsync(); 
         try
         {
             // Ajoute l'utilisateur à la base de données
             await _userRepository.AddAsync(user);
-            await _unitOfWork.SaveChangesAsync(); // Génère l'ID de l'utilisateur
+            await _unitOfWork.SaveChangesAsync(); 
             _logger.LogDebug("Utilisateur créé avec ID {UserId}", user.UserId);
             
             user.CreatedBy = user.UserId;
-        
-         
             await _userRepository.UpdateAsync(user);
+            
+            // Récupération de l'userAgent
             var userAgentId = await _authService.ProcessUserAgentAsync(userAgent);
+            
+            // Enregistrement des documents légaux accépté
             await _legalConsentService.RegisterPrivacyPolicyConsentAsync(user, ipAddress, userAgentId,request.LegalConsents);
 
-
-            // Ajoute une entrée dans la table email_confirmation
+            // Génération du token du lien et de l'otp pour la confirmation de l'email
             var generatedTokenResult = await _securityTokenService.GenerateAndStoreAsync(
                 user.UserId,
                 TokenTypeName,
@@ -191,6 +211,7 @@ public abstract class RegisterFromInviteUseCaseBase
 
             // Associe l'ID de l'utilisateur à l'entité
             entityUser.UserId = user.UserId;
+            entityUser.CreatedAt = DateTime.UtcNow;
             await _entityUserRepository.AddAsync(entityUser);
             _logger.LogDebug("Association EntityUser créée pour UserId {UserId} et EntityId {EntityId}", user.UserId,
                 request.EntityId);
@@ -220,10 +241,13 @@ public abstract class RegisterFromInviteUseCaseBase
                 user,
                 ipAddress ,
                 GetSuccessMessage(redirectUrl),
-                userAgent
+                userAgent,
+                false,
+                SessionOpeningReasons.Registration
             );
             _logger.LogDebug("Connexion automatique effectuée pour l'utilisateur {UserId}", user.UserId);
             
+            // Vérification du token du lien et de l'otp pour la confirmation de l'émail et l'envoie du mail
             if (generatedTokenResult.RawToken is null)
                 throw new BusinessException(ErrorCodes.TokenGenerationFailed, "token");
             if (generatedTokenResult.CodeOtp != null)
@@ -237,7 +261,6 @@ public abstract class RegisterFromInviteUseCaseBase
         }
         catch (Exception ex)
         {
-            // En cas d'erreur, annule toutes les modifications
             await transaction.RollbackAsync();
             _logger.LogError(ex, "Échec de l'inscription via invitation pour l'email {Email}, rollback effectué",
                 request.Email);

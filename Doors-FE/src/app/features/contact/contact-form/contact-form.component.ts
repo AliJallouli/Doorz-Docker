@@ -2,17 +2,23 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TranslatedSpokenLanguageDTO } from '../../../models/language.models';
+import { TranslatedSpokenLanguageDTO } from '../../../core/models/language.models';
 import { LanguageService } from '../../../core/services/language/language.service';
 import { AuthService } from '../../../core/services/auth/auth.service';
-import { ContactMessageTypeDTO, CreateContactMessageDTO } from '../../../models/support.models';
+import { ContactMessageTypeDTO, CreateContactMessageDTO } from '../../../core/models/support.models';
 import { ContactService } from '../../../core/services/support/contact.service';
-import { Subscription } from 'rxjs';
-import { LegalConsentComponent } from '../../register/legal-consent/legal-consent.component';
-import { PhoneInputComponent } from '../../../layers/phone-input/phone-input.component';
-import { EmailInputComponent } from '../../../layers/email-input/email-input.component';
-import {resolveErrorTranslationKey} from '../../../core/errors/error-context-resolver';
-import {LoggerService} from '../../../core/services/logger/logger.service'; // Importez ici
+import {filter, Subscription, take} from 'rxjs';
+import { LegalConsentComponent } from '../../shared/legal-consent/legal-consent.component';
+import { PhoneInputComponent } from '../../../shared/inputs/phone-input/phone-input.component';
+import { EmailInputComponent } from '../../../shared/inputs/email-input/email-input.component';
+import { resolveErrorTranslationKey } from '../../../core/errors/error-context-resolver';
+import { LoggerService } from '../../../core/services/logger/logger.service';
+import { NameInputComponent } from '../../../shared/inputs/name-input/name-input.component';
+import { UserService } from '../../../core/services/user/user.service';
+import {SharedValidators} from '../../../core/utils/Validators/shared-validators';
+import {ApiResponse} from '../../../core/models/auth.models';
+import {User} from '../../../core/models/user.model';
+import {HttpErrorResponse} from '@angular/common/http'; // Importez UserService
 
 interface DocumentType {
   documentId: number;
@@ -28,7 +34,8 @@ interface DocumentType {
     TranslateModule,
     LegalConsentComponent,
     PhoneInputComponent,
-    EmailInputComponent // Ajoutez ici
+    EmailInputComponent,
+    NameInputComponent,
   ],
   templateUrl: './contact-form.component.html',
   styleUrls: ['./contact-form.component.css']
@@ -45,6 +52,7 @@ export class ContactFormComponent implements OnInit, OnDestroy {
   validationTriggered = false;
   fieldError: { [key: string]: string } = {};
   isLoggedIn = false;
+  private authSub!: Subscription;
   languages: TranslatedSpokenLanguageDTO[] = [];
   contactMessageTypes: ContactMessageTypeDTO[] = [];
   private langChangeSub!: Subscription;
@@ -68,14 +76,16 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     private contactService: ContactService,
     private authService: AuthService,
     private translateService: TranslateService,
-    private readonly logger: LoggerService
+    private logger: LoggerService,
+    private userService: UserService // Ajoutez UserService
   ) {}
 
   ngOnInit(): void {
-    this.isLoggedIn = this.authService.isAuthenticatedSync();
 
-    const fullNameValidators = this.isLoggedIn ? [] : [Validators.required];
-    const emailValidators = this.isLoggedIn ? [] : [Validators.required, Validators.email];
+
+    // Définir les validateurs pour fullName et email (requis dans tous les cas)
+    const fullNameValidators = [Validators.required];
+    const emailValidators = [Validators.required, SharedValidators.email()];
 
     this.contactForm = this.fb.group({
       fullName: [null as string | null, fullNameValidators],
@@ -86,6 +96,36 @@ export class ContactFormComponent implements OnInit, OnDestroy {
       contactMessageTypeId: [null as number | null, Validators.required],
       countryCode: ['+32', Validators.required],
       phoneNumber: ['', [Validators.pattern(/^[0-9\s]{6,15}$/)]],
+    });
+
+    this.authSub = this.authService.authStateReady$.pipe(
+      filter(ready => ready === true),
+      take(1)
+    ).subscribe(() => {
+      this.authService.isLoggedIn().subscribe(isAuthenticated => {
+        this.isLoggedIn = isAuthenticated;
+        this.logger.log('État d’authentification détecté:', isAuthenticated);
+
+        if (this.isLoggedIn) {
+          // Utiliser une méthode asynchrone pour récupérer l'utilisateur
+          this.userService.getCurrentUser().subscribe({
+            next: (response: ApiResponse<User>) => {
+              const currentUser = response.data; // Supposons que 'data' contient l'objet User
+              if (currentUser) {
+                const fullName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim();
+                this.contactForm.patchValue({
+                  fullName: fullName || null,
+                  email: currentUser.email || null
+                }, { emitEvent: false });
+                this.logger.log('Champs pré-remplis: ', { fullName, email: currentUser.email });
+              }
+            },
+            error: (err) => {
+              this.logger.error('Erreur lors de la récupération des données utilisateur:', err);
+            }
+          });
+        }
+      });
     });
 
     // Charger les langues
@@ -102,6 +142,7 @@ export class ContactFormComponent implements OnInit, OnDestroy {
       this.loadMessageTypes(currentTypeId);
     });
   }
+
   get f(): { [key: string]: AbstractControl } {
     return this.contactForm.controls;
   }
@@ -173,12 +214,11 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     this.logger.log('Current selectedTypeKeyName:', this.selectedTypeKeyName);
     this.logger.log('Current form contactMessageTypeId:', this.contactForm.get('contactMessageTypeId')?.value);
 
-
     this.contactService.getMessageTypes().subscribe({
       next: (response) => {
         this.contactMessageTypes = (response.data || []).map(t => ({
           ...t,
-          contactMessageTypeId: +t.contactMessageTypeId // 👈 FORCÉ en number
+          contactMessageTypeId: +t.contactMessageTypeId
         }));
 
         // Définir otherTypeId pour le type "other"
@@ -217,17 +257,8 @@ export class ContactFormComponent implements OnInit, OnDestroy {
         this.setDefaultType();
       }
     });
-    this.logger.log(
-      'Form value =', this.contactForm.value.contactMessageTypeId,
-      'typeof =', typeof this.contactForm.value.contactMessageTypeId
-    );
-
-    this.logger.log(
-      'Option types =', this.contactMessageTypes.map(t => [t.contactMessageTypeId, typeof t.contactMessageTypeId])
-    );
-    this.logger.log('TYPE ID types:', this.contactMessageTypes.map(t => [t.contactMessageTypeId, typeof t.contactMessageTypeId]));
-
   }
+
   onSubmit(): void {
     this.submitted = true;
     this.hasInteracted = true;
@@ -256,8 +287,8 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     }
 
     const formData: CreateContactMessageDTO = {
-      fullName: this.isLoggedIn ? '' : (this.f['fullName'].value || ''),
-      email: this.isLoggedIn ? '' : (this.f['email'].value || ''),
+      fullName: this.f['fullName'].value || '',
+      email: this.f['email'].value || '',
       subject: this.showSubjectField ? (this.f['subject'].value || '') : '',
       message: this.f['message'].value || '',
       languageId: this.f['languageId'].value || 0,
@@ -275,11 +306,10 @@ export class ContactFormComponent implements OnInit, OnDestroy {
         this.resetFormState();
       },
       error: (err) => {
-        // Gérer les erreurs backend spécifiques au champ email
         if (err.key === 'EMAIL_INVALID' || err.key === 'EMAIL_NOT_FOUND') {
           this.fieldError['email'] = resolveErrorTranslationKey(err.key);
         } else {
-          this.successMessage = ''; // Réinitialiser le message de succès
+          this.successMessage = '';
           this.fieldError['general'] = resolveErrorTranslationKey(err.key || 'CONTACT.ERROR.GENERIC');
         }
       }
@@ -291,8 +321,8 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     this.consentError = false;
     this.consentsTouched = false;
     this.hasInteracted = false;
-    this.validationTriggered = false; // Réinitialiser après soumission
-    this.fieldError = {}; // Réinitialiser les erreurs
+    this.validationTriggered = false;
+    this.fieldError = {};
     this.legalConsents = {
       TermsOfService: false,
       PrivacyPolicy: false,
@@ -301,18 +331,28 @@ export class ContactFormComponent implements OnInit, OnDestroy {
 
     const currentLang = this.languageService.getLanguage();
     const selectedLang = this.languages.find(l => l.code === currentLang);
-
     const currentCountryCode = this.contactForm.value.countryCode || '+32';
 
+    // Pré-remplir à nouveau si l'utilisateur est connecté
+    let fullName = null;
+    let email = null;
+    if (this.isLoggedIn) {
+      const currentUser = this.userService.getCurrentUserSync();
+      if (currentUser) {
+        fullName = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim();
+        email = currentUser.email || null;
+      }
+    }
+
     this.contactForm.reset({
-      fullName: null,
-      email: null,
+      fullName,
+      email,
       subject: null,
       message: null,
       languageId: selectedLang ? selectedLang.languageId : null,
       contactMessageTypeId: null,
       countryCode: currentCountryCode,
-      phoneNumber: ''
+      phone : ''
     });
 
     this.setDefaultType();
@@ -364,8 +404,8 @@ export class ContactFormComponent implements OnInit, OnDestroy {
     const sanitized = value.replace(/[^a-zA-ZÀ-ÿ\u00C0-\u017F\s'-]/g, '');
     this.contactForm.get('fullName')?.setValue(sanitized, { emitEvent: false });
   }
+
   compareById = (a: number | null, b: number | null): boolean => {
     return a === b;
   };
-
 }

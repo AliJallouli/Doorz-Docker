@@ -1,36 +1,27 @@
-:host {
-  display: block;
-  width: 100%;
-  height: 100%; /* 💥 S'assurer que le composant lui-même prend toute la hauteur */
-  font-family: 'Inter', sans-serif;
-}
-.search-form {
+
+
+.doorz-horizental-form {
   display: flex;
   flex-wrap: nowrap;
   gap: 1rem;
-  background: #ffffff;
-  padding: clamp(1rem, 2vw, 1.5rem);
-
+  background: transparent;
   width: 100%;
   box-sizing: border-box;
+
 }
 
 .form-group {
-  flex: 1 1 200px; /* Chaque champ prend au moins 200px */
+  flex: 1 1 200px;
   display: flex;
   flex-direction: column;
 }
-
-.form-group label {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 500;
-  color: #264653;
-  font-size: clamp(0.875rem, 3vw, 1rem);
-  margin-bottom: 0.25rem;
+.container{
+  padding: 0;
+  margin-bottom: 20px;
 }
 
 .form-group input {
-  padding: 0.75rem;
+  padding: clamp(0.5rem, 1.5vw, 0.625rem); /* Hauteur déjà alignée */
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-family: 'Inter', sans-serif;
@@ -51,34 +42,46 @@
 
 .search-button {
   flex: 0 1 auto;
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(90deg, #00A896 0%, #06D6A0 100%);
+  padding: clamp(0.75rem, 2vw, 0.875rem) clamp(1rem, 3vw, 1.5rem);
+  background-color: #2a9d8f;
   color: #ffffff;
   border: none;
   border-radius: 6px;
-  font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  font-size: clamp(0.875rem, 3vw, 1rem);
+  font-size: clamp(0.875rem, 3.5vw, 0.9375rem);
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.1s ease;
+  transition: all 0.2s ease;
   align-self: flex-end;
 }
 
 .search-button:hover {
-  background: linear-gradient(90deg, #06D6A0 0%, #00A896 100%);
+  background-color: #21867a; /* Couleur hover alignée */
 }
 
 .search-button:active {
   transform: scale(0.98);
 }
 
+.no-panel-message {
+  display: block;
+}
+
+
+.global-search-header {
+  padding-left: 0 !important;
+}
+
+
 /* 📱 Mobile et petits écrans (≤ 760px) */
 @media (max-width: 760px) {
-  .search-form {
+  .doorz-horizental-form {
     flex-direction: column;
-    gap: 0.5rem;
+
+    gap: clamp(1.2rem, 2vw, 0.75rem);
     padding: clamp(0.75rem, 2vw, 1rem);
-    margin-bottom: 20px;
+  }
+  .container{
+    margin-bottom: 10px;
   }
 
   .form-group {
@@ -86,25 +89,26 @@
   }
 
   .form-group input {
-    padding: 0.75rem;
+    padding: 0.5rem; /* Hauteur alignée */
   }
 
   .search-button {
     width: 100%;
     align-self: stretch;
-    padding: 0.75rem;
+    padding: 0.625rem 0.75rem; /* Hauteur alignée */
+    font-size: clamp(0.875rem, 3.5vw, 0.9375rem); /* Taille de police alignée */
   }
 }
 
 /* 📱 Très petits écrans (≤ 260px) */
 @media (max-width: 260px) {
-  .search-form {
+  .doorz-horizental-form {
     padding: 0.5rem;
     gap: 0.5rem;
   }
 
   .form-group input {
-    padding: 0.5rem;
+    padding: 0.5rem; /* Hauteur alignée */
   }
 
   .form-group label {
@@ -112,47 +116,59 @@
   }
 
   .search-button {
-    padding: 0.5rem;
-    font-size: clamp(0.75rem, 2.5vw, 0.875rem);
+    padding: 0.625rem 0.75rem; /* Hauteur alignée */
+    font-size: clamp(0.75rem, 3vw, 0.8125rem); /* Taille de police alignée sur mobile */
   }
 }
 
 /* 📱 Tablette à mobile large (761px - 991px) */
 @media (max-width: 991px) and (min-width: 761px) {
-  .search-form {
+  .doorz-horizental-form {
     padding: clamp(0.75rem, 2vw, 1rem);
-    margin-bottom: 24px;
+    margin-bottom: 15px;
   }
-
+  .container{
+    margin-bottom: 10px;
+  }
   .form-group input {
-    padding: 0.75rem;
+    padding: clamp(0.5rem, 1.5vw, 0.625rem); /* Hauteur alignée */
   }
 
-  .search-button {
-    padding: 0.75rem 1.5rem;
+  .doorz-horizental-form {
+    padding: clamp(0.625rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem); /* Hauteur alignée */
+    font-size: clamp(0.875rem, 3.5vw, 0.9375rem); /* Taille de police alignée */
   }
 }
 
 /* Grand écran (≥ 1200px) */
 @media (min-width: 1200px) {
-  .search-form {
+  .doorz-horizental-form {
     padding: clamp(1.5rem, 3vw, 2rem);
-    margin-bottom: 48px;
+    margin-bottom: 15px;
   }
 
   .form-group input {
-    padding: 1rem;
+    padding: clamp(0.5rem, 1.5vw, 0.625rem); /* Hauteur alignée */
   }
 
   .search-button {
-    padding: 1rem 2rem;
-    font-size: clamp(1rem, 3vw, 1.125rem);
+    padding: clamp(0.625rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem); /* Hauteur alignée */
+    font-size: clamp(0.875rem, 3.5vw, 0.9375rem); /* Taille de police alignée */
   }
 }
 
 /* Desktop intermédiaire (992px - 1199px) */
 @media (min-width: 992px) and (max-width: 1199px) {
-  .search-form {
-    margin-bottom: 40px;
+  .doorz-horizental-form {
+    margin-bottom: 15px;
+  }
+
+  .form-group input {
+    padding: clamp(0.5rem, 1.5vw, 0.625rem); /* Hauteur alignée */
+  }
+
+  .search-button {
+    padding: clamp(0.625rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem); /* Hauteur alignée */
+    font-size: clamp(0.875rem, 3.5vw, 0.9375rem); /* Taille de police alignée */
   }
 }

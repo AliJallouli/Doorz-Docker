@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {environment} from '../../../../environments/environment';
-import {ApiResponse} from '../../../models/auth.models';
-import {ContactMessageTypeDTO, CreateContactMessageDTO} from '../../../models/support.models';
+import {ApiResponse} from '../../models/auth.models';
+import {ContactMessageTypeDTO, CreateContactMessageDTO} from '../../models/support.models';
 
 @Injectable({
   providedIn: 'root'

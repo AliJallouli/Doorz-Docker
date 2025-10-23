@@ -1,6 +1,5 @@
 ﻿using Application.UseCases.References.Language.DTOs;
 using Application.UseCases.References.Language.UseCase;
-using BackEnd_TI.Utils;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Contracts.Responses;
 
@@ -19,7 +18,6 @@ public class SpokenLanguageController:ControllerBase
     [HttpGet("all")]
     public async Task<IActionResult> GetAllTranslatedLanguages()
     {
-        var languageCode = LanguageUtils.ExtractLanguageCode(Request);
 
         var result = await _useCase.ExecuteAsync();
 
