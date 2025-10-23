@@ -1,3 +1,6 @@
+Projet actuellement en développement – ajout progressif de nouvelles fonctionnalités (authentification, Inscription,Invitation,Contact,System RGPD, conteneurisation complète)
+
+
 #Important pour les certificats:
 ================================
 	- Prérequis 
